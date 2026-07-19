@@ -12,6 +12,12 @@
       "order": 2,
       "status": "playable",
       "characterPath": "./assets/teddies/tt02_moldy_molly/character.json"
+    },
+    {
+      "id": "tt03",
+      "order": 3,
+      "status": "playable",
+      "characterPath": "./assets/teddies/tt03_dumpster_danny/character.json"
     }
   ]
 }
