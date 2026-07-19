@@ -1,412 +1,650 @@
 import { TEDDIES, LEVELS_PER_TEDDY, TOTAL_LEVELS, DIFFICULTIES } from './characters.js';
 
-const STORAGE_KEY = 'toxic-teddies-face-trails:v4';
+const STORAGE_KEY = 'toxic-teddies-arrow-escape:v1';
+const DIRS = {
+  up:    { dr: -1, dc: 0, angle: -90, dx: 0, dy: -1, label: 'up' },
+  right: { dr: 0, dc: 1, angle: 0, dx: 1, dy: 0, label: 'right' },
+  down:  { dr: 1, dc: 0, angle: 90, dx: 0, dy: 1, label: 'down' },
+  left:  { dr: 0, dc: -1, angle: 180, dx: -1, dy: 0, label: 'left' }
+};
+
 const els = Object.fromEntries([
-  'backButton','soundButton','collectionCounter','homeView','gameView','teddyGrid','levelKicker','characterName','alternateName','lives','trailProgress','percentProgress','instructionCard','instructionIcon','instructionTitle','instructionText','puzzleFrame','mapHost','mistakeFlash','resetButton','hintButton','startButton','levelStripTitle','difficultyBadge','levelButtons','routeTitle','trailList','rewardTitle','rewardText','miniPortrait','completionModal','completionTitle','completionTagline','revealHost','completionCopy','closeModal','replayButton','nextButton','gameOverModal','tryAgainButton'
+  'backButton','soundButton','collectionCounter','homeView','gameView','teddyGrid','levelKicker','characterName','alternateName','lives','clearProgress','percentProgress','instructionCard','instructionIcon','instructionTitle','instructionText','puzzleFrame','boardStage','faceShell','arrowGrid','mistakeFlash','resetButton','hintButton','levelStripTitle','difficultyBadge','levelButtons','portraitTitle','miniPortrait','featureCopy','completionModal','completionTitle','completionTagline','revealHost','completionCopy','closeModal','replayButton','nextButton','gameOverModal','tryAgainButton'
 ].map(id => [id, document.getElementById(id)]));
 
 const state = {
   teddyIndex: 0,
   level: 1,
-  routes: [],
-  activeIndex: 0,
-  activeProgress: 0,
+  puzzle: null,
   lives: 3,
-  started: false,
-  tracing: false,
-  completed: false,
-  pointerId: null,
-  lastSampleIndex: 0,
   sound: true,
+  transitionLock: false,
+  pressTimer: null,
+  longPressTriggered: false,
+  previewTimer: null,
   save: loadSave()
 };
 
-function loadSave(){
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? { completed:{} }; }
-  catch { return { completed:{} }; }
+function loadSave() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? { completed: {} }; }
+  catch { return { completed: {} }; }
 }
-function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.save)); updateCollectionCounter(); }
-function levelKey(teddyId, level){ return `${teddyId}-l${level}`; }
-function completed(teddyId, level){ return Boolean(state.save.completed[levelKey(teddyId,level)]); }
-function unlocked(teddyId, level){ return level === 1 || completed(teddyId, level - 1); }
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.save));
+  updateCollectionCounter();
+}
+function levelKey(teddyId, level) { return `${teddyId}-l${level}`; }
+function completed(teddyId, level) { return Boolean(state.save.completed?.[levelKey(teddyId, level)]); }
+function unlocked(teddyId, level) { return level === 1 || completed(teddyId, level - 1); }
+function currentTeddy() { return TEDDIES[state.teddyIndex]; }
+function difficulty() { return DIFFICULTIES[state.level - 1]; }
+function cellKey(row, col) { return `${row}:${col}`; }
 
-function boot(){
-  bindEvents();
+function boot() {
+  bindStaticEvents();
   renderHome();
   updateCollectionCounter();
+
   const params = new URLSearchParams(location.search);
   const teddyId = params.get('teddy');
   const level = Number(params.get('level'));
-  const index = TEDDIES.findIndex(t => t.id === teddyId);
-  if(index >= 0) openGame(index, Number.isInteger(level) && level >= 1 && level <= 5 ? level : 1);
+  const index = TEDDIES.findIndex(teddy => teddy.id === teddyId);
+  if (index >= 0) openGame(index, Number.isInteger(level) && level >= 1 && level <= LEVELS_PER_TEDDY ? level : 1);
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
 }
 
-function bindEvents(){
+function bindStaticEvents() {
   els.backButton.addEventListener('click', showHome);
   els.soundButton.addEventListener('click', () => {
     state.sound = !state.sound;
     els.soundButton.textContent = state.sound ? '🔊' : '🔇';
   });
-  els.startButton.addEventListener('click', startTracing);
-  els.resetButton.addEventListener('click', () => resetGame(true));
+  els.resetButton.addEventListener('click', resetGame);
   els.hintButton.addEventListener('click', showHint);
-  els.mapHost.addEventListener('pointerdown', pointerDown);
-  els.mapHost.addEventListener('pointermove', pointerMove);
-  els.mapHost.addEventListener('pointerup', pointerUp);
-  els.mapHost.addEventListener('pointercancel', pointerCancel);
   els.closeModal.addEventListener('click', () => els.completionModal.classList.add('hidden'));
-  els.replayButton.addEventListener('click', () => { els.completionModal.classList.add('hidden'); resetGame(true); startTracing(); });
+  els.replayButton.addEventListener('click', () => {
+    els.completionModal.classList.add('hidden');
+    resetGame();
+  });
   els.nextButton.addEventListener('click', goNext);
-  els.tryAgainButton.addEventListener('click', () => { els.gameOverModal.classList.add('hidden'); resetGame(true); startTracing(); });
+  els.tryAgainButton.addEventListener('click', () => {
+    els.gameOverModal.classList.add('hidden');
+    resetGame();
+  });
+  window.addEventListener('blur', clearPressTimer);
 }
 
-function renderHome(){
+function renderHome() {
   els.teddyGrid.innerHTML = '';
-  TEDDIES.forEach((teddy,index) => {
-    const done = Array.from({length:5},(_,i)=>completed(teddy.id,i+1)).filter(Boolean).length;
+  TEDDIES.forEach((teddy, index) => {
+    const done = Array.from({ length: LEVELS_PER_TEDDY }, (_, i) => completed(teddy.id, i + 1)).filter(Boolean).length;
     const button = document.createElement('button');
     button.className = 'teddy-card';
     button.type = 'button';
-    button.innerHTML = `<div class="teddy-card-art">${renderTeddySvg(teddy,{mode:'portrait',level:Math.max(1,done)})}</div><div class="teddy-card-copy"><h3>${teddy.primary}</h3><p>${teddy.alternate}</p><div class="card-progress"><span>Mutation progress</span><strong>${done}/5</strong></div><div class="progress-line"><span style="width:${done*20}%"></span></div></div>`;
+    button.innerHTML = `
+      <div class="teddy-card-art">${renderPortrait(teddy, false)}</div>
+      <div class="teddy-card-copy">
+        <h3>${teddy.primary}</h3>
+        <p>${teddy.alternate}</p>
+        <div class="card-progress"><span>Face puzzles</span><strong>${done}/5</strong></div>
+        <div class="progress-line"><span style="width:${done * 20}%"></span></div>
+      </div>`;
     button.addEventListener('click', () => {
       let target = 1;
-      for(let l=1;l<=5;l+=1) if(unlocked(teddy.id,l)) target=l;
-      openGame(index,target);
+      for (let level = 1; level <= LEVELS_PER_TEDDY; level += 1) {
+        if (unlocked(teddy.id, level)) target = level;
+      }
+      openGame(index, target);
     });
     els.teddyGrid.append(button);
   });
 }
 
-function showHome(){
-  stopPointer();
-  state.started = false;
+function showHome() {
+  clearPressTimer();
+  clearPreview();
   els.homeView.classList.remove('hidden');
   els.gameView.classList.add('hidden');
   els.backButton.classList.add('hidden');
-  history.replaceState({},'',location.pathname);
+  history.replaceState({}, '', location.pathname);
   renderHome();
 }
 
-function openGame(teddyIndex, level){
+function openGame(teddyIndex, level) {
   state.teddyIndex = teddyIndex;
   state.level = level;
-  state.lives = 3;
-  state.completed = false;
-  state.started = false;
   els.homeView.classList.add('hidden');
   els.gameView.classList.remove('hidden');
   els.backButton.classList.remove('hidden');
+
   const url = new URL(location.href);
   url.searchParams.set('teddy', currentTeddy().id);
   url.searchParams.set('level', String(level));
-  history.replaceState({},'',url);
+  history.replaceState({}, '', url);
+
   buildLevel();
 }
 
-function currentTeddy(){ return TEDDIES[state.teddyIndex]; }
-function difficulty(){ return DIFFICULTIES[state.level - 1]; }
-
-function buildLevel(){
+function buildLevel() {
   const teddy = currentTeddy();
   const diff = difficulty();
-  els.levelKicker.textContent = `LEVEL ${state.level} OF 5 · ${diff.name}`;
+  state.lives = diff.lives;
+  state.transitionLock = false;
+  state.puzzle = generatePuzzle(teddy, state.teddyIndex, state.level);
+
+  els.levelKicker.textContent = `PUZZLE ${state.level} OF 5 · ${diff.name}`;
   els.characterName.textContent = teddy.primary;
   els.alternateName.textContent = `also known as ${teddy.alternate}`;
-  els.levelStripTitle.textContent = `${teddy.short}'s five mutations`;
+  els.levelStripTitle.textContent = `${teddy.short}'s five faces`;
   els.difficultyBadge.textContent = diff.name;
-  els.routeTitle.textContent = `${teddy.short}'s body trails`;
-  els.rewardTitle.textContent = state.level === 5 ? `Master ${teddy.primary}` : `Unlock level ${state.level + 1}`;
-  els.rewardText.textContent = state.level === 5 ? `Complete the hardest full-body map to finish ${teddy.short}'s set.` : 'Finish this full-body Teddy map to open the next mutation.';
-  els.miniPortrait.innerHTML = renderTeddySvg(teddy,{mode:'portrait',level:state.level});
-  els.mapHost.innerHTML = renderTeddySvg(teddy,{mode:'game',level:state.level});
-  prepareRoutes();
+  els.portraitTitle.textContent = teddy.primary;
+  els.featureCopy.textContent = featureDescription(teddy.feature);
+  els.miniPortrait.innerHTML = renderPortrait(teddy, false);
+
+  els.faceShell.style.borderColor = `${teddy.palette[1]}33`;
+  els.faceShell.style.background = `${teddy.palette[0]}12`;
+  renderBoard();
   renderLevelButtons();
-  resetGame(true);
+  renderLives();
+  updateProgress();
+  updateInstruction('Choose an open arrow', 'Look from the arrow tip to the edge. Long-press any arrow to preview its lane.', false);
 }
 
-function renderLevelButtons(){
+function resetGame() {
+  clearPressTimer();
+  clearPreview();
+  els.gameOverModal.classList.add('hidden');
+  state.transitionLock = false;
+  buildLevel();
+}
+
+function renderLevelButtons() {
   const teddy = currentTeddy();
   els.levelButtons.innerHTML = '';
-  for(let level=1;level<=5;level+=1){
+  for (let level = 1; level <= LEVELS_PER_TEDDY; level += 1) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'level-button';
     button.textContent = level;
-    if(level === state.level) button.classList.add('active');
-    if(completed(teddy.id,level)) button.classList.add('complete');
-    if(!unlocked(teddy.id,level)) { button.classList.add('locked'); button.disabled = true; }
-    button.addEventListener('click',()=>openGame(state.teddyIndex,level));
+    if (level === state.level) button.classList.add('active');
+    if (completed(teddy.id, level)) button.classList.add('complete');
+    if (!unlocked(teddy.id, level)) {
+      button.classList.add('locked');
+      button.disabled = true;
+    }
+    button.addEventListener('click', () => openGame(state.teddyIndex, level));
     els.levelButtons.append(button);
   }
 }
 
-function prepareRoutes(){
-  const svg = els.mapHost.querySelector('svg');
-  const diff = difficulty();
-  state.svg = svg;
-  state.routes = [...svg.querySelectorAll('[data-route]')].slice(0,diff.routes).map((path,index) => {
-    const length = path.getTotalLength();
-    const samples = Array.from({length:diff.sampleCount+1},(_,i)=>{
-      const point = path.getPointAtLength((i/diff.sampleCount)*length);
-      return {x:point.x,y:point.y};
+function renderBoard() {
+  const teddy = currentTeddy();
+  const { size, cells } = state.puzzle;
+  els.arrowGrid.innerHTML = '';
+  els.arrowGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  els.arrowGrid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+  els.arrowGrid.style.setProperty('--tile-fur', teddy.palette[0]);
+  els.arrowGrid.style.setProperty('--accent', teddy.accent);
+
+  cells.forEach(cell => {
+    const dir = DIRS[cell.dir];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `arrow-tile ${cell.featureClass}`;
+    button.style.gridRow = String(cell.row + 1);
+    button.style.gridColumn = String(cell.col + 1);
+    button.style.setProperty('--rotation', `${dir.angle}deg`);
+    button.style.setProperty('--dx', String(dir.dx));
+    button.style.setProperty('--dy', String(dir.dy));
+    button.setAttribute('role', 'gridcell');
+    button.setAttribute('aria-label', `${cell.featureLabel} arrow pointing ${dir.label}`);
+    button.addEventListener('pointerdown', event => beginLongPress(event, cell));
+    button.addEventListener('pointerup', endLongPress);
+    button.addEventListener('pointercancel', endLongPress);
+    button.addEventListener('pointerleave', cancelLongPress);
+    button.addEventListener('contextmenu', event => event.preventDefault());
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      if (state.longPressTriggered) {
+        state.longPressTriggered = false;
+        return;
+      }
+      attemptMove(cell);
     });
-    const progress = path.cloneNode(true);
-    progress.removeAttribute('data-route');
-    progress.classList.add('route-progress');
-    progress.style.stroke = currentTeddy().accent;
-    progress.style.strokeWidth = `${Math.max(16,24-state.level)}`;
-    progress.style.filter = `drop-shadow(0 0 8px ${currentTeddy().accent})`;
-    progress.style.pointerEvents = 'none';
-    progress.style.strokeDasharray = `${length}`;
-    progress.style.strokeDashoffset = `${length}`;
-    path.parentNode.insertBefore(progress,path.nextSibling);
-    return { path, progress, length, samples, label:path.dataset.label || `Mutation ${index+1}`, complete:false };
+    cell.element = button;
+    els.arrowGrid.append(button);
   });
 }
 
-function startTracing(){
-  if(state.completed || !state.svg) return;
-  state.started = true;
-  els.startButton.disabled = true;
-  els.startButton.textContent = 'Tracing active';
-  announceRoute();
-  pulseMarker();
+function beginLongPress(event, cell) {
+  if (state.transitionLock || cell.removed) return;
+  clearPressTimer();
+  state.longPressTriggered = false;
+  state.pressTimer = window.setTimeout(() => {
+    state.longPressTriggered = true;
+    previewTrajectory(cell);
+    navigator.vibrate?.(22);
+  }, 460);
+  event.currentTarget.setPointerCapture?.(event.pointerId);
 }
 
-function pointerDown(event){
-  if(!state.started || state.completed || state.tracing) return;
-  const route = state.routes[state.activeIndex];
-  if(!route) return;
-  const point = clientToSvg(event.clientX,event.clientY);
-  if(distance(point,route.samples[0]) > difficulty().startRadius){
-    fail('Wrong starting point','Begin at the glowing marker.');
+function endLongPress() {
+  clearPressTimer();
+}
+function cancelLongPress() {
+  clearPressTimer();
+}
+function clearPressTimer() {
+  if (state.pressTimer) window.clearTimeout(state.pressTimer);
+  state.pressTimer = null;
+}
+
+function previewTrajectory(cell) {
+  clearPreview();
+  if (!state.puzzle.active.has(cell.key)) return;
+
+  const blockers = blockersAhead(cell);
+  cell.element?.classList.add('inspecting');
+  blockers.forEach((blocker, index) => blocker.element?.classList.add(index === 0 ? 'trajectory-blocker' : 'trajectory'));
+  drawTrajectoryLine(cell, blockers.length > 0);
+
+  if (blockers.length) {
+    updateInstruction('Blocked lane', `${blockers.length} Teddy arrow${blockers.length === 1 ? '' : 's'} must leave this lane first.`, false);
+  } else {
+    updateInstruction('Open lane', 'This arrow can slide safely to the perimeter.', false);
+  }
+
+  state.previewTimer = window.setTimeout(clearPreview, 1400);
+}
+
+function drawTrajectoryLine(cell, blocked) {
+  const size = state.puzzle.size;
+  const dir = DIRS[cell.dir];
+  const line = document.createElement('div');
+  line.className = `trajectory-line${blocked ? ' blocked' : ''}`;
+  const cx = ((cell.col + 0.5) / size) * 92 + 4;
+  const cy = ((cell.row + 0.5) / size) * 92 + 4;
+  line.style.left = `${cx}%`;
+  line.style.top = `${cy}%`;
+
+  if (dir.dc !== 0) {
+    const length = dir.dc > 0 ? 100 - cx : cx;
+    line.style.width = `${length}%`;
+    line.style.height = '4px';
+    line.style.transform = dir.dc > 0 ? 'translateY(-50%)' : 'translate(-100%, -50%)';
+  } else {
+    const length = dir.dr > 0 ? 100 - cy : cy;
+    line.style.height = `${length}%`;
+    line.style.width = '4px';
+    line.style.transform = dir.dr > 0 ? 'translateX(-50%)' : 'translate(-50%, -100%)';
+  }
+  els.boardStage.append(line);
+}
+
+function clearPreview() {
+  if (state.previewTimer) window.clearTimeout(state.previewTimer);
+  state.previewTimer = null;
+  els.boardStage.querySelectorAll('.trajectory-line').forEach(line => line.remove());
+  state.puzzle?.cells.forEach(cell => cell.element?.classList.remove('inspecting', 'trajectory', 'trajectory-blocker'));
+}
+
+function attemptMove(cell) {
+  if (state.transitionLock || !state.puzzle.active.has(cell.key)) return;
+  clearPreview();
+  const blockers = blockersAhead(cell);
+
+  if (blockers.length) {
+    loseLife(cell, blockers[0]);
     return;
   }
-  state.tracing = true;
-  state.pointerId = event.pointerId;
-  state.lastSampleIndex = 0;
-  state.activeProgress = 0;
-  els.mapHost.setPointerCapture?.(event.pointerId);
-  updateInstruction('Keep tracing',`Stay inside ${route.label.toLowerCase()} and follow the arrow.`,false);
-  event.preventDefault();
+
+  state.transitionLock = true;
+  cell.element.classList.add('exiting');
+  playTone(430 + Math.min(280, state.puzzle.cleared * 4), .09);
+  updateInstruction('Lane cleared', 'That removal may have freed another arrow. Look again before choosing.', false);
+
+  window.setTimeout(() => {
+    cell.removed = true;
+    cell.element.classList.add('removed');
+    state.puzzle.active.delete(cell.key);
+    state.puzzle.cleared += 1;
+    state.transitionLock = false;
+    updateProgress();
+
+    if (state.puzzle.active.size === 0) completeLevel();
+  }, 310);
 }
 
-function pointerMove(event){
-  if(!state.tracing || event.pointerId !== state.pointerId) return;
-  const route = state.routes[state.activeIndex];
-  const point = clientToSvg(event.clientX,event.clientY);
-  const nearest = nearestSample(route,point);
-  if(nearest.distance > difficulty().tolerance){ fail('You left the Teddy','Stay on the mutation trail.',true); return; }
-  if(nearest.index < state.lastSampleIndex - difficulty().backtrack){ fail('Wrong direction','Follow the arrow through the Teddy.',true); return; }
-  state.lastSampleIndex = Math.max(state.lastSampleIndex,nearest.index);
-  state.activeProgress = state.lastSampleIndex/(route.samples.length-1);
-  paint(route,state.activeProgress);
-  updateProgress();
-  event.preventDefault();
+function loseLife(cell, blocker) {
+  state.lives = Math.max(0, state.lives - 1);
+  renderLives();
+  cell.element.classList.remove('blocked-bump');
+  blocker.element?.classList.add('trajectory-blocker');
+  void cell.element.offsetWidth;
+  cell.element.classList.add('blocked-bump');
+  flashMistake();
+  playTone(115, .14);
+  updateInstruction('That arrow is blocked', 'Follow its direction and clear the first Teddy arrow in the lane before trying again.', true);
+
+  window.setTimeout(() => blocker.element?.classList.remove('trajectory-blocker'), 650);
+  if (state.lives === 0) {
+    window.setTimeout(() => els.gameOverModal.classList.remove('hidden'), 360);
+  }
 }
 
-function pointerUp(event){
-  if(!state.tracing || event.pointerId !== state.pointerId) return;
-  stopPointer();
-  if(state.activeProgress >= .96) completeRoute();
-  else fail('Trail interrupted','Finish the full trail before lifting your finger.');
-}
-function pointerCancel(event){ if(state.tracing && event.pointerId === state.pointerId){ stopPointer(); fail('Trail interrupted','Keep your finger on the Teddy.'); } }
-function stopPointer(){
-  if(state.pointerId !== null && els.mapHost.hasPointerCapture?.(state.pointerId)) els.mapHost.releasePointerCapture(state.pointerId);
-  state.pointerId = null; state.tracing = false;
+function blockersAhead(cell) {
+  return rayKeys(cell, state.puzzle.size)
+    .map(key => state.puzzle.active.get(key))
+    .filter(Boolean);
 }
 
-function completeRoute(){
-  const route = state.routes[state.activeIndex];
-  route.complete = true;
-  paint(route,1);
-  state.activeIndex += 1;
-  state.activeProgress = 0;
-  playTone(600 + state.activeIndex*25,.07);
-  renderTrails();
-  updateProgress();
-  if(state.activeIndex >= state.routes.length){ completeLevel(); return; }
-  activateRoute(); announceRoute(); pulseMarker();
+function showHint() {
+  if (state.transitionLock || !state.puzzle) return;
+  clearPreview();
+  const open = [...state.puzzle.active.values()].filter(cell => blockersAhead(cell).length === 0);
+  if (!open.length) return;
+  const rng = mulberry32(hashString(`${currentTeddy().id}:${state.level}:${state.puzzle.cleared}:hint`));
+  const cell = open[Math.floor(rng() * open.length)];
+  cell.element.classList.add('hinting');
+  updateInstruction('Open arrow highlighted', 'This lane reaches the perimeter without another arrow in the way.', false);
+  window.setTimeout(() => cell.element?.classList.remove('hinting'), 2400);
 }
 
-function completeLevel(){
-  state.completed = true; state.started = false;
+function completeLevel() {
   const teddy = currentTeddy();
-  state.save.completed[levelKey(teddy.id,state.level)] = { completedAt:new Date().toISOString(), lives:state.lives };
+  state.save.completed[levelKey(teddy.id, state.level)] = {
+    completedAt: new Date().toISOString(),
+    livesRemaining: state.lives,
+    tileCount: state.puzzle.cells.length
+  };
   persist();
   renderLevelButtons();
   playVictory();
-  state.svg.classList.add('revealed');
-  els.completionTitle.textContent = `${teddy.primary} · Level ${state.level}`;
+
+  els.completionTitle.textContent = `${teddy.primary} · Puzzle ${state.level}`;
   els.completionTagline.textContent = teddy.tagline;
-  els.revealHost.innerHTML = renderTeddySvg(teddy,{mode:'reveal',level:state.level});
-  els.completionCopy.textContent = state.level === 5 ? `${teddy.primary}'s full five-level mutation set is complete.` : `Level ${state.level + 1} is now unlocked. ${teddy.lore}`;
-  els.nextButton.textContent = state.level === 5 ? 'Choose another Teddy' : `Play level ${state.level+1}`;
-  setTimeout(()=>els.completionModal.classList.remove('hidden'),350);
+  els.revealHost.innerHTML = renderPortrait(teddy, true);
+  els.completionCopy.textContent = state.level === LEVELS_PER_TEDDY
+    ? `${teddy.primary}'s complete five-puzzle face set is cleared. ${teddy.lore}`
+    : `Puzzle ${state.level + 1} is now unlocked. ${teddy.lore}`;
+  els.nextButton.textContent = state.level === LEVELS_PER_TEDDY ? 'Choose another Teddy' : `Play puzzle ${state.level + 1}`;
+  window.setTimeout(() => els.completionModal.classList.remove('hidden'), 320);
 }
 
-function goNext(){
+function goNext() {
   els.completionModal.classList.add('hidden');
-  if(state.level < 5) openGame(state.teddyIndex,state.level+1);
+  if (state.level < LEVELS_PER_TEDDY) openGame(state.teddyIndex, state.level + 1);
   else showHome();
 }
 
-function fail(title,message,pointerActive=false){
-  if(pointerActive) stopPointer();
-  const route = state.routes[state.activeIndex];
-  if(route && !route.complete) paint(route,0);
-  state.activeProgress = 0;
-  state.lives = Math.max(0,state.lives-1);
-  renderLives(); updateProgress(); updateInstruction(title,message,true); flashMistake(); playTone(110,.14);
-  if(state.lives === 0){ state.started=false; setTimeout(()=>els.gameOverModal.classList.remove('hidden'),350); }
-  else pulseMarker();
+function renderLives() {
+  els.lives.innerHTML = '';
+  for (let index = 0; index < difficulty().lives; index += 1) {
+    const drop = document.createElement('span');
+    drop.className = `toxic-drop${index >= state.lives ? ' lost' : ''}`;
+    drop.textContent = '💧';
+    drop.setAttribute('aria-hidden', 'true');
+    els.lives.append(drop);
+  }
+  els.lives.setAttribute('aria-label', `${state.lives} toxic drops remaining`);
 }
 
-function resetGame(restoreLives){
-  stopPointer();
-  state.routes.forEach(route=>{ route.complete=false; paint(route,0); });
-  state.activeIndex=0; state.activeProgress=0; state.completed=false; state.started=false;
-  if(restoreLives) state.lives=3;
-  state.svg?.classList.remove('revealed');
-  renderLives(); renderTrails(); updateProgress(); activateRoute();
-  updateInstruction('Start at the glowing marker',`Trace ${currentTeddy().primary}'s full body in the arrow direction.`,false);
-  els.startButton.disabled=false; els.startButton.textContent='Start tracing';
+function updateProgress() {
+  const total = state.puzzle?.cells.length ?? 0;
+  const cleared = state.puzzle?.cleared ?? 0;
+  const percent = total ? Math.round((cleared / total) * 100) : 0;
+  els.clearProgress.textContent = `${cleared} / ${total} cleared`;
+  els.percentProgress.textContent = `${percent}%`;
 }
 
-function activateRoute(){
-  state.routes.forEach((route,index)=>{
-    route.path.style.opacity = index===state.activeIndex ? '1' : route.complete ? '.22' : '.48';
-    route.path.style.strokeWidth = index===state.activeIndex ? '21' : '17';
+function updateCollectionCounter() {
+  const count = Object.keys(state.save.completed ?? {}).length;
+  els.collectionCounter.textContent = `${count} / ${TOTAL_LEVELS}`;
+}
+
+function updateInstruction(title, text, error) {
+  els.instructionTitle.textContent = title;
+  els.instructionText.textContent = text;
+  els.instructionIcon.textContent = error ? '⚠' : '☝';
+  els.instructionCard.classList.toggle('error', error);
+}
+
+function flashMistake() {
+  els.mistakeFlash.classList.remove('active');
+  void els.mistakeFlash.offsetWidth;
+  els.mistakeFlash.classList.add('active');
+  window.setTimeout(() => els.mistakeFlash.classList.remove('active'), 400);
+  navigator.vibrate?.([38, 24, 48]);
+}
+
+function generatePuzzle(teddy, teddyIndex, level) {
+  const diff = DIFFICULTIES[level - 1];
+  const seed = hashString(`${teddy.id}:${level}:arrow-face-v2`);
+  const rng = mulberry32(seed);
+  const cells = buildFaceCells(diff.size, teddy, teddyIndex, rng);
+  const fullKeys = new Set(cells.map(cell => cell.key));
+  const remaining = new Map(cells.map(cell => [cell.key, cell]));
+  const directions = new Map();
+  const solution = [];
+
+  while (remaining.size) {
+    const candidates = [];
+    for (const cell of remaining.values()) {
+      for (const dirName of Object.keys(DIRS)) {
+        const ray = rayKeys({ ...cell, dir: dirName }, diff.size);
+        if (ray.some(key => remaining.has(key))) continue;
+        const removedAhead = ray.filter(key => fullKeys.has(key) && !remaining.has(key)).length;
+        candidates.push({ cell, dirName, removedAhead });
+      }
+    }
+
+    if (!candidates.length) throw new Error('Could not generate a solvable arrow board.');
+    const dependent = candidates.filter(candidate => candidate.removedAhead > 0);
+    const useDependency = dependent.length > 0 && solution.length > 0 && rng() < diff.dependency;
+    const pool = useDependency ? dependent : candidates;
+
+    let chosen;
+    if (useDependency && rng() < diff.dependency) {
+      const maxDependency = Math.max(...pool.map(candidate => candidate.removedAhead));
+      const strongest = pool.filter(candidate => candidate.removedAhead >= Math.max(1, maxDependency - 1));
+      chosen = strongest[Math.floor(rng() * strongest.length)];
+    } else {
+      chosen = pool[Math.floor(rng() * pool.length)];
+    }
+
+    directions.set(chosen.cell.key, chosen.dirName);
+    solution.push(chosen.cell.key);
+    remaining.delete(chosen.cell.key);
+  }
+
+  cells.forEach(cell => {
+    cell.dir = directions.get(cell.key);
+    cell.removed = false;
+    cell.element = null;
   });
-  state.svg?.querySelectorAll('[data-start]').forEach((marker,index)=>{
-    const active = index===state.activeIndex;
-    marker.setAttribute('opacity',active?'1':'.35');
-    marker.setAttribute('r',active?'15':'9');
-    marker.setAttribute('fill',active?'#e8ff72':'#87905d');
-  });
-}
 
-function renderLives(){
-  els.lives.innerHTML='';
-  for(let i=0;i<3;i+=1){ const s=document.createElement('span'); s.className=`toxic-drop${i>=state.lives?' lost':''}`; s.textContent='💧'; els.lives.append(s); }
-  els.lives.setAttribute('aria-label',`${state.lives} toxic drops remaining`);
-}
-function renderTrails(){
-  els.trailList.innerHTML='';
-  state.routes.forEach((route,index)=>{ const li=document.createElement('li'); li.textContent=route.label; if(route.complete)li.classList.add('complete'); else if(index===state.activeIndex)li.classList.add('active'); els.trailList.append(li); });
-}
-function updateProgress(){
-  const done=state.routes.filter(r=>r.complete).length;
-  const total=state.routes.length;
-  const pct=total?Math.round(((done+(state.completed?0:state.activeProgress))/total)*100):0;
-  els.trailProgress.textContent=`${done} / ${total} trails`;
-  els.percentProgress.textContent=`${pct}%`;
-}
-function updateCollectionCounter(){
-  const count=Object.keys(state.save.completed||{}).length;
-  els.collectionCounter.textContent=`${count} / ${TOTAL_LEVELS}`;
-}
-function updateInstruction(title,text,error){
-  els.instructionTitle.textContent=title; els.instructionText.textContent=text; els.instructionIcon.textContent=error?'⚠':'☝'; els.instructionCard.classList.toggle('error',error);
-}
-function announceRoute(){ const r=state.routes[state.activeIndex]; if(r) updateInstruction(`Trace ${r.label}`,`Trail ${state.activeIndex+1} of ${state.routes.length}. Start at the glowing marker.`,false); }
-function showHint(){
-  const r=state.routes[state.activeIndex]; if(!r)return;
-  r.path.animate([{stroke:'#4a351f'},{stroke:currentTeddy().accent},{stroke:'#4a351f'}],{duration:650,iterations:3});
-  pulseMarker(); updateInstruction(`Hint: ${r.label}`,'Begin at the bright dot and move toward the arrow.',false);
-}
-function pulseMarker(){
-  const marker=state.svg?.querySelectorAll('[data-start]')[state.activeIndex];
-  marker?.animate?.([{transform:'scale(1)',transformOrigin:'center'},{transform:'scale(1.5)',transformOrigin:'center'},{transform:'scale(1)',transformOrigin:'center'}],{duration:850,iterations:2});
-}
-function flashMistake(){
-  els.mistakeFlash.classList.remove('active'); els.puzzleFrame.classList.remove('shake'); void els.mistakeFlash.offsetWidth;
-  els.mistakeFlash.classList.add('active'); els.puzzleFrame.classList.add('shake');
-  setTimeout(()=>{els.mistakeFlash.classList.remove('active');els.puzzleFrame.classList.remove('shake');},430);
-  navigator.vibrate?.([40,25,55]);
-}
-function paint(route,p){ route.progress.style.strokeDashoffset=`${route.length*(1-Math.max(0,Math.min(1,p)))}`; }
-function nearestSample(route,point){ let best={index:0,distance:Infinity}; route.samples.forEach((sample,index)=>{ const d=distance(sample,point); if(d<best.distance)best={index,distance:d}; }); return best; }
-function clientToSvg(x,y){ const matrix=state.svg.getScreenCTM(); const p=new DOMPoint(x,y).matrixTransform(matrix.inverse()); return {x:p.x,y:p.y}; }
-function distance(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
-function playTone(freq,duration){
-  if(!state.sound)return; const C=window.AudioContext||window.webkitAudioContext; if(!C)return;
-  const c=new C(),o=c.createOscillator(),g=c.createGain(); o.type='sawtooth';o.frequency.value=freq;g.gain.setValueAtTime(.04,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+duration);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+duration);o.addEventListener('ended',()=>c.close());
-}
-function playVictory(){ [330,440,660].forEach((f,i)=>setTimeout(()=>playTone(f,.16),i*120)); }
-
-function renderTeddySvg(teddy,{mode='portrait',level=1}={}){
-  const [fur,dark,mutant,light]=teddy.palette;
-  const game = mode==='game';
-  const texture = game ? '.35' : '.75';
-  const routes = routePaths(teddy.feature,level);
-  const routeMarkup = game ? routes.map((r,i)=>`<path data-route="${i}" data-label="${r.label}" d="${r.d}"/><circle data-start="${i}" cx="${r.start[0]}" cy="${r.start[1]}" r="${i===0?15:9}" fill="${i===0?'#e8ff72':'#87905d'}" opacity="${i===0?1:.35}"/><path class="arrow-guide" d="${r.arrow}" marker-end="url(#arrow)"/>`).join('') : '';
-  const mutation = mutationMarkup(teddy.feature,mutant,light,dark);
-  return `<svg viewBox="0 0 700 900" role="img" aria-label="${teddy.primary} full body Toxic Teddy">
-  <defs>
-    <filter id="furNoise"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="${Number(teddy.id.slice(2))+7}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7"/></filter>
-    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#49351f"/></marker>
-  </defs>
-  <rect width="700" height="900" rx="38" fill="${game?'#ead9ae':'#18150f'}"/>
-  <g class="teddy-art" opacity="${game?texture:1}">
-    <ellipse cx="350" cy="822" rx="210" ry="28" fill="#000" opacity=".18"/>
-    <circle cx="188" cy="178" r="90" fill="${fur}" stroke="${dark}" stroke-width="18" filter="url(#furNoise)"/>
-    <circle cx="512" cy="178" r="90" fill="${fur}" stroke="${dark}" stroke-width="18" filter="url(#furNoise)"/>
-    <circle cx="350" cy="290" r="210" fill="${fur}" stroke="${dark}" stroke-width="20" filter="url(#furNoise)"/>
-    <ellipse cx="350" cy="612" rx="190" ry="220" fill="${fur}" stroke="${dark}" stroke-width="20" filter="url(#furNoise)"/>
-    <ellipse cx="145" cy="590" rx="78" ry="180" transform="rotate(10 145 590)" fill="${fur}" stroke="${dark}" stroke-width="18"/>
-    <ellipse cx="555" cy="590" rx="78" ry="180" transform="rotate(-10 555 590)" fill="${fur}" stroke="${dark}" stroke-width="18"/>
-    <ellipse cx="255" cy="790" rx="110" ry="76" fill="${fur}" stroke="${dark}" stroke-width="18"/>
-    <ellipse cx="445" cy="790" rx="110" ry="76" fill="${fur}" stroke="${dark}" stroke-width="18"/>
-    <path d="M350 90 C330 150 360 205 338 260 C322 300 340 338 350 378" fill="none" stroke="#2b1f16" stroke-width="10" stroke-dasharray="16 10"/>
-    <circle cx="275" cy="278" r="53" fill="#171511" stroke="#080706" stroke-width="12"/><path d="M250 255 300 303M300 255 250 303" stroke="#696057" stroke-width="10"/>
-    <ellipse cx="425" cy="278" rx="52" ry="58" fill="${light}" stroke="#171511" stroke-width="12"/><circle cx="436" cy="291" r="14" fill="#19150e"/><circle cx="420" cy="263" r="8" fill="#fff"/>
-    <ellipse cx="350" cy="370" rx="108" ry="78" fill="#b98957" stroke="${dark}" stroke-width="12"/>
-    <ellipse cx="350" cy="342" rx="52" ry="38" fill="#171511"/><path d="M290 397 Q350 455 410 397 Q350 430 290 397" fill="#24140e" stroke="#17100b" stroke-width="10"/><path d="M308 405 326 429 344 409 363 431 382 406" fill="#e8dfbf"/>
-    <ellipse cx="350" cy="625" rx="118" ry="145" fill="#b98856" opacity=".72" stroke="${dark}" stroke-width="12"/>
-    ${mutation}
-  </g>
-  <g class="routes" fill="none" stroke="#49351f" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">${routeMarkup}</g>
-</svg>`;
-}
-
-function mutationMarkup(feature,accent,light,dark){
-  const common=`<path d="M160 470 195 452 215 487 179 503Z" fill="#b45a6c" stroke="${dark}" stroke-width="7"/><path d="M505 690 545 675 560 715 520 725Z" fill="#6e9d91" stroke="${dark}" stroke-width="7"/>`;
-  const map={
-    radiation:`<circle cx="350" cy="625" r="74" fill="#e1c62f" stroke="#18140d" stroke-width="12"/><circle cx="350" cy="625" r="18" fill="#18140d"/><path d="M350 553 323 606 377 606ZM287 664 344 652 317 702ZM413 664 356 652 383 702Z" fill="#18140d"/><path d="M190 175 Q172 218 198 242" stroke="${accent}" stroke-width="16" fill="none"/><circle cx="190" cy="248" r="12" fill="${accent}"/>`,
-    mold:`<g fill="${accent}" stroke="${dark}" stroke-width="5"><circle cx="190" cy="175" r="24"/><circle cx="165" cy="205" r="15"/><circle cx="505" cy="205" r="20"/><circle cx="210" cy="565" r="18"/><circle cx="500" cy="650" r="22"/></g><path d="M302 548 q25-58 54 0 q-28 24-54 0M360 558 q30-70 64 0 q-34 28-64 0" fill="${light}" stroke="${dark}" stroke-width="7"/>`,
-    trash:`<path d="M120 130 580 130 540 210 160 210Z" fill="#62645e" stroke="#222" stroke-width="14"/><path d="M260 95h180l28 38H232Z" fill="#777a72" stroke="#222" stroke-width="12"/><circle cx="350" cy="625" r="72" fill="#6e726b" stroke="#222" stroke-width="12"/><path d="M310 585 390 665M390 585 310 665" stroke="#35372f" stroke-width="14"/>`,
-    sludge:`<path d="M220 715 Q250 690 275 735 T330 735 T385 735 T440 735 T490 715 L490 815 Q430 852 350 850 Q270 850 210 815Z" fill="${accent}" opacity=".85"/><path d="M520 520 Q545 570 520 625 Q500 670 530 710" stroke="${accent}" stroke-width="22" fill="none"/>`,
-    battery:`<g stroke="#1b1a16" stroke-width="9"><rect x="120" y="455" width="76" height="150" rx="12" fill="#e0cc3f"/><rect x="504" y="455" width="76" height="150" rx="12" fill="#e0cc3f"/><path d="M140 480h36M530 480h30"/><path d="M154 520v45M132 542h44M542 520v45"/></g><path d="M330 510 300 590 342 578 320 655 405 555 361 568 385 510Z" fill="${accent}" stroke="#211b12" stroke-width="8"/>`,
-    maggot:`<g fill="${light}" stroke="${dark}" stroke-width="4"><path d="M205 185q38-35 62 5q-25 30-62-5"/><path d="M480 510q42-32 62 12q-30 28-62-12"/><path d="M260 700q38-30 60 8q-28 30-60-8"/></g><g fill="#21170f"><circle cx="220" cy="182" r="4"/><circle cx="496" cy="508" r="4"/><circle cx="278" cy="699" r="4"/></g>`,
-    burger:`<g stroke="${dark}" stroke-width="9"><path d="M260 555 Q350 490 440 555Z" fill="#d79a43"/><rect x="250" y="555" width="200" height="45" rx="14" fill="#5f321d"/><path d="M250 600h200l-22 36H272Z" fill="#e8c84c"/><rect x="255" y="636" width="190" height="44" rx="14" fill="#6f3d22"/><path d="M260 680 Q350 745 440 680Z" fill="#d79a43"/></g>`,
-    rust:`<g fill="#a9562b" stroke="#34241a" stroke-width="8"><path d="M150 430 215 405 235 475 165 498Z"/><path d="M460 565 540 548 555 625 475 640Z"/><path d="M290 665 370 650 380 720 300 732Z"/></g><g fill="#e1a36f"><circle cx="177" cy="445" r="6"/><circle cx="510" cy="585" r="6"/><circle cx="335" cy="680" r="6"/></g>`,
-    acid:`<path d="M145 430 Q190 455 170 510 Q150 560 185 600" stroke="${accent}" stroke-width="24" fill="none"/><path d="M480 690q25-55 55 0q-28 35-55 0" fill="${accent}"/><g fill="#19150f"><circle cx="250" cy="565" r="20"/><circle cx="455" cy="520" r="14"/><circle cx="390" cy="730" r="18"/></g>`,
-    mask:`<path d="M250 315 Q350 235 450 315 L425 440 Q350 480 275 440Z" fill="#49534a" stroke="#151713" stroke-width="14"/><circle cx="295" cy="330" r="36" fill="#8ba06b" stroke="#151713" stroke-width="10"/><circle cx="405" cy="330" r="36" fill="#8ba06b" stroke="#151713" stroke-width="10"/><circle cx="350" cy="410" r="34" fill="#252b27"/><path d="M270 430 Q210 470 180 560M430 430 Q490 470 520 560" fill="none" stroke="#252b27" stroke-width="18"/>`,
-    patchwork:`${common}<path d="M290 510 410 520 400 650 280 640Z" fill="#ca5c76" stroke="${dark}" stroke-width="9"/><path d="M290 510 400 650M410 520 280 640" stroke="#f2c0cc" stroke-width="6" stroke-dasharray="10 8"/><path d="M200 160 250 190 220 235 175 208Z" fill="#5aa3a0" stroke="${dark}" stroke-width="8"/>`,
-    plague:`<path d="M300 300 Q350 260 405 300 L520 370 405 410 Q350 450 300 410Z" fill="#d7c49b" stroke="#171511" stroke-width="14"/><circle cx="305" cy="315" r="22" fill="#20221b"/><circle cx="390" cy="315" r="22" fill="#20221b"/><path d="M190 420 Q350 350 510 420 L560 720 Q350 830 140 720Z" fill="#24221d" opacity=".72"/><path d="M140 700h420" stroke="#58663c" stroke-width="12"/>`
+  return {
+    size: diff.size,
+    cells,
+    active: new Map(cells.map(cell => [cell.key, cell])),
+    solution,
+    cleared: 0
   };
-  return map[feature] || common;
 }
 
-function routePaths(feature,level){
-  return [
-    {label:'Left ruined ear',d:'M238 132 C188 87 114 112 105 182 C98 240 138 270 190 266 C229 263 247 226 239 191',start:[238,132],arrow:'M132 142 Q105 180 133 220'},
-    {label:'Right infected ear',d:'M462 132 C514 88 586 112 596 182 C604 239 565 271 513 266 C474 262 454 227 462 190',start:[462,132],arrow:'M568 143 Q596 180 568 220'},
-    {label:'Button-eye socket',d:'M225 272 C248 229 309 222 337 267 C321 316 258 332 222 298 C210 287 212 279 225 272 C250 252 286 256 299 278 C309 297 297 315 276 321',start:[225,272],arrow:'M240 252 Q270 235 302 258'},
-    {label:'Mutant eye',d:'M374 269 C401 225 461 226 489 272 C469 318 408 330 376 298 C364 286 363 278 374 269 C403 250 437 257 450 281 C459 298 448 315 429 321',start:[374,269],arrow:'M390 252 Q423 236 457 262'},
-    {label:'Rotten muzzle',d:'M350 324 C303 326 276 355 280 388 C284 426 322 445 354 442 C389 439 421 416 420 382 C419 348 391 323 350 324 C328 335 319 356 325 377 C330 397 350 406 367 397',start:[350,324],arrow:'M310 347 Q344 319 383 344'},
-    {label:'Toxic grin',d:'M282 407 C316 448 383 451 420 407 C404 468 376 489 350 489 C321 489 297 465 282 407',start:[282,407],arrow:'M307 431 Q347 458 389 430'},
-    {label:'Left arm seam',d:'M190 445 C128 480 105 562 129 642 C149 708 179 745 216 729 C243 716 239 678 222 640 C198 585 202 514 236 480',start:[190,445],arrow:'M155 495 Q125 560 151 628'},
-    {label:'Right arm leak',d:'M510 445 C572 480 596 562 571 642 C551 708 521 745 484 729 C457 716 461 678 478 640 C502 585 498 514 464 480',start:[510,445],arrow:'M545 495 Q575 560 549 628'},
-    {label:'Belly mutation',d:'M350 492 C276 493 231 551 236 632 C241 711 287 755 350 755 C416 755 463 709 464 632 C465 552 421 493 350 492 C306 520 296 574 315 613 C331 646 370 655 391 628',start:[350,492],arrow:'M277 535 Q240 612 276 690'},
-    {label:'Chest fracture',d:'M350 493 L326 540 L362 568 L330 612 L370 645 L345 691',start:[350,493],arrow:'M342 510 L330 538 L349 553'},
-    {label:'Left infected leg',d:'M290 735 C235 724 176 742 168 786 C160 832 209 856 273 846 C320 839 338 811 325 779 C317 758 304 744 290 735',start:[290,735],arrow:'M220 750 Q170 780 200 817'},
-    {label:'Right infected leg',d:'M410 735 C465 724 524 742 532 786 C540 832 491 856 427 846 C380 839 362 811 375 779 C383 758 396 744 410 735',start:[410,735],arrow:'M480 750 Q530 780 500 817'},
-    {label: feature==='plague'?'Lantern drip':'Final toxic drip',d:'M350 755 C356 790 387 801 379 833 C371 863 344 871 331 847 C320 828 337 808 324 789 C313 773 293 768 282 754',start:[350,755],arrow:'M344 775 Q365 796 357 822'}
-  ];
+function buildFaceCells(size, teddy, teddyIndex, rng) {
+  const cells = [];
+  const half = (size - 1) / 2;
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      const x = (col - half) / half;
+      const y = (row - half) / half;
+      const head = (x * x) / (0.79 * 0.79) + ((y + 0.01) * (y + 0.01)) / (0.83 * 0.83) <= 1;
+      const leftEar = ((x + 0.68) ** 2) / (0.29 ** 2) + ((y + 0.68) ** 2) / (0.29 ** 2) <= 1;
+      const rightEar = ((x - 0.68) ** 2) / (0.29 ** 2) + ((y + 0.68) ** 2) / (0.29 ** 2) <= 1;
+      if (!(head || leftEar || rightEar)) continue;
+
+      const feature = classifyFaceFeature(x, y, teddy.feature, row, col, teddyIndex, rng);
+      cells.push({
+        key: cellKey(row, col),
+        row,
+        col,
+        x,
+        y,
+        featureClass: feature.className,
+        featureLabel: feature.label
+      });
+    }
+  }
+  return cells;
+}
+
+function classifyFaceFeature(x, y, feature, row, col, teddyIndex, rng) {
+  const leftEye = Math.hypot(x + 0.29, y + 0.2) < 0.16;
+  const rightEye = Math.hypot(x - 0.29, y + 0.2) < 0.16;
+  const nose = Math.abs(x) < 0.13 && y > -0.02 && y < 0.18;
+  const mouth = Math.abs(x) < 0.34 && y > 0.25 && y < 0.43;
+  const centerScar = Math.abs(x) < 0.075 && y < -0.28;
+
+  if (leftEye) return { className: 'feature-button', label: 'button-eye' };
+  if (rightEye) return { className: 'feature-eye', label: 'infected-eye' };
+  if (nose) return { className: 'feature-nose', label: 'nose' };
+  if (mouth) return { className: 'feature-mouth', label: 'mouth' };
+  if (centerScar) return { className: 'feature-scar', label: 'stitched scar' };
+
+  const patterned = mutationCell(feature, x, y, row, col, teddyIndex);
+  if (patterned || rng() < 0.035) return { className: 'feature-accent', label: `${feature} mutation` };
+  return { className: 'feature-fur', label: 'fur' };
+}
+
+function mutationCell(feature, x, y, row, col, teddyIndex) {
+  const noise = ((row * 31 + col * 17 + teddyIndex * 13) % 19) / 19;
+  switch (feature) {
+    case 'radiation': return Math.hypot(x, y + 0.48) < 0.16 || (noise > .84 && y > -.1);
+    case 'mold': return noise > .73 && (x < -.1 || y > .05);
+    case 'trash': return y < -.58 || (noise > .82 && y > .1);
+    case 'sludge': return y > .55 || (x > .48 && y > .05);
+    case 'battery': return Math.abs(x) > .52 && y > -.15 && y < .46;
+    case 'maggot': return noise > .79;
+    case 'burger': return y > .46 || (y > .08 && y < .18 && Math.abs(x) < .52);
+    case 'rust': return noise > .7;
+    case 'acid': return Math.abs(x - y * .52) < .11 || (x > .48 && y > .1);
+    case 'mask': return Math.abs(x) < .48 && y > -.28 && y < .32;
+    case 'patchwork': return (row + col) % 4 === 0;
+    case 'plague': return Math.abs(x) < .11 && y > -.05 && y < .46;
+    default: return false;
+  }
+}
+
+function rayKeys(cell, size) {
+  const dir = DIRS[cell.dir];
+  const keys = [];
+  let row = cell.row + dir.dr;
+  let col = cell.col + dir.dc;
+  while (row >= 0 && row < size && col >= 0 && col < size) {
+    keys.push(cellKey(row, col));
+    row += dir.dr;
+    col += dir.dc;
+  }
+  return keys;
+}
+
+function renderPortrait(teddy, celebrate) {
+  const [fur, dark, accent, light] = teddy.palette;
+  const mutation = portraitMutation(teddy.feature, accent, light, dark);
+  return `<svg viewBox="0 0 520 520" role="img" aria-label="${teddy.primary} Toxic Teddy portrait">
+    <rect width="520" height="520" rx="32" fill="#f4ead4"/>
+    <circle cx="132" cy="142" r="82" fill="${fur}" stroke="${dark}" stroke-width="15"/>
+    <circle cx="388" cy="142" r="82" fill="${fur}" stroke="${dark}" stroke-width="15"/>
+    <circle cx="260" cy="270" r="190" fill="${fur}" stroke="${dark}" stroke-width="18"/>
+    <path d="M260 85 C245 135 272 170 253 220 C240 254 258 284 260 320" fill="none" stroke="${dark}" stroke-width="9" stroke-dasharray="14 9"/>
+    <circle cx="190" cy="245" r="48" fill="#27221c" stroke="${dark}" stroke-width="9"/>
+    <path d="M166 221 214 269M214 221 166 269" stroke="#8e877a" stroke-width="9"/>
+    <ellipse cx="330" cy="245" rx="47" ry="53" fill="${light}" stroke="${dark}" stroke-width="10"/>
+    <circle cx="340" cy="257" r="13" fill="#1c1813"/><circle cx="323" cy="230" r="7" fill="#fff"/>
+    <ellipse cx="260" cy="342" rx="100" ry="70" fill="#b78555" stroke="${dark}" stroke-width="11"/>
+    <ellipse cx="260" cy="318" rx="46" ry="32" fill="#201b16"/>
+    <path d="M198 365 Q260 430 322 365 Q260 401 198 365" fill="#4d241a" stroke="${dark}" stroke-width="9"/>
+    <path d="M218 373 236 397 254 378 272 399 294 374" fill="#f0e1bd"/>
+    ${mutation}
+    ${celebrate ? `<g fill="${accent}"><circle cx="72" cy="80" r="8"/><circle cx="452" cy="92" r="10"/><circle cx="440" cy="420" r="7"/><path d="M85 390l18 38 40 5-30 27 8 40-36-20-36 20 8-40-30-27 40-5Z"/></g>` : ''}
+  </svg>`;
+}
+
+function portraitMutation(feature, accent, light, dark) {
+  const map = {
+    radiation: `<circle cx="260" cy="440" r="37" fill="${accent}" opacity=".92"/><circle cx="260" cy="440" r="10" fill="${dark}"/><path d="M260 403l-13 27h26ZM228 459l29-8-15 28ZM292 459l-29-8 15 28Z" fill="${dark}"/>`,
+    mold: `<g fill="${accent}" stroke="${dark}" stroke-width="4"><circle cx="120" cy="120" r="19"/><circle cx="142" cy="99" r="12"/><circle cx="384" cy="166" r="16"/><circle cx="155" cy="365" r="13"/></g>`,
+    trash: `<path d="M80 78h360l-38 68H118Z" fill="#70736d" stroke="#2f302b" stroke-width="11"/><path d="M190 55h140l24 26H166Z" fill="#858880" stroke="#2f302b" stroke-width="9"/>`,
+    sludge: `<path d="M82 402 Q126 375 154 420 T226 420 T300 420 T374 420 T438 402 L430 498H90Z" fill="${accent}" opacity=".82"/>`,
+    battery: `<g fill="${accent}" stroke="${dark}" stroke-width="7"><rect x="70" y="310" width="60" height="112" rx="10"/><rect x="390" y="310" width="60" height="112" rx="10"/></g><path d="M247 385l-18 48 27-8-14 46 52-68-29 9 16-27Z" fill="${light}" stroke="${dark}" stroke-width="6"/>`,
+    maggot: `<g fill="${light}" stroke="${dark}" stroke-width="4"><path d="M130 140q35-30 58 7q-26 25-58-7"/><path d="M364 360q38-27 57 10q-29 23-57-10"/></g>`,
+    burger: `<g stroke="${dark}" stroke-width="7"><path d="M170 400q90-65 180 0Z" fill="#d79a43"/><rect x="166" y="400" width="188" height="34" rx="12" fill="#5f321d"/><path d="M174 434h172l-20 26H194Z" fill="#edcc4e"/></g>`,
+    rust: `<g fill="${accent}" stroke="${dark}" stroke-width="6"><path d="M100 330l62-18 17 61-62 19Z"/><path d="M350 390l65-12 12 60-64 14Z"/></g>`,
+    acid: `<path d="M104 300q35 35 17 82q-17 45 18 78" fill="none" stroke="${accent}" stroke-width="18"/><circle cx="400" cy="398" r="18" fill="${accent}"/>`,
+    mask: `<path d="M165 265q95-82 190 0l-28 128q-67 42-134 0Z" fill="#566058" stroke="${dark}" stroke-width="11"/><circle cx="210" cy="290" r="31" fill="${light}" stroke="${dark}" stroke-width="8"/><circle cx="310" cy="290" r="31" fill="${light}" stroke="${dark}" stroke-width="8"/><circle cx="260" cy="370" r="27" fill="#252b27"/>`,
+    patchwork: `<path d="M92 326l72-20 20 70-74 20Z" fill="#c85d76" stroke="${dark}" stroke-width="7"/><path d="M348 378l70-14 14 66-72 15Z" fill="#65a19c" stroke="${dark}" stroke-width="7"/>`,
+    plague: `<path d="M220 305q45-38 90 0l74 38-76 22q-54 28-88-60Z" fill="#30332a" stroke="${dark}" stroke-width="10"/><circle cx="242" cy="300" r="23" fill="${light}"/><circle cx="302" cy="300" r="23" fill="${light}"/>`
+  };
+  return map[feature] ?? '';
+}
+
+function featureDescription(feature) {
+  const descriptions = {
+    radiation: 'Radioactive arrows glow through Toby’s stitched forehead and toxic cheeks.',
+    mold: 'Mold clusters spread across Molly’s ears, eye socket, and infected fur.',
+    trash: 'Trash-lid brow pieces and grimy facial arrows form Danny’s alley-born portrait.',
+    sludge: 'Heavy green arrows pool around Sam’s jaw and melting lower face.',
+    battery: 'Charged yellow arrows frame Barry’s face like leaking battery cells.',
+    maggot: 'Pale infestation arrows crawl through Mitch’s torn plush features.',
+    burger: 'Greasy orange facial bands make Burger Bear look permanently overstuffed.',
+    rust: 'Corroded orange patches break up Randy’s metal-filled Teddy face.',
+    acid: 'Bright acid trails cut diagonally through Andy’s dissolving portrait.',
+    mask: 'Dark respirator tiles turn Max’s face into a sealed gas-mask puzzle.',
+    patchwork: 'Mismatched colored arrows stitch Pat’s borrowed face together.',
+    plague: 'A dark central beak shape gives Plague Bear his unmistakable silhouette.'
+  };
+  return descriptions[feature] ?? 'Every arrow is part of the Toxic Teddy face.';
+}
+
+function playTone(frequency, duration) {
+  if (!state.sound) return;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  const context = new AudioContextClass();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(.035, context.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + duration);
+  oscillator.connect(gain).connect(context.destination);
+  oscillator.start();
+  oscillator.stop(context.currentTime + duration);
+  oscillator.addEventListener('ended', () => context.close());
+}
+function playVictory() {
+  [330, 440, 554, 660].forEach((frequency, index) => window.setTimeout(() => playTone(frequency, .16), index * 105));
+}
+
+function hashString(value) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+function mulberry32(seed) {
+  return function random() {
+    let value = seed += 0x6D2B79F5;
+    value = Math.imul(value ^ value >>> 15, value | 1);
+    value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+    return ((value ^ value >>> 14) >>> 0) / 4294967296;
+  };
 }
 
 boot();
