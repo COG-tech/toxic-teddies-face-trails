@@ -1,15 +1,23 @@
-import { TEDDIES, LEVELS_PER_TEDDY, TOTAL_LEVELS, DIFFICULTIES } from './characters.js';
+import { TEDDIES, LEVELS_PER_TEDDY, TOTAL_LEVELS } from './characters.js';
 
-const STORAGE_KEY = 'toxic-teddies-arrow-escape:v1';
+const STORAGE_KEY = 'toxic-teddies-arrow-escape:path-pieces-v1';
+const BACKDROP_POSITIONS = ['4% 50%', '27% 50%', '50% 50%', '73% 50%', '96% 50%'];
 const DIRS = {
-  up:    { dr: -1, dc: 0, angle: -90, dx: 0, dy: -1, label: 'up' },
-  right: { dr: 0, dc: 1, angle: 0, dx: 1, dy: 0, label: 'right' },
-  down:  { dr: 1, dc: 0, angle: 90, dx: 0, dy: 1, label: 'down' },
-  left:  { dr: 0, dc: -1, angle: 180, dx: -1, dy: 0, label: 'left' }
+  up: { dr: -1, dc: 0, dx: 0, dy: -1 },
+  right: { dr: 0, dc: 1, dx: 1, dy: 0 },
+  down: { dr: 1, dc: 0, dx: 0, dy: 1 },
+  left: { dr: 0, dc: -1, dx: -1, dy: 0 }
 };
+const LEVELS = [
+  { name: 'EASY', cols: 13, rows: 21, min: 3, max: 6 },
+  { name: 'GROSS', cols: 15, rows: 23, min: 3, max: 7 },
+  { name: 'TOXIC', cols: 17, rows: 25, min: 3, max: 8 },
+  { name: 'VILE', cols: 19, rows: 27, min: 3, max: 9 },
+  { name: 'LEGENDARY', cols: 21, rows: 29, min: 3, max: 10 }
+];
 
 const els = Object.fromEntries([
-  'backButton','soundButton','collectionCounter','homeView','gameView','teddyGrid','levelKicker','characterName','alternateName','lives','clearProgress','percentProgress','instructionCard','instructionIcon','instructionTitle','instructionText','puzzleFrame','boardStage','faceShell','arrowGrid','mistakeFlash','resetButton','hintButton','levelStripTitle','difficultyBadge','levelButtons','portraitTitle','miniPortrait','featureCopy','completionModal','completionTitle','completionTagline','revealHost','completionCopy','closeModal','replayButton','nextButton','gameOverModal','tryAgainButton'
+  'homeView','gameView','teddyGrid','collectionCounter','backButton','levelTitle','characterName','lives','clearProgress','percentProgress','board','boardBackdrop','pieceLayer','previewLayer','statusText','resetButton','hintButton','levelButtons','completionModal','completionTitle','completionCopy','replayButton','nextButton','gameOverModal','tryAgainButton'
 ].map(id => [id, document.getElementById(id)]));
 
 const state = {
@@ -17,7 +25,6 @@ const state = {
   level: 1,
   puzzle: null,
   lives: 3,
-  sound: true,
   transitionLock: false,
   pressTimer: null,
   longPressTriggered: false,
@@ -26,7 +33,7 @@ const state = {
 };
 
 function loadSave() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? { completed: {} }; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { completed: {} }; }
   catch { return { completed: {} }; }
 }
 function persist() {
@@ -34,81 +41,58 @@ function persist() {
   updateCollectionCounter();
 }
 function levelKey(teddyId, level) { return `${teddyId}-l${level}`; }
-function completed(teddyId, level) { return Boolean(state.save.completed?.[levelKey(teddyId, level)]); }
+function completed(teddyId, level) { return Boolean(state.save.completed[levelKey(teddyId, level)]); }
 function unlocked(teddyId, level) { return level === 1 || completed(teddyId, level - 1); }
 function currentTeddy() { return TEDDIES[state.teddyIndex]; }
-function difficulty() { return DIFFICULTIES[state.level - 1]; }
+function currentLevel() { return LEVELS[state.level - 1]; }
 function cellKey(row, col) { return `${row}:${col}`; }
 
 function boot() {
-  bindStaticEvents();
+  bindEvents();
   renderHome();
   updateCollectionCounter();
-
   const params = new URLSearchParams(location.search);
   const teddyId = params.get('teddy');
   const level = Number(params.get('level'));
-  const index = TEDDIES.findIndex(teddy => teddy.id === teddyId);
-  if (index >= 0) openGame(index, Number.isInteger(level) && level >= 1 && level <= LEVELS_PER_TEDDY ? level : 1);
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
+  const index = TEDDIES.findIndex(t => t.id === teddyId);
+  if (index >= 0) openGame(index, Number.isInteger(level) && level >= 1 && level <= 5 ? level : 1);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
-function bindStaticEvents() {
+function bindEvents() {
   els.backButton.addEventListener('click', showHome);
-  els.soundButton.addEventListener('click', () => {
-    state.sound = !state.sound;
-    els.soundButton.textContent = state.sound ? '🔊' : '🔇';
-  });
-  els.resetButton.addEventListener('click', resetGame);
+  els.resetButton.addEventListener('click', resetLevel);
   els.hintButton.addEventListener('click', showHint);
-  els.closeModal.addEventListener('click', () => els.completionModal.classList.add('hidden'));
-  els.replayButton.addEventListener('click', () => {
-    els.completionModal.classList.add('hidden');
-    resetGame();
-  });
+  els.replayButton.addEventListener('click', () => { hideModals(); resetLevel(); });
   els.nextButton.addEventListener('click', goNext);
-  els.tryAgainButton.addEventListener('click', () => {
-    els.gameOverModal.classList.add('hidden');
-    resetGame();
-  });
+  els.tryAgainButton.addEventListener('click', () => { hideModals(); resetLevel(); });
   window.addEventListener('blur', clearPressTimer);
 }
 
 function renderHome() {
   els.teddyGrid.innerHTML = '';
   TEDDIES.forEach((teddy, index) => {
-    const done = Array.from({ length: LEVELS_PER_TEDDY }, (_, i) => completed(teddy.id, i + 1)).filter(Boolean).length;
-    const button = document.createElement('button');
-    button.className = 'teddy-card';
-    button.type = 'button';
-    button.innerHTML = `
-      <div class="teddy-card-art">${renderPortrait(teddy, false)}</div>
-      <div class="teddy-card-copy">
-        <h3>${teddy.primary}</h3>
-        <p>${teddy.alternate}</p>
-        <div class="card-progress"><span>Face puzzles</span><strong>${done}/5</strong></div>
-        <div class="progress-line"><span style="width:${done * 20}%"></span></div>
-      </div>`;
-    button.addEventListener('click', () => {
-      let target = 1;
-      for (let level = 1; level <= LEVELS_PER_TEDDY; level += 1) {
-        if (unlocked(teddy.id, level)) target = level;
-      }
-      openGame(index, target);
-    });
-    els.teddyGrid.append(button);
+    const done = Array.from({ length: 5 }, (_, i) => completed(teddy.id, i + 1)).filter(Boolean).length;
+    const card = document.createElement('button');
+    card.className = 'teddy-card';
+    card.type = 'button';
+    card.innerHTML = `<div class="teddy-card-art" style="--card-accent:${teddy.accent};--card-fur:${teddy.palette[0]}"><span>☣</span></div><div><h3>${teddy.primary}</h3><p>${teddy.alternate}</p><strong>${done}/5</strong></div>`;
+    card.addEventListener('click', () => openGame(index, latestUnlocked(teddy)));
+    els.teddyGrid.append(card);
   });
 }
 
+function latestUnlocked(teddy) {
+  let target = 1;
+  for (let level = 1; level <= 5; level += 1) if (unlocked(teddy.id, level)) target = level;
+  return target;
+}
+
 function showHome() {
-  clearPressTimer();
   clearPreview();
-  els.homeView.classList.remove('hidden');
+  clearPressTimer();
   els.gameView.classList.add('hidden');
-  els.backButton.classList.add('hidden');
+  els.homeView.classList.remove('hidden');
   history.replaceState({}, '', location.pathname);
   renderHome();
 }
@@ -118,524 +102,454 @@ function openGame(teddyIndex, level) {
   state.level = level;
   els.homeView.classList.add('hidden');
   els.gameView.classList.remove('hidden');
-  els.backButton.classList.remove('hidden');
-
   const url = new URL(location.href);
   url.searchParams.set('teddy', currentTeddy().id);
   url.searchParams.set('level', String(level));
   history.replaceState({}, '', url);
-
   buildLevel();
 }
 
 function buildLevel() {
   const teddy = currentTeddy();
-  const diff = difficulty();
-  state.lives = diff.lives;
+  const cfg = currentLevel();
+  state.lives = 3;
   state.transitionLock = false;
-  state.puzzle = generatePuzzle(teddy, state.teddyIndex, state.level);
-
-  els.levelKicker.textContent = `PUZZLE ${state.level} OF 5 · ${diff.name}`;
+  state.puzzle = generateSolvablePuzzle(teddy, state.level, cfg);
+  els.levelTitle.textContent = `Level ${state.level}`;
   els.characterName.textContent = teddy.primary;
-  els.alternateName.textContent = `also known as ${teddy.alternate}`;
-  els.levelStripTitle.textContent = `${teddy.short}'s five faces`;
-  els.difficultyBadge.textContent = diff.name;
-  els.portraitTitle.textContent = teddy.primary;
-  els.featureCopy.textContent = featureDescription(teddy.feature);
-  els.miniPortrait.innerHTML = renderPortrait(teddy, false);
-
-  els.faceShell.style.borderColor = `${teddy.palette[1]}33`;
-  els.faceShell.style.background = `${teddy.palette[0]}12`;
-  renderBoard();
-  renderLevelButtons();
+  els.boardBackdrop.style.setProperty('--backdrop-position', BACKDROP_POSITIONS[state.level - 1]);
+  els.board.style.setProperty('--cols', cfg.cols);
+  els.board.style.setProperty('--rows', cfg.rows);
+  els.board.setAttribute('viewBox', `0 0 ${cfg.cols * 50} ${cfg.rows * 50}`);
+  renderPieces();
   renderLives();
+  renderLevelButtons();
   updateProgress();
-  updateInstruction('Choose an open arrow', 'Look from the arrow tip to the edge. Long-press any arrow to preview its lane.', false);
+  setStatus(`${cfg.name} · choose a piece with an open lane`);
 }
 
-function resetGame() {
-  clearPressTimer();
+function resetLevel() {
   clearPreview();
-  els.gameOverModal.classList.add('hidden');
-  state.transitionLock = false;
+  clearPressTimer();
+  hideModals();
   buildLevel();
 }
 
 function renderLevelButtons() {
-  const teddy = currentTeddy();
   els.levelButtons.innerHTML = '';
-  for (let level = 1; level <= LEVELS_PER_TEDDY; level += 1) {
+  const teddy = currentTeddy();
+  for (let level = 1; level <= 5; level += 1) {
     const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'level-button';
     button.textContent = level;
+    button.className = 'level-chip';
     if (level === state.level) button.classList.add('active');
-    if (completed(teddy.id, level)) button.classList.add('complete');
-    if (!unlocked(teddy.id, level)) {
-      button.classList.add('locked');
-      button.disabled = true;
-    }
+    if (completed(teddy.id, level)) button.classList.add('done');
+    if (!unlocked(teddy.id, level)) button.disabled = true;
     button.addEventListener('click', () => openGame(state.teddyIndex, level));
     els.levelButtons.append(button);
   }
 }
 
-function renderBoard() {
-  const teddy = currentTeddy();
-  const { size, cells } = state.puzzle;
-  els.arrowGrid.innerHTML = '';
-  els.arrowGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-  els.arrowGrid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
-  els.arrowGrid.style.setProperty('--tile-fur', teddy.palette[0]);
-  els.arrowGrid.style.setProperty('--accent', teddy.accent);
-
-  cells.forEach(cell => {
-    const dir = DIRS[cell.dir];
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `arrow-tile ${cell.featureClass}`;
-    button.style.gridRow = String(cell.row + 1);
-    button.style.gridColumn = String(cell.col + 1);
-    button.style.setProperty('--rotation', `${dir.angle}deg`);
-    button.style.setProperty('--dx', String(dir.dx));
-    button.style.setProperty('--dy', String(dir.dy));
-    button.setAttribute('role', 'gridcell');
-    button.setAttribute('aria-label', `${cell.featureLabel} arrow pointing ${dir.label}`);
-    button.addEventListener('pointerdown', event => beginLongPress(event, cell));
-    button.addEventListener('pointerup', endLongPress);
-    button.addEventListener('pointercancel', endLongPress);
-    button.addEventListener('pointerleave', cancelLongPress);
-    button.addEventListener('contextmenu', event => event.preventDefault());
-    button.addEventListener('click', event => {
-      event.preventDefault();
-      if (state.longPressTriggered) {
-        state.longPressTriggered = false;
-        return;
-      }
-      attemptMove(cell);
-    });
-    cell.element = button;
-    els.arrowGrid.append(button);
-  });
+function renderLives() {
+  els.lives.innerHTML = '';
+  for (let i = 0; i < 3; i += 1) {
+    const drop = document.createElement('span');
+    drop.className = `life-drop${i >= state.lives ? ' lost' : ''}`;
+    els.lives.append(drop);
+  }
 }
 
-function beginLongPress(event, cell) {
-  if (state.transitionLock || cell.removed) return;
+function renderPieces() {
+  els.pieceLayer.innerHTML = '';
+  const cfg = currentLevel();
+  const ns = 'http://www.w3.org/2000/svg';
+  const defs = document.createElementNS(ns, 'defs');
+  defs.innerHTML = `<marker id="pieceArrow" viewBox="0 0 16 16" refX="13" refY="8" markerWidth="9" markerHeight="9" orient="auto" markerUnits="strokeWidth"><path d="M1 1L14 8L1 15" fill="none" stroke="#76583a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></marker>`;
+  els.pieceLayer.append(defs);
+
+  state.puzzle.pieces.forEach(piece => {
+    const group = document.createElementNS(ns, 'g');
+    group.classList.add('path-piece');
+    group.dataset.id = piece.id;
+    const points = piece.cells.map(({ row, col }) => `${col * 50 + 25},${row * 50 + 25}`).join(' ');
+    const visible = document.createElementNS(ns, 'polyline');
+    visible.setAttribute('points', points);
+    visible.setAttribute('class', 'piece-line');
+    visible.setAttribute('marker-end', 'url(#pieceArrow)');
+    const hit = document.createElementNS(ns, 'polyline');
+    hit.setAttribute('points', points);
+    hit.setAttribute('class', 'piece-hit');
+    group.append(visible, hit);
+    group.addEventListener('pointerdown', event => beginLongPress(event, piece));
+    group.addEventListener('pointerup', endLongPress);
+    group.addEventListener('pointercancel', endLongPress);
+    group.addEventListener('pointerleave', cancelLongPress);
+    group.addEventListener('click', event => {
+      event.preventDefault();
+      if (state.longPressTriggered) { state.longPressTriggered = false; return; }
+      attemptMove(piece);
+    });
+    piece.element = group;
+    els.pieceLayer.append(group);
+  });
+
+  els.previewLayer.setAttribute('viewBox', `0 0 ${cfg.cols * 50} ${cfg.rows * 50}`);
+}
+
+function beginLongPress(event, piece) {
+  if (state.transitionLock || piece.removed) return;
   clearPressTimer();
   state.longPressTriggered = false;
   state.pressTimer = window.setTimeout(() => {
     state.longPressTriggered = true;
-    previewTrajectory(cell);
-    navigator.vibrate?.(22);
-  }, 460);
+    previewPiece(piece);
+    navigator.vibrate?.(20);
+  }, 450);
   event.currentTarget.setPointerCapture?.(event.pointerId);
 }
-
-function endLongPress() {
-  clearPressTimer();
-}
-function cancelLongPress() {
-  clearPressTimer();
-}
+function endLongPress() { clearPressTimer(); }
+function cancelLongPress() { clearPressTimer(); }
 function clearPressTimer() {
-  if (state.pressTimer) window.clearTimeout(state.pressTimer);
+  if (state.pressTimer) clearTimeout(state.pressTimer);
   state.pressTimer = null;
 }
 
-function previewTrajectory(cell) {
+function previewPiece(piece) {
   clearPreview();
-  if (!state.puzzle.active.has(cell.key)) return;
-
-  const blockers = blockersAhead(cell);
-  cell.element?.classList.add('inspecting');
-  blockers.forEach((blocker, index) => blocker.element?.classList.add(index === 0 ? 'trajectory-blocker' : 'trajectory'));
-  drawTrajectoryLine(cell, blockers.length > 0);
-
-  if (blockers.length) {
-    updateInstruction('Blocked lane', `${blockers.length} Teddy arrow${blockers.length === 1 ? '' : 's'} must leave this lane first.`, false);
-  } else {
-    updateInstruction('Open lane', 'This arrow can slide safely to the perimeter.', false);
-  }
-
-  state.previewTimer = window.setTimeout(clearPreview, 1400);
+  const blockers = blockersAhead(piece);
+  piece.element.classList.add('inspecting');
+  if (blockers[0]) blockers[0].element.classList.add('blocking');
+  drawPreviewRay(piece, blockers.length > 0);
+  setStatus(blockers.length ? 'Blocked — clear the first piece in this lane' : 'Open lane — this piece can leave now');
+  state.previewTimer = setTimeout(clearPreview, 1500);
 }
 
-function drawTrajectoryLine(cell, blocked) {
-  const size = state.puzzle.size;
-  const dir = DIRS[cell.dir];
-  const line = document.createElement('div');
-  line.className = `trajectory-line${blocked ? ' blocked' : ''}`;
-  const cx = ((cell.col + 0.5) / size) * 92 + 4;
-  const cy = ((cell.row + 0.5) / size) * 92 + 4;
-  line.style.left = `${cx}%`;
-  line.style.top = `${cy}%`;
-
-  if (dir.dc !== 0) {
-    const length = dir.dc > 0 ? 100 - cx : cx;
-    line.style.width = `${length}%`;
-    line.style.height = '4px';
-    line.style.transform = dir.dc > 0 ? 'translateY(-50%)' : 'translate(-100%, -50%)';
-  } else {
-    const length = dir.dr > 0 ? 100 - cy : cy;
-    line.style.height = `${length}%`;
-    line.style.width = '4px';
-    line.style.transform = dir.dr > 0 ? 'translateX(-50%)' : 'translate(-50%, -100%)';
-  }
-  els.boardStage.append(line);
+function drawPreviewRay(piece, blocked) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const cfg = currentLevel();
+  const lead = piece.cells[piece.cells.length - 1];
+  const dir = DIRS[piece.dir];
+  const x1 = lead.col * 50 + 25;
+  const y1 = lead.row * 50 + 25;
+  const x2 = dir.dc > 0 ? cfg.cols * 50 : dir.dc < 0 ? 0 : x1;
+  const y2 = dir.dr > 0 ? cfg.rows * 50 : dir.dr < 0 ? 0 : y1;
+  const line = document.createElementNS(ns, 'line');
+  line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+  line.setAttribute('class', `preview-ray${blocked ? ' blocked' : ''}`);
+  els.previewLayer.append(line);
 }
 
 function clearPreview() {
-  if (state.previewTimer) window.clearTimeout(state.previewTimer);
+  if (state.previewTimer) clearTimeout(state.previewTimer);
   state.previewTimer = null;
-  els.boardStage.querySelectorAll('.trajectory-line').forEach(line => line.remove());
-  state.puzzle?.cells.forEach(cell => cell.element?.classList.remove('inspecting', 'trajectory', 'trajectory-blocker'));
+  els.previewLayer.innerHTML = '';
+  state.puzzle?.pieces.forEach(piece => piece.element?.classList.remove('inspecting', 'blocking', 'hinting'));
 }
 
-function attemptMove(cell) {
-  if (state.transitionLock || !state.puzzle.active.has(cell.key)) return;
+function attemptMove(piece) {
+  if (state.transitionLock || piece.removed || !state.puzzle.active.has(piece.id)) return;
   clearPreview();
-  const blockers = blockersAhead(cell);
+  const blockers = blockersAhead(piece);
+  if (blockers.length) { loseLife(piece, blockers[0]); return; }
+  removePiece(piece);
+}
 
-  if (blockers.length) {
-    loseLife(cell, blockers[0]);
-    return;
-  }
-
+function removePiece(piece) {
   state.transitionLock = true;
-  cell.element.classList.add('exiting');
-  playTone(430 + Math.min(280, state.puzzle.cleared * 4), .09);
-  updateInstruction('Lane cleared', 'That removal may have freed another arrow. Look again before choosing.', false);
-
-  window.setTimeout(() => {
-    cell.removed = true;
-    cell.element.classList.add('removed');
-    state.puzzle.active.delete(cell.key);
+  const dir = DIRS[piece.dir];
+  piece.element.style.setProperty('--exit-x', `${dir.dx * 130}%`);
+  piece.element.style.setProperty('--exit-y', `${dir.dy * 130}%`);
+  piece.element.classList.add('exiting');
+  setStatus('Lane cleared');
+  setTimeout(() => {
+    piece.removed = true;
+    piece.element.classList.add('removed');
+    state.puzzle.active.delete(piece.id);
     state.puzzle.cleared += 1;
     state.transitionLock = false;
     updateProgress();
-
     if (state.puzzle.active.size === 0) completeLevel();
-  }, 310);
+  }, 300);
 }
 
-function loseLife(cell, blocker) {
+function loseLife(piece, blocker) {
   state.lives = Math.max(0, state.lives - 1);
   renderLives();
-  cell.element.classList.remove('blocked-bump');
-  blocker.element?.classList.add('trajectory-blocker');
-  void cell.element.offsetWidth;
-  cell.element.classList.add('blocked-bump');
-  flashMistake();
-  playTone(115, .14);
-  updateInstruction('That arrow is blocked', 'Follow its direction and clear the first Teddy arrow in the lane before trying again.', true);
-
-  window.setTimeout(() => blocker.element?.classList.remove('trajectory-blocker'), 650);
-  if (state.lives === 0) {
-    window.setTimeout(() => els.gameOverModal.classList.remove('hidden'), 360);
-  }
+  piece.element.classList.remove('blocked-bump');
+  blocker.element.classList.add('blocking');
+  void piece.element.getBoundingClientRect();
+  piece.element.classList.add('blocked-bump');
+  setStatus('Blocked piece — one toxic drop lost');
+  navigator.vibrate?.([35, 25, 45]);
+  setTimeout(() => blocker.element?.classList.remove('blocking'), 650);
+  if (state.lives === 0) setTimeout(() => els.gameOverModal.classList.remove('hidden'), 350);
 }
 
-function blockersAhead(cell) {
-  return rayKeys(cell, state.puzzle.size)
-    .map(key => state.puzzle.active.get(key))
-    .filter(Boolean);
+function blockersAhead(piece) {
+  const cfg = currentLevel();
+  const dir = DIRS[piece.dir];
+  const blockers = [];
+  const seen = new Set();
+  for (const cell of piece.cells) {
+    let row = cell.row + dir.dr;
+    let col = cell.col + dir.dc;
+    while (row >= 0 && row < cfg.rows && col >= 0 && col < cfg.cols) {
+      const occupantId = state.puzzle.occupancy.get(cellKey(row, col));
+      if (occupantId && occupantId !== piece.id && state.puzzle.active.has(occupantId) && !seen.has(occupantId)) {
+        seen.add(occupantId);
+        blockers.push(state.puzzle.byId.get(occupantId));
+        break;
+      }
+      row += dir.dr;
+      col += dir.dc;
+    }
+  }
+  return blockers;
 }
 
 function showHint() {
-  if (state.transitionLock || !state.puzzle) return;
   clearPreview();
-  const open = [...state.puzzle.active.values()].filter(cell => blockersAhead(cell).length === 0);
+  const open = [...state.puzzle.active.values()].filter(piece => blockersAhead(piece).length === 0);
   if (!open.length) return;
   const rng = mulberry32(hashString(`${currentTeddy().id}:${state.level}:${state.puzzle.cleared}:hint`));
-  const cell = open[Math.floor(rng() * open.length)];
-  cell.element.classList.add('hinting');
-  updateInstruction('Open arrow highlighted', 'This lane reaches the perimeter without another arrow in the way.', false);
-  window.setTimeout(() => cell.element?.classList.remove('hinting'), 2400);
-}
-
-function completeLevel() {
-  const teddy = currentTeddy();
-  state.save.completed[levelKey(teddy.id, state.level)] = {
-    completedAt: new Date().toISOString(),
-    livesRemaining: state.lives,
-    tileCount: state.puzzle.cells.length
-  };
-  persist();
-  renderLevelButtons();
-  playVictory();
-
-  els.completionTitle.textContent = `${teddy.primary} · Puzzle ${state.level}`;
-  els.completionTagline.textContent = teddy.tagline;
-  els.revealHost.innerHTML = renderPortrait(teddy, true);
-  els.completionCopy.textContent = state.level === LEVELS_PER_TEDDY
-    ? `${teddy.primary}'s complete five-puzzle face set is cleared. ${teddy.lore}`
-    : `Puzzle ${state.level + 1} is now unlocked. ${teddy.lore}`;
-  els.nextButton.textContent = state.level === LEVELS_PER_TEDDY ? 'Choose another Teddy' : `Play puzzle ${state.level + 1}`;
-  window.setTimeout(() => els.completionModal.classList.remove('hidden'), 320);
-}
-
-function goNext() {
-  els.completionModal.classList.add('hidden');
-  if (state.level < LEVELS_PER_TEDDY) openGame(state.teddyIndex, state.level + 1);
-  else showHome();
-}
-
-function renderLives() {
-  els.lives.innerHTML = '';
-  for (let index = 0; index < difficulty().lives; index += 1) {
-    const drop = document.createElement('span');
-    drop.className = `toxic-drop${index >= state.lives ? ' lost' : ''}`;
-    drop.textContent = '💧';
-    drop.setAttribute('aria-hidden', 'true');
-    els.lives.append(drop);
-  }
-  els.lives.setAttribute('aria-label', `${state.lives} toxic drops remaining`);
+  const piece = open[Math.floor(rng() * open.length)];
+  piece.element.classList.add('hinting');
+  drawPreviewRay(piece, false);
+  setStatus('This piece has an open lane');
+  state.previewTimer = setTimeout(clearPreview, 1800);
 }
 
 function updateProgress() {
-  const total = state.puzzle?.cells.length ?? 0;
-  const cleared = state.puzzle?.cleared ?? 0;
-  const percent = total ? Math.round((cleared / total) * 100) : 0;
-  els.clearProgress.textContent = `${cleared} / ${total} cleared`;
-  els.percentProgress.textContent = `${percent}%`;
+  const total = state.puzzle.pieces.length;
+  const cleared = state.puzzle.cleared;
+  els.clearProgress.textContent = `${cleared} / ${total}`;
+  els.percentProgress.textContent = `${Math.round((cleared / total) * 100)}%`;
 }
-
 function updateCollectionCounter() {
-  const count = Object.keys(state.save.completed ?? {}).length;
-  els.collectionCounter.textContent = `${count} / ${TOTAL_LEVELS}`;
+  els.collectionCounter.textContent = `${Object.keys(state.save.completed).length} / ${TOTAL_LEVELS}`;
+}
+function setStatus(text) { els.statusText.textContent = text; }
+
+function completeLevel() {
+  const teddy = currentTeddy();
+  state.save.completed[levelKey(teddy.id, state.level)] = { completedAt: new Date().toISOString(), lives: state.lives };
+  persist();
+  renderLevelButtons();
+  els.completionTitle.textContent = `${teddy.primary} · Level ${state.level}`;
+  els.completionCopy.textContent = state.level === 5 ? `${teddy.primary}'s five-level set is cleared.` : `Level ${state.level + 1} is unlocked.`;
+  els.nextButton.textContent = state.level === 5 ? 'Choose another Teddy' : `Play level ${state.level + 1}`;
+  setTimeout(() => els.completionModal.classList.remove('hidden'), 320);
+}
+function goNext() {
+  hideModals();
+  if (state.level < 5) openGame(state.teddyIndex, state.level + 1);
+  else showHome();
+}
+function hideModals() {
+  els.completionModal.classList.add('hidden');
+  els.gameOverModal.classList.add('hidden');
 }
 
-function updateInstruction(title, text, error) {
-  els.instructionTitle.textContent = title;
-  els.instructionText.textContent = text;
-  els.instructionIcon.textContent = error ? '⚠' : '☝';
-  els.instructionCard.classList.toggle('error', error);
+function generateSolvablePuzzle(teddy, level, cfg) {
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    const rng = mulberry32(hashString(`${teddy.id}:${level}:paths:${attempt}`));
+    const pieces = buildPieces(cfg, rng);
+    const solved = assignDirections(pieces, cfg, rng);
+    if (solved && pieces.length >= 16) return makePuzzle(pieces);
+  }
+  const fallback = buildFallbackPieces(cfg);
+  assignDirections(fallback, cfg, mulberry32(99));
+  return makePuzzle(fallback);
 }
 
-function flashMistake() {
-  els.mistakeFlash.classList.remove('active');
-  void els.mistakeFlash.offsetWidth;
-  els.mistakeFlash.classList.add('active');
-  window.setTimeout(() => els.mistakeFlash.classList.remove('active'), 400);
-  navigator.vibrate?.([38, 24, 48]);
+function makePuzzle(pieces) {
+  const occupancy = new Map();
+  const byId = new Map();
+  pieces.forEach(piece => {
+    byId.set(piece.id, piece);
+    piece.cells.forEach(cell => occupancy.set(cellKey(cell.row, cell.col), piece.id));
+    piece.removed = false;
+    piece.element = null;
+  });
+  return { pieces, occupancy, byId, active: new Map(pieces.map(piece => [piece.id, piece])), cleared: 0 };
 }
 
-function generatePuzzle(teddy, teddyIndex, level) {
-  const diff = DIFFICULTIES[level - 1];
-  const seed = hashString(`${teddy.id}:${level}:arrow-face-v2`);
-  const rng = mulberry32(seed);
-  const cells = buildFaceCells(diff.size, teddy, teddyIndex, rng);
-  const fullKeys = new Set(cells.map(cell => cell.key));
-  const remaining = new Map(cells.map(cell => [cell.key, cell]));
-  const directions = new Map();
-  const solution = [];
+function buildPieces(cfg, rng) {
+  const mask = buildTeddyMask(cfg);
+  const used = new Set();
+  const pieces = [];
+  let id = 0;
+  const add = cells => {
+    const clean = cells.filter(cell => mask.has(cellKey(cell.row, cell.col)) && !used.has(cellKey(cell.row, cell.col)));
+    if (clean.length < 2 || clean.length !== cells.length) return false;
+    clean.forEach(cell => used.add(cellKey(cell.row, cell.col)));
+    pieces.push({ id: `p${id++}`, cells: clean });
+    return true;
+  };
 
-  while (remaining.size) {
-    const candidates = [];
-    for (const cell of remaining.values()) {
-      for (const dirName of Object.keys(DIRS)) {
-        const ray = rayKeys({ ...cell, dir: dirName }, diff.size);
-        if (ray.some(key => remaining.has(key))) continue;
-        const removedAhead = ray.filter(key => fullKeys.has(key) && !remaining.has(key)).length;
-        candidates.push({ cell, dirName, removedAhead });
-      }
+  const cx = Math.floor(cfg.cols / 2);
+  const eyeY = Math.floor(cfg.rows * .31);
+  const eyeOffset = Math.max(2, Math.floor(cfg.cols * .21));
+  const spiral = (centerX, centerY, radius) => {
+    const cells = [];
+    for (let x = centerX - radius; x <= centerX + radius; x += 1) cells.push({ row: centerY - radius, col: x });
+    for (let y = centerY - radius + 1; y <= centerY + radius; y += 1) cells.push({ row: y, col: centerX + radius });
+    for (let x = centerX + radius - 1; x >= centerX - radius + 1; x -= 1) cells.push({ row: centerY + radius, col: x });
+    for (let y = centerY + radius - 1; y >= centerY; y -= 1) cells.push({ row: y, col: centerX - radius + 1 });
+    return cells;
+  };
+  add(spiral(cx - eyeOffset, eyeY, Math.max(1, Math.floor(cfg.cols / 9))));
+  add(spiral(cx + eyeOffset, eyeY, Math.max(1, Math.floor(cfg.cols / 9))));
+
+  const mouthY = Math.floor(cfg.rows * .52);
+  const mouthCells = [];
+  for (let x = cx - 3; x <= cx + 3; x += 1) mouthCells.push({ row: mouthY, col: x });
+  mouthCells.push({ row: mouthY + 1, col: cx + 3 }, { row: mouthY + 2, col: cx + 3 });
+  for (let x = cx + 2; x >= cx - 2; x -= 1) mouthCells.push({ row: mouthY + 2, col: x });
+  add(mouthCells);
+
+  for (let row = 0; row < cfg.rows; row += 1) {
+    if (row % 4 >= 2) continue;
+    let col = 0;
+    while (col < cfg.cols) {
+      while (col < cfg.cols && (!mask.has(cellKey(row, col)) || used.has(cellKey(row, col)))) col += 1;
+      const run = [];
+      while (col < cfg.cols && mask.has(cellKey(row, col)) && !used.has(cellKey(row, col))) { run.push({ row, col }); col += 1; }
+      splitRun(run, cfg.min, cfg.max, rng).forEach(add);
     }
-
-    if (!candidates.length) throw new Error('Could not generate a solvable arrow board.');
-    const dependent = candidates.filter(candidate => candidate.removedAhead > 0);
-    const useDependency = dependent.length > 0 && solution.length > 0 && rng() < diff.dependency;
-    const pool = useDependency ? dependent : candidates;
-
-    let chosen;
-    if (useDependency && rng() < diff.dependency) {
-      const maxDependency = Math.max(...pool.map(candidate => candidate.removedAhead));
-      const strongest = pool.filter(candidate => candidate.removedAhead >= Math.max(1, maxDependency - 1));
-      chosen = strongest[Math.floor(rng() * strongest.length)];
-    } else {
-      chosen = pool[Math.floor(rng() * pool.length)];
-    }
-
-    directions.set(chosen.cell.key, chosen.dirName);
-    solution.push(chosen.cell.key);
-    remaining.delete(chosen.cell.key);
   }
 
-  cells.forEach(cell => {
-    cell.dir = directions.get(cell.key);
-    cell.removed = false;
-    cell.element = null;
-  });
-
-  return {
-    size: diff.size,
-    cells,
-    active: new Map(cells.map(cell => [cell.key, cell])),
-    solution,
-    cleared: 0
-  };
+  for (let col = 0; col < cfg.cols; col += 1) {
+    let row = 0;
+    while (row < cfg.rows) {
+      while (row < cfg.rows && (!mask.has(cellKey(row, col)) || used.has(cellKey(row, col)))) row += 1;
+      const run = [];
+      while (row < cfg.rows && mask.has(cellKey(row, col)) && !used.has(cellKey(row, col))) { run.push({ row, col }); row += 1; }
+      splitRun(run, cfg.min, cfg.max, rng).forEach(add);
+    }
+  }
+  return pieces;
 }
 
-function buildFaceCells(size, teddy, teddyIndex, rng) {
-  const cells = [];
-  const half = (size - 1) / 2;
-  for (let row = 0; row < size; row += 1) {
-    for (let col = 0; col < size; col += 1) {
-      const x = (col - half) / half;
-      const y = (row - half) / half;
-      const head = (x * x) / (0.79 * 0.79) + ((y + 0.01) * (y + 0.01)) / (0.83 * 0.83) <= 1;
-      const leftEar = ((x + 0.68) ** 2) / (0.29 ** 2) + ((y + 0.68) ** 2) / (0.29 ** 2) <= 1;
-      const rightEar = ((x - 0.68) ** 2) / (0.29 ** 2) + ((y + 0.68) ** 2) / (0.29 ** 2) <= 1;
-      if (!(head || leftEar || rightEar)) continue;
+function splitRun(run, min, max, rng) {
+  const chunks = [];
+  let index = 0;
+  while (run.length - index >= min) {
+    const remaining = run.length - index;
+    let length = Math.min(max, Math.max(min, Math.floor(min + rng() * (max - min + 1))));
+    if (remaining - length === 1) length -= 1;
+    if (length < min) break;
+    chunks.push(run.slice(index, index + length));
+    index += length;
+  }
+  return chunks;
+}
 
-      const feature = classifyFaceFeature(x, y, teddy.feature, row, col, teddyIndex, rng);
-      cells.push({
-        key: cellKey(row, col),
-        row,
-        col,
-        x,
-        y,
-        featureClass: feature.className,
-        featureLabel: feature.label
+function buildTeddyMask(cfg) {
+  const mask = new Set();
+  for (let row = 0; row < cfg.rows; row += 1) {
+    for (let col = 0; col < cfg.cols; col += 1) {
+      const x = (col / (cfg.cols - 1)) * 2 - 1;
+      const y = (row / (cfg.rows - 1)) * 2 - 1;
+      const head = ellipse(x, y, 0, -0.35, .72, .50);
+      const leftEar = ellipse(x, y, -.62, -.77, .28, .24);
+      const rightEar = ellipse(x, y, .62, -.77, .28, .24);
+      const torso = ellipse(x, y, 0, .42, .59, .55);
+      const leftArm = ellipse(x, y, -.67, .34, .18, .37);
+      const rightArm = ellipse(x, y, .67, .34, .18, .37);
+      const leftFoot = ellipse(x, y, -.34, .90, .31, .17);
+      const rightFoot = ellipse(x, y, .34, .90, .31, .17);
+      if (head || leftEar || rightEar || torso || leftArm || rightArm || leftFoot || rightFoot) mask.add(cellKey(row, col));
+    }
+  }
+  return mask;
+}
+function ellipse(x, y, cx, cy, rx, ry) { return ((x - cx) ** 2) / (rx ** 2) + ((y - cy) ** 2) / (ry ** 2) <= 1; }
+
+function assignDirections(pieces, cfg, rng) {
+  const occupancy = new Map();
+  pieces.forEach(piece => piece.cells.forEach(cell => occupancy.set(cellKey(cell.row, cell.col), piece.id)));
+  const active = new Set(pieces.map(piece => piece.id));
+  const byId = new Map(pieces.map(piece => [piece.id, piece]));
+  let safety = pieces.length * 5;
+  while (active.size && safety-- > 0) {
+    const candidates = [];
+    for (const id of active) {
+      const piece = byId.get(id);
+      endpointOptions(piece).forEach(option => {
+        if (canExitStatic(piece, option.dir, cfg, occupancy, active)) candidates.push({ piece, ...option });
       });
     }
+    if (!candidates.length) return false;
+    const edgeBiased = candidates.sort((a, b) => edgeScore(b.piece, b.dir, cfg) - edgeScore(a.piece, a.dir, cfg));
+    const pool = edgeBiased.slice(0, Math.max(1, Math.ceil(edgeBiased.length * .45)));
+    const choice = pool[Math.floor(rng() * pool.length)];
+    if (choice.reverse) choice.piece.cells.reverse();
+    choice.piece.dir = choice.dir;
+    active.delete(choice.piece.id);
   }
-  return cells;
+  return active.size === 0;
 }
 
-function classifyFaceFeature(x, y, feature, row, col, teddyIndex, rng) {
-  const leftEye = Math.hypot(x + 0.29, y + 0.2) < 0.16;
-  const rightEye = Math.hypot(x - 0.29, y + 0.2) < 0.16;
-  const nose = Math.abs(x) < 0.13 && y > -0.02 && y < 0.18;
-  const mouth = Math.abs(x) < 0.34 && y > 0.25 && y < 0.43;
-  const centerScar = Math.abs(x) < 0.075 && y < -0.28;
-
-  if (leftEye) return { className: 'feature-button', label: 'button-eye' };
-  if (rightEye) return { className: 'feature-eye', label: 'infected-eye' };
-  if (nose) return { className: 'feature-nose', label: 'nose' };
-  if (mouth) return { className: 'feature-mouth', label: 'mouth' };
-  if (centerScar) return { className: 'feature-scar', label: 'stitched scar' };
-
-  const patterned = mutationCell(feature, x, y, row, col, teddyIndex);
-  if (patterned || rng() < 0.035) return { className: 'feature-accent', label: `${feature} mutation` };
-  return { className: 'feature-fur', label: 'fur' };
+function endpointOptions(piece) {
+  if (piece.cells.length < 2) return [];
+  const first = piece.cells[0], second = piece.cells[1];
+  const beforeLast = piece.cells[piece.cells.length - 2], last = piece.cells[piece.cells.length - 1];
+  const startDir = directionFrom(second, first);
+  const endDir = directionFrom(beforeLast, last);
+  const options = [];
+  if (startDir) options.push({ dir: startDir, reverse: true });
+  if (endDir) options.push({ dir: endDir, reverse: false });
+  return options;
 }
-
-function mutationCell(feature, x, y, row, col, teddyIndex) {
-  const noise = ((row * 31 + col * 17 + teddyIndex * 13) % 19) / 19;
-  switch (feature) {
-    case 'radiation': return Math.hypot(x, y + 0.48) < 0.16 || (noise > .84 && y > -.1);
-    case 'mold': return noise > .73 && (x < -.1 || y > .05);
-    case 'trash': return y < -.58 || (noise > .82 && y > .1);
-    case 'sludge': return y > .55 || (x > .48 && y > .05);
-    case 'battery': return Math.abs(x) > .52 && y > -.15 && y < .46;
-    case 'maggot': return noise > .79;
-    case 'burger': return y > .46 || (y > .08 && y < .18 && Math.abs(x) < .52);
-    case 'rust': return noise > .7;
-    case 'acid': return Math.abs(x - y * .52) < .11 || (x > .48 && y > .1);
-    case 'mask': return Math.abs(x) < .48 && y > -.28 && y < .32;
-    case 'patchwork': return (row + col) % 4 === 0;
-    case 'plague': return Math.abs(x) < .11 && y > -.05 && y < .46;
-    default: return false;
+function directionFrom(a, b) {
+  const dr = b.row - a.row, dc = b.col - a.col;
+  if (dr === -1 && dc === 0) return 'up';
+  if (dr === 1 && dc === 0) return 'down';
+  if (dr === 0 && dc === -1) return 'left';
+  if (dr === 0 && dc === 1) return 'right';
+  return null;
+}
+function canExitStatic(piece, dirName, cfg, occupancy, active) {
+  const dir = DIRS[dirName];
+  for (const cell of piece.cells) {
+    let row = cell.row + dir.dr, col = cell.col + dir.dc;
+    while (row >= 0 && row < cfg.rows && col >= 0 && col < cfg.cols) {
+      const occupant = occupancy.get(cellKey(row, col));
+      if (occupant && occupant !== piece.id && active.has(occupant)) return false;
+      row += dir.dr; col += dir.dc;
+    }
   }
+  return true;
+}
+function edgeScore(piece, dirName, cfg) {
+  const lead = dirName === 'left' || dirName === 'up' ? piece.cells[0] : piece.cells[piece.cells.length - 1];
+  if (dirName === 'left') return cfg.cols - lead.col;
+  if (dirName === 'right') return lead.col;
+  if (dirName === 'up') return cfg.rows - lead.row;
+  return lead.row;
 }
 
-function rayKeys(cell, size) {
-  const dir = DIRS[cell.dir];
-  const keys = [];
-  let row = cell.row + dir.dr;
-  let col = cell.col + dir.dc;
-  while (row >= 0 && row < size && col >= 0 && col < size) {
-    keys.push(cellKey(row, col));
-    row += dir.dr;
-    col += dir.dc;
+function buildFallbackPieces(cfg) {
+  const mask = buildTeddyMask(cfg);
+  const pieces = [];
+  let id = 0;
+  for (let row = 0; row < cfg.rows; row += 1) {
+    const run = [];
+    for (let col = 0; col < cfg.cols; col += 1) {
+      if (mask.has(cellKey(row, col))) run.push({ row, col });
+      else if (run.length >= 2) { pieces.push({ id: `f${id++}`, cells: run.splice(0) }); }
+      else run.length = 0;
+    }
+    if (run.length >= 2) pieces.push({ id: `f${id++}`, cells: run });
   }
-  return keys;
-}
-
-function renderPortrait(teddy, celebrate) {
-  const [fur, dark, accent, light] = teddy.palette;
-  const mutation = portraitMutation(teddy.feature, accent, light, dark);
-  return `<svg viewBox="0 0 520 520" role="img" aria-label="${teddy.primary} Toxic Teddy portrait">
-    <rect width="520" height="520" rx="32" fill="#f4ead4"/>
-    <circle cx="132" cy="142" r="82" fill="${fur}" stroke="${dark}" stroke-width="15"/>
-    <circle cx="388" cy="142" r="82" fill="${fur}" stroke="${dark}" stroke-width="15"/>
-    <circle cx="260" cy="270" r="190" fill="${fur}" stroke="${dark}" stroke-width="18"/>
-    <path d="M260 85 C245 135 272 170 253 220 C240 254 258 284 260 320" fill="none" stroke="${dark}" stroke-width="9" stroke-dasharray="14 9"/>
-    <circle cx="190" cy="245" r="48" fill="#27221c" stroke="${dark}" stroke-width="9"/>
-    <path d="M166 221 214 269M214 221 166 269" stroke="#8e877a" stroke-width="9"/>
-    <ellipse cx="330" cy="245" rx="47" ry="53" fill="${light}" stroke="${dark}" stroke-width="10"/>
-    <circle cx="340" cy="257" r="13" fill="#1c1813"/><circle cx="323" cy="230" r="7" fill="#fff"/>
-    <ellipse cx="260" cy="342" rx="100" ry="70" fill="#b78555" stroke="${dark}" stroke-width="11"/>
-    <ellipse cx="260" cy="318" rx="46" ry="32" fill="#201b16"/>
-    <path d="M198 365 Q260 430 322 365 Q260 401 198 365" fill="#4d241a" stroke="${dark}" stroke-width="9"/>
-    <path d="M218 373 236 397 254 378 272 399 294 374" fill="#f0e1bd"/>
-    ${mutation}
-    ${celebrate ? `<g fill="${accent}"><circle cx="72" cy="80" r="8"/><circle cx="452" cy="92" r="10"/><circle cx="440" cy="420" r="7"/><path d="M85 390l18 38 40 5-30 27 8 40-36-20-36 20 8-40-30-27 40-5Z"/></g>` : ''}
-  </svg>`;
-}
-
-function portraitMutation(feature, accent, light, dark) {
-  const map = {
-    radiation: `<circle cx="260" cy="440" r="37" fill="${accent}" opacity=".92"/><circle cx="260" cy="440" r="10" fill="${dark}"/><path d="M260 403l-13 27h26ZM228 459l29-8-15 28ZM292 459l-29-8 15 28Z" fill="${dark}"/>`,
-    mold: `<g fill="${accent}" stroke="${dark}" stroke-width="4"><circle cx="120" cy="120" r="19"/><circle cx="142" cy="99" r="12"/><circle cx="384" cy="166" r="16"/><circle cx="155" cy="365" r="13"/></g>`,
-    trash: `<path d="M80 78h360l-38 68H118Z" fill="#70736d" stroke="#2f302b" stroke-width="11"/><path d="M190 55h140l24 26H166Z" fill="#858880" stroke="#2f302b" stroke-width="9"/>`,
-    sludge: `<path d="M82 402 Q126 375 154 420 T226 420 T300 420 T374 420 T438 402 L430 498H90Z" fill="${accent}" opacity=".82"/>`,
-    battery: `<g fill="${accent}" stroke="${dark}" stroke-width="7"><rect x="70" y="310" width="60" height="112" rx="10"/><rect x="390" y="310" width="60" height="112" rx="10"/></g><path d="M247 385l-18 48 27-8-14 46 52-68-29 9 16-27Z" fill="${light}" stroke="${dark}" stroke-width="6"/>`,
-    maggot: `<g fill="${light}" stroke="${dark}" stroke-width="4"><path d="M130 140q35-30 58 7q-26 25-58-7"/><path d="M364 360q38-27 57 10q-29 23-57-10"/></g>`,
-    burger: `<g stroke="${dark}" stroke-width="7"><path d="M170 400q90-65 180 0Z" fill="#d79a43"/><rect x="166" y="400" width="188" height="34" rx="12" fill="#5f321d"/><path d="M174 434h172l-20 26H194Z" fill="#edcc4e"/></g>`,
-    rust: `<g fill="${accent}" stroke="${dark}" stroke-width="6"><path d="M100 330l62-18 17 61-62 19Z"/><path d="M350 390l65-12 12 60-64 14Z"/></g>`,
-    acid: `<path d="M104 300q35 35 17 82q-17 45 18 78" fill="none" stroke="${accent}" stroke-width="18"/><circle cx="400" cy="398" r="18" fill="${accent}"/>`,
-    mask: `<path d="M165 265q95-82 190 0l-28 128q-67 42-134 0Z" fill="#566058" stroke="${dark}" stroke-width="11"/><circle cx="210" cy="290" r="31" fill="${light}" stroke="${dark}" stroke-width="8"/><circle cx="310" cy="290" r="31" fill="${light}" stroke="${dark}" stroke-width="8"/><circle cx="260" cy="370" r="27" fill="#252b27"/>`,
-    patchwork: `<path d="M92 326l72-20 20 70-74 20Z" fill="#c85d76" stroke="${dark}" stroke-width="7"/><path d="M348 378l70-14 14 66-72 15Z" fill="#65a19c" stroke="${dark}" stroke-width="7"/>`,
-    plague: `<path d="M220 305q45-38 90 0l74 38-76 22q-54 28-88-60Z" fill="#30332a" stroke="${dark}" stroke-width="10"/><circle cx="242" cy="300" r="23" fill="${light}"/><circle cx="302" cy="300" r="23" fill="${light}"/>`
-  };
-  return map[feature] ?? '';
-}
-
-function featureDescription(feature) {
-  const descriptions = {
-    radiation: 'Radioactive arrows glow through Toby’s stitched forehead and toxic cheeks.',
-    mold: 'Mold clusters spread across Molly’s ears, eye socket, and infected fur.',
-    trash: 'Trash-lid brow pieces and grimy facial arrows form Danny’s alley-born portrait.',
-    sludge: 'Heavy green arrows pool around Sam’s jaw and melting lower face.',
-    battery: 'Charged yellow arrows frame Barry’s face like leaking battery cells.',
-    maggot: 'Pale infestation arrows crawl through Mitch’s torn plush features.',
-    burger: 'Greasy orange facial bands make Burger Bear look permanently overstuffed.',
-    rust: 'Corroded orange patches break up Randy’s metal-filled Teddy face.',
-    acid: 'Bright acid trails cut diagonally through Andy’s dissolving portrait.',
-    mask: 'Dark respirator tiles turn Max’s face into a sealed gas-mask puzzle.',
-    patchwork: 'Mismatched colored arrows stitch Pat’s borrowed face together.',
-    plague: 'A dark central beak shape gives Plague Bear his unmistakable silhouette.'
-  };
-  return descriptions[feature] ?? 'Every arrow is part of the Toxic Teddy face.';
-}
-
-function playTone(frequency, duration) {
-  if (!state.sound) return;
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) return;
-  const context = new AudioContextClass();
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  oscillator.type = 'sine';
-  oscillator.frequency.value = frequency;
-  gain.gain.setValueAtTime(.035, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + duration);
-  oscillator.connect(gain).connect(context.destination);
-  oscillator.start();
-  oscillator.stop(context.currentTime + duration);
-  oscillator.addEventListener('ended', () => context.close());
-}
-function playVictory() {
-  [330, 440, 554, 660].forEach((frequency, index) => window.setTimeout(() => playTone(frequency, .16), index * 105));
+  return pieces;
 }
 
 function hashString(value) {
   let hash = 2166136261;
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
+  for (let i = 0; i < value.length; i += 1) { hash ^= value.charCodeAt(i); hash = Math.imul(hash, 16777619); }
   return hash >>> 0;
 }
 function mulberry32(seed) {
