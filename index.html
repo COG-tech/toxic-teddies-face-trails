@@ -3,140 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f2ead6" />
-  <meta name="description" content="A calm sequential arrow-clearing puzzle where every board forms a Toxic Teddy face." />
+  <meta name="theme-color" content="#f4eddf" />
+  <meta name="description" content="Toxic Teddies Arrow Escape — clear connected arrow pieces in the right order." />
   <title>Toxic Teddies: Arrow Escape</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./styles.css" />
-  <link rel="stylesheet" href="./arrow-extras.css" />
-  <link rel="stylesheet" href="./skin.css" />
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar">
-      <button id="backButton" class="icon-button hidden" type="button" aria-label="Back to Teddy collection">←</button>
-      <div class="brand-lockup">
-        <span class="hazard-mark" aria-hidden="true">☣</span>
+    <section id="homeView" class="home-view">
+      <header class="home-header">
         <div>
-          <p class="eyebrow">SERIES 1 · ARROW ESCAPE</p>
-          <h1>TOXIC <span>TEDDIES</span></h1>
+          <p class="eyebrow">SERIES 1</p>
+          <h1>TOXIC TEDDIES</h1>
+          <p>Clear every connected arrow piece in the right order.</p>
         </div>
-      </div>
-      <div class="top-actions">
-        <button id="soundButton" class="icon-button" type="button" aria-label="Toggle sound">🔊</button>
         <div id="collectionCounter" class="collection-counter">0 / 60</div>
+      </header>
+      <div id="teddyGrid" class="teddy-grid"></div>
+    </section>
+
+    <section id="gameView" class="game-view hidden">
+      <header class="game-topbar">
+        <button id="backButton" class="top-icon" type="button" aria-label="Back">←</button>
+        <div class="game-title">
+          <h2 id="levelTitle">Level 1</h2>
+          <p id="characterName">Toxic Toby</p>
+        </div>
+        <div class="top-actions">
+          <button id="hintButton" class="top-icon" type="button" aria-label="Hint">◌</button>
+          <button id="resetButton" class="top-icon" type="button" aria-label="Reset">⬡</button>
+        </div>
+      </header>
+
+      <div class="status-row">
+        <div id="lives" class="lives" aria-label="Three toxic drops remaining"></div>
+        <div class="progress">
+          <span id="clearProgress">0 / 0</span>
+          <strong id="percentProgress">0%</strong>
+        </div>
       </div>
-    </header>
 
-    <main>
-      <section id="homeView" class="view home-view">
-        <div class="hero-card">
-          <div>
-            <p class="eyebrow">12 TEDDIES · 5 PUZZLES EACH</p>
-            <h2>Clear the face.<br />Find the right order.</h2>
-            <p>Every arrow belongs to a Toxic Teddy portrait. Tap only arrows with an open lane to the edge. Each removal frees the arrows trapped behind it.</p>
-          </div>
-          <div class="hero-badge"><strong>60</strong><span>OFFLINE PUZZLES</span></div>
-        </div>
-        <div id="teddyGrid" class="teddy-grid" aria-label="Choose a Toxic Teddy"></div>
-      </section>
+      <p id="statusText" class="status-text">Choose a piece with an open lane</p>
 
-      <section id="gameView" class="view game-view hidden">
-        <div class="game-header">
-          <div>
-            <p id="levelKicker" class="eyebrow"></p>
-            <h2 id="characterName"></h2>
-            <p id="alternateName" class="alternate-name"></p>
-          </div>
-          <div class="status-cluster">
-            <div id="lives" class="lives" aria-label="Three toxic drops remaining"></div>
-            <div class="progress-block">
-              <span id="clearProgress">0 / 0 cleared</span>
-              <strong id="percentProgress">0%</strong>
-            </div>
-          </div>
-        </div>
+      <main class="board-shell">
+        <div id="boardBackdrop" class="board-backdrop"></div>
+        <svg id="board" class="board" role="img" aria-label="Connected arrow puzzle shaped like a Toxic Teddy">
+          <g id="pieceLayer"></g>
+        </svg>
+        <svg id="previewLayer" class="preview-layer" aria-hidden="true"></svg>
+      </main>
 
-        <div class="game-layout">
-          <section class="puzzle-card">
-            <div id="instructionCard" class="instruction-card">
-              <span id="instructionIcon">☝</span>
-              <div>
-                <strong id="instructionTitle">Choose an open arrow</strong>
-                <p id="instructionText">An arrow can leave only when nothing blocks its lane to the edge. Long-press any arrow to preview its path.</p>
-              </div>
-            </div>
-
-            <div id="puzzleFrame" class="puzzle-frame">
-              <div id="boardStage" class="board-stage">
-                <div id="faceShell" class="face-shell" aria-hidden="true"></div>
-                <div id="arrowGrid" class="arrow-grid" role="grid" aria-label="Directional arrow puzzle shaped like a Toxic Teddy face"></div>
-              </div>
-              <div id="mistakeFlash" class="mistake-flash" aria-hidden="true"></div>
-            </div>
-
-            <div class="game-controls">
-              <button id="resetButton" class="secondary-button" type="button">↻ Reset</button>
-              <button id="hintButton" class="primary-button" type="button">✦ Show one open arrow</button>
-            </div>
-          </section>
-
-          <aside class="side-panel">
-            <section class="level-strip-card">
-              <div class="card-heading">
-                <div>
-                  <p class="eyebrow">TEDDY PUZZLES</p>
-                  <h3 id="levelStripTitle">Five faces</h3>
-                </div>
-                <span id="difficultyBadge" class="difficulty-badge">EASY</span>
-              </div>
-              <div id="levelButtons" class="level-buttons"></div>
-            </section>
-
-            <section class="rule-card">
-              <p class="eyebrow">HOW IT WORKS</p>
-              <h3>Open lane = safe move</h3>
-              <p>Look from the arrow tip to the perimeter. No Teddy tile in the lane means it can slide away. A blocked tap costs one toxic drop.</p>
-            </section>
-
-            <section class="portrait-card">
-              <p class="eyebrow">CURRENT FACE</p>
-              <h3 id="portraitTitle">Toxic Teddy</h3>
-              <div id="miniPortrait" class="mini-portrait"></div>
-              <p id="featureCopy" class="feature-copy"></p>
-            </section>
-          </aside>
-        </div>
-      </section>
-    </main>
+      <footer class="game-footer">
+        <div id="levelButtons" class="level-buttons"></div>
+      </footer>
+    </section>
   </div>
 
   <div id="completionModal" class="modal-backdrop hidden">
-    <section class="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
-      <button id="closeModal" class="modal-close" type="button" aria-label="Close">×</button>
+    <section class="modal-card">
       <p class="eyebrow">FACE CLEARED</p>
-      <h2 id="completionTitle"></h2>
-      <p id="completionTagline" class="completion-tagline"></p>
-      <div id="revealHost" class="reveal-host"></div>
-      <p id="completionCopy" class="completion-copy"></p>
+      <h3 id="completionTitle">Toxic Toby · Level 1</h3>
+      <p id="completionCopy"></p>
       <div class="modal-actions">
         <button id="replayButton" class="secondary-button" type="button">Replay</button>
-        <button id="nextButton" class="primary-button" type="button">Next puzzle</button>
+        <button id="nextButton" class="primary-button" type="button">Next level</button>
       </div>
     </section>
   </div>
 
   <div id="gameOverModal" class="modal-backdrop hidden">
-    <section class="completion-modal compact" role="dialog" aria-modal="true">
-      <div class="failure-icon">☣</div>
+    <section class="modal-card">
       <p class="eyebrow">NO TOXIC DROPS LEFT</p>
-      <h2>The face is still trapped.</h2>
-      <p>Study the open lanes and try the sequence again.</p>
-      <button id="tryAgainButton" class="primary-button" type="button">Try again</button>
+      <h3>Study the lanes and try again.</h3>
+      <button id="tryAgainButton" class="primary-button full" type="button">Try again</button>
     </section>
   </div>
 
   <script type="module" src="./app.js"></script>
-  <script src="./skin.js"></script>
 </body>
 </html>
