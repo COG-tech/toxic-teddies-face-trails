@@ -1,0 +1,45 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.level-picker select {
+  min-height: 46px;
+  max-width: 230px;
+  padding: 0 38px 0 14px;
+  border: 1px solid rgba(242, 231, 201, 0.13);
+  border-radius: 14px;
+  color: #f2e7c9;
+  background: #242019;
+  font: 800 0.82rem "Nunito", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.level-picker select:focus-visible {
+  outline: 3px solid #d8ff5b;
+  outline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .level-picker {
+    order: 3;
+    width: 100%;
+  }
+
+  .level-picker select {
+    width: 100%;
+    max-width: none;
+  }
+}
