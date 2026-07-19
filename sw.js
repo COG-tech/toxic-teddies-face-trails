@@ -1,12 +1,9 @@
-const CACHE_NAME = 'toxic-teddies-arrow-escape-v3';
+const CACHE_NAME = 'toxic-teddies-arrow-escape-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
   './styles.css',
-  './arrow-extras.css',
-  './skin.css',
   './app.js',
-  './skin.js',
   './characters.js',
   './manifest.webmanifest',
   './assets/backdrops/toxic-toby-expression-sheet.svg',
