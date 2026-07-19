@@ -1,135 +1,135 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#18150f" />
-    <meta name="description" content="Toxic Teddies: Face Trails — trace the scars, slime, stitches, and mutations that form each Teddy's face." />
-    <title>Toxic Teddies: Face Trails</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./level-picker.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <div class="brand-lockup" aria-label="Toxic Teddies Face Trails">
-          <div class="hazard-mark" aria-hidden="true">☣</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#13100b" />
+  <meta name="description" content="Toxic Teddies: Face Trails — 12 mutant teddies, 5 increasingly difficult tracing levels each." />
+  <title>Toxic Teddies: Face Trails</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <button id="backButton" class="icon-button hidden" type="button" aria-label="Back to collection">←</button>
+      <div class="brand-lockup">
+        <span class="hazard-mark" aria-hidden="true">☣</span>
+        <div>
+          <p class="eyebrow">SERIES 1 · FOUNDING TEDDIES</p>
+          <h1>TOXIC <span>TEDDIES</span></h1>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="soundButton" class="icon-button" type="button" aria-label="Toggle sound">🔊</button>
+        <div id="collectionCounter" class="collection-counter">0 / 60</div>
+      </div>
+    </header>
+
+    <main>
+      <section id="homeView" class="view home-view">
+        <div class="hero-card">
           <div>
-            <p class="eyebrow">SERIES 1 · FOUNDING TEDDIES</p>
-            <h1>TOXIC <span>TEDDIES</span></h1>
+            <p class="eyebrow">12 TEDDIES · 5 LEVELS EACH</p>
+            <h2>Trace the mutation.</h2>
+            <p>Every puzzle is built from a full Toxic Teddy body. Each Teddy gets five maps that grow tighter, longer, and nastier.</p>
           </div>
+          <div class="hero-badge"><strong>60</strong><span>LEVELS</span></div>
         </div>
-        <div class="header-actions">
-          <label class="level-picker">
-            <span class="sr-only">Choose Teddy level</span>
-            <select id="levelSelect" aria-label="Choose Teddy level"></select>
-          </label>
-          <button class="icon-button" id="soundButton" type="button" aria-label="Toggle sound">🔊</button>
-          <button class="collection-button" id="collectionButton" type="button">
-            <span>Collection</span>
-            <strong id="collectionCount">0 / 12</strong>
-          </button>
-        </div>
-      </header>
+        <div id="teddyGrid" class="teddy-grid" aria-label="Choose a Toxic Teddy"></div>
+      </section>
 
-      <main class="game-layout">
-        <section class="mission-panel" aria-labelledby="missionTitle">
-          <div class="mission-copy">
-            <p class="level-kicker" id="levelKicker">LOADING LEVEL</p>
-            <h2 id="missionTitle">Toxic Teddy</h2>
-            <p id="alternateName">preparing contamination…</p>
+      <section id="gameView" class="view game-view hidden">
+        <div class="game-header">
+          <div>
+            <p id="levelKicker" class="eyebrow"></p>
+            <h2 id="characterName"></h2>
+            <p id="alternateName" class="alternate-name"></p>
           </div>
-
-          <div class="status-row">
-            <div class="lives" id="lives" aria-label="Three toxic drops remaining"></div>
-            <div class="progress-copy">
-              <span id="segmentProgress">0 / 0 trails</span>
+          <div class="status-cluster">
+            <div id="lives" class="lives" aria-label="Three toxic drops remaining"></div>
+            <div class="progress-block">
+              <span id="trailProgress">0 / 0 trails</span>
               <strong id="percentProgress">0%</strong>
             </div>
           </div>
+        </div>
 
-          <div class="instruction-card" id="instructionCard">
-            <span class="instruction-icon">☝</span>
-            <div>
-              <strong id="instructionTitle">Load a face map</strong>
-              <p id="instructionText">Every path is part of the Teddy’s face.</p>
-            </div>
-          </div>
-
-          <div class="puzzle-frame" id="puzzleFrame">
-            <div class="loading-state" id="loadingState">
-              <span class="loader"></span>
-              <p id="loadingText">Growing the contamination…</p>
-            </div>
-            <div class="map-host" id="mapHost" aria-label="Toxic Teddy face tracing map"></div>
-            <div class="mistake-flash" id="mistakeFlash" aria-hidden="true"></div>
-          </div>
-
-          <div class="game-controls">
-            <button class="secondary-button" id="resetButton" type="button">↻ Reset</button>
-            <button class="secondary-button" id="hintButton" type="button">✦ Hint</button>
-            <button class="primary-button" id="startButton" type="button" disabled>Start tracing</button>
-          </div>
-        </section>
-
-        <aside class="side-panel">
-          <section class="brief-card">
-            <div class="brief-icon">🧸</div>
-            <p class="eyebrow">FACE MAP RULE</p>
-            <h3>The puzzle is the Teddy.</h3>
-            <p id="faceRuleText">Every trail follows the active Teddy’s face. This is not a maze placed over a picture.</p>
-          </section>
-
-          <section class="trail-list-card">
-            <div class="card-heading">
+        <div class="game-layout">
+          <section class="puzzle-card">
+            <div id="instructionCard" class="instruction-card">
+              <span id="instructionIcon">☝</span>
               <div>
-                <p class="eyebrow">CURRENT ROUTE</p>
-                <h3 id="routeTitle">Teddy mutations</h3>
+                <strong id="instructionTitle">Start at the glowing marker</strong>
+                <p id="instructionText">Trace the Teddy in the arrow direction.</p>
               </div>
-              <span class="difficulty-badge" id="difficultyBadge">EASY</span>
             </div>
-            <ol id="trailList" class="trail-list"></ol>
+            <div id="puzzleFrame" class="puzzle-frame">
+              <div id="mapHost" class="map-host"></div>
+              <div id="mistakeFlash" class="mistake-flash"></div>
+            </div>
+            <div class="game-controls">
+              <button id="resetButton" class="secondary-button" type="button">↻ Reset</button>
+              <button id="hintButton" class="secondary-button" type="button">✦ Hint</button>
+              <button id="startButton" class="primary-button" type="button">Start tracing</button>
+            </div>
           </section>
 
-          <section class="reward-card">
-            <div class="reward-glow"></div>
-            <p class="eyebrow">COMPLETION REWARD</p>
-            <h3 id="rewardTitle">Reveal the Teddy</h3>
-            <p id="rewardText">Finish every face trail to unlock the full-color collection portrait.</p>
-            <div class="locked-portrait" id="lockedPortrait" aria-label="Locked Teddy portrait">?</div>
-          </section>
-        </aside>
-      </main>
-    </div>
-
-    <div class="modal-backdrop" id="completionModal" hidden>
-      <section class="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
-        <button class="modal-close" id="closeCompletion" type="button" aria-label="Close">×</button>
-        <p class="eyebrow">TEDDY UNLOCKED</p>
-        <h2 id="completionTitle">Toxic Teddy</h2>
-        <p class="completion-tagline" id="completionTagline">CONTAMINATION COMPLETE</p>
-        <div class="reveal-host" id="revealHost"></div>
-        <p class="lore-copy" id="loreCopy"></p>
-        <div class="modal-actions">
-          <button class="secondary-button" id="replayButton" type="button">Replay map</button>
-          <button class="primary-button" id="collectButton" type="button">Add to collection</button>
+          <aside class="side-panel">
+            <section class="level-strip-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">TEDDY LEVELS</p>
+                  <h3 id="levelStripTitle">5 mutations</h3>
+                </div>
+                <span id="difficultyBadge" class="difficulty-badge">EASY</span>
+              </div>
+              <div id="levelButtons" class="level-buttons"></div>
+            </section>
+            <section class="route-card">
+              <p class="eyebrow">CURRENT ROUTE</p>
+              <h3 id="routeTitle">Mutation trails</h3>
+              <ol id="trailList" class="trail-list"></ol>
+            </section>
+            <section class="reward-card">
+              <p class="eyebrow">LEVEL REWARD</p>
+              <h3 id="rewardTitle">Unlock the next mutation</h3>
+              <p id="rewardText">Finish the Teddy map with at least one toxic drop remaining.</p>
+              <div id="miniPortrait" class="mini-portrait"></div>
+            </section>
+          </aside>
         </div>
       </section>
-    </div>
+    </main>
+  </div>
 
-    <div class="modal-backdrop" id="gameOverModal" hidden>
-      <section class="completion-modal compact" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
-        <div class="failure-icon">☣</div>
-        <p class="eyebrow">CONTAMINATION LOST</p>
-        <h2 id="gameOverTitle">The Teddy escaped your finger.</h2>
-        <p>All three toxic drops are gone. Reset the face and try again.</p>
-        <button class="primary-button" id="tryAgainButton" type="button">Try again</button>
-      </section>
-    </div>
+  <div id="completionModal" class="modal-backdrop hidden">
+    <section class="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+      <button id="closeModal" class="modal-close" type="button" aria-label="Close">×</button>
+      <p class="eyebrow">MUTATION MASTERED</p>
+      <h2 id="completionTitle"></h2>
+      <p id="completionTagline" class="completion-tagline"></p>
+      <div id="revealHost" class="reveal-host"></div>
+      <p id="completionCopy" class="completion-copy"></p>
+      <div class="modal-actions">
+        <button id="replayButton" class="secondary-button" type="button">Replay</button>
+        <button id="nextButton" class="primary-button" type="button">Next level</button>
+      </div>
+    </section>
+  </div>
 
-    <script type="module" src="./app.js"></script>
-  </body>
+  <div id="gameOverModal" class="modal-backdrop hidden">
+    <section class="completion-modal compact" role="dialog" aria-modal="true">
+      <div class="failure-icon">☣</div>
+      <p class="eyebrow">CONTAMINATION LOST</p>
+      <h2>All toxic drops are gone.</h2>
+      <p>Reset the Teddy and trace the mutation again.</p>
+      <button id="tryAgainButton" class="primary-button" type="button">Try again</button>
+    </section>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
 </html>
