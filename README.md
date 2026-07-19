@@ -1,48 +1,70 @@
-# Toxic Teddies: Face Trails
+# Toxic Teddies: Arrow Escape
 
-A collectible tracing puzzle game where **every level map is built from the face of an original Toxic Teddy**. The player traces the ears, eyes, scars, stitches, mouth, slime, mold, cracks, trash, and mutations—not a random maze placed over character artwork.
+A calm sequential arrow-clearing puzzle where every board is arranged to look like the face of an original Toxic Teddy.
 
-## Playable prototype
+This is **not** a tracing game.
 
-Three reusable, data-driven levels are now included:
+## Core mechanic
 
-1. **Toxic Toby / Radioactive Ricky** — easy
-2. **Moldy Molly / Fungus Faye** — easy
-3. **Dumpster Danny / Trashcan Travis** — medium
+- Each puzzle is a grid of directional arrow tiles.
+- The tiles collectively form a recognizable Toxic Teddy face.
+- A tile can leave only when its arrow has a completely open lane to the perimeter.
+- Removing a tile clears its lane and can free arrows that were trapped behind it.
+- Tapping a blocked arrow costs one toxic-drop life.
+- Long-pressing any arrow previews its path and highlights the first blocker.
+- The puzzle is solved when every arrow has slid off the board.
 
-Each level contains its own character metadata, SVG face map, path rules, and full-color completion reveal.
+## Content structure
 
-## Implemented gameplay
+The game contains 12 Founding Teddies with five increasingly difficult puzzles each:
 
-- mouse, touch, and stylus support through Pointer Events;
-- responsive SVG coordinate conversion;
-- configurable path-distance tolerance;
-- ordered trail completion;
-- wrong-direction detection;
-- disconnected-route jump prevention;
+1. Toxic Toby / Radioactive Ricky
+2. Moldy Molly / Fungus Faye
+3. Dumpster Danny / Trashcan Travis
+4. Sludge Sam / Gooey Grant
+5. Battery Barry / Leaking Leon
+6. Maggot Mitch / Wormy Walt
+7. Burger Bear / Greasy Gina
+8. Rusty Randy / Corroded Cory
+9. Acid Andy / Meltdown Mel
+10. Gas Mask Max / Fumey Frank
+11. Patchwork Pat / Quilted Quinn
+12. Plague Bear / Sickly Sonny
+
+Total: **60 puzzles**.
+
+## Difficulty progression
+
+1. Easy — 7×7 Teddy face grid
+2. Gross — 9×9 Teddy face grid
+3. Toxic — 11×11 Teddy face grid
+4. Vile — 13×13 Teddy face grid
+5. Legendary — 15×15 Teddy face grid
+
+Higher levels contain more tiles and stronger dependency chains, so more arrows must be removed in the correct order.
+
+## Experience rules
+
+- no countdown timer;
+- no flashing visual clutter;
+- smooth directional slide animations;
 - three toxic-drop lives;
-- reset, retry, and hints;
-- progress percentage and route checklist;
-- full-color Teddy reveal;
-- local completion and collection saving;
-- level selector and URL-based level loading;
-- reusable JSON/SVG level architecture.
+- deterministic, guaranteed-solvable boards;
+- local progress saving;
+- responsive mouse, touch, and stylus input;
+- offline play through a service worker cache.
 
-## Project structure
+## Project files
 
 ```text
-assets/teddies/<character_slug>/
-  character.json
-  face_map.json
-  face_map.svg
-  completed_reveal.svg
-
-data/levels.json
-scripts/validate-levels.mjs
-docs/MASTER_PROJECT_DEFINITION.md
+index.html
+styles.css
+arrow-extras.css
+app.js
+characters.js
+manifest.webmanifest
+sw.js
 ```
-
-The tracing engine contains no level-specific geometry. New Teddy levels are registered in `data/levels.json` and loaded through the same engine.
 
 ## Local development
 
@@ -51,20 +73,10 @@ npm install
 npm run dev
 ```
 
-## Validation and production build
+## Production build
 
 ```bash
-npm run check
 npm run build
 ```
 
-The generated production site is written to `dist/`. GitHub Actions runs the same validation and build steps on pushes to `main` and on pull requests.
-
-## Current milestone status
-
-- Three playable Teddy face maps: complete
-- Reusable tracing engine: complete
-- Local data validation: configured
-- Vite production build: configured
-- Current level sequence: Toxic Toby → Moldy Molly → Dumpster Danny
-- Next milestone: mobile input hardening, a full collection screen, and Sludge Sam
+The source files can also be served directly through GitHub Pages from `main` and `/ (root)`.
