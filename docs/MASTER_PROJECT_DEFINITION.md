@@ -1,25 +1,64 @@
-# Toxic Teddies: Face Trails — Master Project Definition
+# Toxic Teddies: Arrow Escape — Master Project Definition
 
 ## Locked product statement
 
-**Toxic Teddies: Face Trails is a collectible tracing puzzle game in which every level map is built from the face of an original Toxic Teddy.** Players follow directional paths through the Teddy’s ears, eyes, scars, stitches, mouth, slime, mold, masks, cracks, and mutations. They receive three toxic-drop lives, lose a drop for tracing errors, and reveal the complete full-color character when the face-map is solved. Every finished level unlocks that Teddy in the player’s collection.
+**Toxic Teddies: Arrow Escape is a calm sequential arrow-clearing puzzle game. Every board is made from directional arrow tiles arranged to form the recognizable face of one original Toxic Teddy.**
 
-## Non-negotiable rule
+The player does not trace a path. The player studies the direction of every arrow, identifies which arrow has a completely open lane to the perimeter, and removes the arrows in a safe order until the Teddy face is cleared.
 
-> One Toxic Teddy equals one face-shaped tracing map.
+## Non-negotiable rules
 
-The puzzle must be recognizable as the character before completion. Never place an unrelated maze over a Teddy image.
+> The game is a sequential arrow-order puzzle, not a tracing game.
 
-## Core loop
+> The complete arrow layout must visibly resemble the active Toxic Teddy’s face.
 
-1. Select a Teddy.
-2. Start at the highlighted point.
-3. Trace each ordered facial path in the arrow direction.
-4. Lose a toxic drop for leaving the path, starting incorrectly, moving backward, jumping between segments, or lifting early.
-5. Complete every segment.
-6. Reveal and collect the full-color Teddy.
+The arrow mosaic must communicate:
 
-## First playable set
+- teddy head silhouette;
+- two ears;
+- button or damaged eye;
+- infected eye;
+- nose;
+- mouth;
+- central stitches or scars;
+- character-specific toxic mutation colors and shapes.
+
+## Core gameplay mechanics
+
+### Sequential clearing
+
+A directional tile is removable only when no active tile blocks the straight lane from its arrow tip to the board perimeter.
+
+### Unlocking lanes
+
+When a tile slides away, its former position becomes empty. That opening can release one or more arrows that were previously trapped behind it.
+
+### Strategic planning
+
+The player must inspect the board and choose a safe order. Tapping a blocked arrow removes one toxic-drop life.
+
+### Built-in assistance
+
+Long-pressing any arrow highlights its planned trajectory. If the lane is blocked, the first blocking arrow is identified. The hint button highlights one currently removable arrow.
+
+### Completion
+
+The level is complete when every arrow tile has slid off the board.
+
+## Experience rules
+
+The game must feel quiet, clear, and tactile:
+
+- no countdown timers;
+- no rapid flashing effects;
+- no unnecessary interface clutter;
+- smooth directional slide animations;
+- responsive touch, mouse, and stylus input;
+- three toxic-drop lives;
+- offline operation after first load;
+- automatic local progress saving.
+
+## Founding 12
 
 1. Toxic Toby / Radioactive Ricky
 2. Moldy Molly / Fungus Faye
@@ -34,65 +73,90 @@ The puzzle must be recognizable as the character before completion. Never place 
 11. Patchwork Pat / Quilted Quinn
 12. Plague Bear / Sickly Sonny
 
-The wider Series 1 target remains 41 artworks with A/B names, creating 82 collectible identities.
+## Level structure
 
-## Prototype scope
+Each Founding Teddy receives five increasingly difficult face puzzles.
 
-The first prototype uses Moldy Molly and must provide:
+| Level | Difficulty | Grid |
+|---|---|---|
+| 1 | Easy | 7×7 |
+| 2 | Gross | 9×9 |
+| 3 | Toxic | 11×11 |
+| 4 | Vile | 13×13 |
+| 5 | Legendary | 15×15 |
 
-- responsive web gameplay;
-- mouse, touch, and stylus input;
-- SVG-to-screen coordinate conversion;
-- configurable path tolerance;
-- direction validation;
-- ordered segment completion;
-- jump prevention;
-- three toxic-drop lives;
-- reset and retry;
-- local completion storage;
-- full-color reveal;
-- JSON-driven level data;
-- a reusable engine that can load a second Teddy without being rewritten.
+Total launch structure: **12 Teddies × 5 levels = 60 puzzles**.
 
-## Asset contract
+Higher difficulty means:
 
-```text
-assets/teddies/<character_slug>/
-  character.json
-  face_map.svg
-  face_map.json
-  completed_reveal.svg
-  thumbnail.svg                 # later
-  optional_sound.mp3            # later
-```
+- more arrow tiles;
+- denser facial detail;
+- longer dependency chains;
+- fewer immediately open lanes;
+- more careful ordering required.
 
-No level-specific geometry belongs inside the tracing engine. The engine reads SVG paths and JSON configuration.
+## Puzzle-generation contract
+
+Every generated board must be guaranteed solvable.
+
+The generator works by reverse construction:
+
+1. Start with the full Teddy-face mask.
+2. Select a tile that currently has an open lane to the perimeter.
+3. Assign that tile its outward direction.
+4. Remove it from the construction state.
+5. Prefer later tiles whose lanes depend on previously removed positions.
+6. Repeat until every tile has a direction and a valid removal sequence.
+7. Restore all tiles for play.
+
+The resulting level may allow more than one safe move, but it must always contain at least one valid move until completion.
+
+## Visual construction
+
+The arrow board itself is the character artwork.
+
+Tile colors and regions establish:
+
+- fur;
+- dark button eye;
+- infected bright eye;
+- nose;
+- mouth;
+- stitched forehead;
+- character-specific mutation pattern.
+
+Examples:
+
+- Toxic Toby: radioactive forehead and cheek arrows;
+- Moldy Molly: fungus clusters;
+- Dumpster Danny: trash-lid upper face;
+- Gas Mask Max: respirator-shaped central region;
+- Plague Bear: dark beak-shaped facial region.
 
 ## Technical direction
 
-- Vite
-- standards-based HTML/CSS/JavaScript
-- SVG maps
-- Pointer Events
-- localStorage for prototype progress
-- GitHub source control
-- deployable to GitHub Pages or Cloudflare Pages
+- standards-based HTML, CSS, and JavaScript;
+- CSS Grid directional-tile board;
+- deterministic procedural puzzle generation;
+- Pointer Events for touch, mouse, and stylus;
+- localStorage for level progress;
+- Service Worker caching for offline play;
+- static deployment through GitHub Pages;
+- no backend required for the first release.
 
-A backend, authentication, purchases, advertisements, cloud sync, and physical-card systems are explicitly outside the first prototype.
+## Acceptance criteria
 
-## Prototype acceptance criteria
+The game is acceptable only when:
 
-The prototype is acceptable only when:
-
-1. The unsolved map visibly forms Moldy Molly’s face.
-2. Tracing works on desktop and mobile.
-3. Leaving the path removes a life.
-4. Wrong-way movement removes a life.
-5. A player cannot jump between disconnected paths.
-6. Three toxic drops display and update correctly.
-7. Reset works without refreshing.
-8. Completion is detected reliably.
-9. The full-color Teddy reveal appears.
-10. Completion persists after reopening the browser.
-11. The map comes from SVG and JSON assets.
-12. A second level can use the same engine unchanged.
+1. Clicking a clear arrow slides it smoothly off-screen.
+2. Clicking a blocked arrow costs exactly one life.
+3. Removing arrows can unlock previously blocked arrows.
+4. Long-press previews the selected arrow’s trajectory.
+5. A blocker is visibly identified during trajectory preview.
+6. Every generated level is solvable.
+7. Each board reads as a Toxic Teddy face before any move.
+8. All 12 Teddies have five levels.
+9. Level completion unlocks the next difficulty for that Teddy.
+10. Progress survives browser restarts.
+11. The game works on mobile and desktop.
+12. The game works offline after its first successful load.
