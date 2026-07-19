@@ -1,0 +1,4 @@
+.path-piece.exiting[style*="--exit-x: 130%"] { transform: translateX(120vw); }
+.path-piece.exiting[style*="--exit-x: -130%"] { transform: translateX(-120vw); }
+.path-piece.exiting[style*="--exit-y: 130%"] { transform: translateY(120vh); }
+.path-piece.exiting[style*="--exit-y: -130%"] { transform: translateY(-120vh); }
