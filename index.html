@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#18150f" />
+    <meta
+      name="description"
+      content="Toxic Teddies: Face Trails — trace the scars, slime, stitches, and mutations that form each Teddy's face."
+    />
+    <title>Toxic Teddies: Face Trails</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Nunito:wght@500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-lockup" aria-label="Toxic Teddies Face Trails">
+          <div class="hazard-mark" aria-hidden="true">☣</div>
+          <div>
+            <p class="eyebrow">SERIES 1 · FOUNDING TEDDIES</p>
+            <h1>TOXIC <span>TEDDIES</span></h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button" id="soundButton" type="button" aria-label="Toggle sound">🔊</button>
+          <button class="collection-button" id="collectionButton" type="button">
+            <span>Collection</span>
+            <strong id="collectionCount">0 / 12</strong>
+          </button>
+        </div>
+      </header>
+
+      <main class="game-layout">
+        <section class="mission-panel" aria-labelledby="missionTitle">
+          <div class="mission-copy">
+            <p class="level-kicker" id="levelKicker">LEVEL 01 · EASY</p>
+            <h2 id="missionTitle">Moldy Molly</h2>
+            <p id="alternateName">also known as Fungus Faye</p>
+          </div>
+
+          <div class="status-row">
+            <div class="lives" id="lives" aria-label="Three toxic drops remaining"></div>
+            <div class="progress-copy">
+              <span id="segmentProgress">0 / 8 trails</span>
+              <strong id="percentProgress">0%</strong>
+            </div>
+          </div>
+
+          <div class="instruction-card" id="instructionCard">
+            <span class="instruction-icon">☝</span>
+            <div>
+              <strong id="instructionTitle">Start at the glowing spore</strong>
+              <p id="instructionText">Follow each arrow without leaving Molly’s face.</p>
+            </div>
+          </div>
+
+          <div class="puzzle-frame" id="puzzleFrame">
+            <div class="loading-state" id="loadingState">
+              <span class="loader"></span>
+              <p>Growing the mold…</p>
+            </div>
+            <div class="map-host" id="mapHost" aria-label="Moldy Molly face tracing map"></div>
+            <div class="mistake-flash" id="mistakeFlash" aria-hidden="true"></div>
+          </div>
+
+          <div class="game-controls">
+            <button class="secondary-button" id="resetButton" type="button">↻ Reset</button>
+            <button class="secondary-button" id="hintButton" type="button">✦ Hint</button>
+            <button class="primary-button" id="startButton" type="button">Start tracing</button>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="brief-card">
+            <div class="brief-icon">🧸</div>
+            <p class="eyebrow">FACE MAP RULE</p>
+            <h3>The puzzle is the Teddy.</h3>
+            <p>
+              Every trail follows Molly’s ears, eyes, mold, nose, mouth, stitches, or toxic drips. This is not a maze placed over a picture.
+            </p>
+          </section>
+
+          <section class="trail-list-card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">CURRENT ROUTE</p>
+                <h3>Molly’s mutations</h3>
+              </div>
+              <span class="difficulty-badge">EASY</span>
+            </div>
+            <ol id="trailList" class="trail-list"></ol>
+          </section>
+
+          <section class="reward-card">
+            <div class="reward-glow"></div>
+            <p class="eyebrow">COMPLETION REWARD</p>
+            <h3>Reveal Moldy Molly</h3>
+            <p>Finish the face trails to unlock her full-color collection portrait.</p>
+            <div class="locked-portrait" id="lockedPortrait" aria-label="Locked Moldy Molly portrait">?</div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="completionModal" hidden>
+      <section class="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+        <button class="modal-close" id="closeCompletion" type="button" aria-label="Close">×</button>
+        <p class="eyebrow">TEDDY UNLOCKED</p>
+        <h2 id="completionTitle">Moldy Molly</h2>
+        <p class="completion-tagline">EXPIRED BUT STILL SMILING</p>
+        <div class="reveal-host" id="revealHost"></div>
+        <p class="lore-copy">
+          Abandoned in a lunchbox after one very long summer, Molly grew a family of mushrooms and decided she preferred them to children.
+        </p>
+        <div class="modal-actions">
+          <button class="secondary-button" id="replayButton" type="button">Replay map</button>
+          <button class="primary-button" id="collectButton" type="button">Add to collection</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="gameOverModal" hidden>
+      <section class="completion-modal compact" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+        <div class="failure-icon">☣</div>
+        <p class="eyebrow">CONTAMINATION LOST</p>
+        <h2 id="gameOverTitle">Molly escaped your finger.</h2>
+        <p>All three toxic drops are gone. Reset the face and try again.</p>
+        <button class="primary-button" id="tryAgainButton" type="button">Try again</button>
+      </section>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
