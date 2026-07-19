@@ -1,0 +1,16 @@
+{
+  "viewBox": "0 0 800 900",
+  "sampleCount": 420,
+  "startRadius": 42,
+  "backtrackAllowance": 8,
+  "segments": [
+    { "id": "left-ear", "label": "Left moldy ear", "direction": "forward", "order": 1, "tolerance": 29, "continuous": true },
+    { "id": "right-ear", "label": "Right torn ear", "direction": "forward", "order": 2, "tolerance": 29, "continuous": true },
+    { "id": "left-eye", "label": "Fungus eye socket", "direction": "forward", "order": 3, "tolerance": 25, "continuous": true },
+    { "id": "right-eye", "label": "Button-eye scar", "direction": "forward", "order": 4, "tolerance": 25, "continuous": true },
+    { "id": "nose", "label": "Rotten nose", "direction": "forward", "order": 5, "tolerance": 24, "continuous": true },
+    { "id": "mouth", "label": "Crooked smile", "direction": "forward", "order": 6, "tolerance": 25, "continuous": true },
+    { "id": "stitches", "label": "Cheek stitches", "direction": "forward", "order": 7, "tolerance": 24, "continuous": true },
+    { "id": "toxic-drip", "label": "Toxic chin drip", "direction": "forward", "order": 8, "tolerance": 25, "continuous": true }
+  ]
+}
