@@ -1,7 +1,6 @@
 import { TEDDIES, LEVELS_PER_TEDDY, TOTAL_LEVELS } from './characters.js';
 
-const STORAGE_KEY = 'toxic-teddies-arrow-escape:path-pieces-v1';
-const BACKDROP_POSITIONS = ['4% 50%', '27% 50%', '50% 50%', '73% 50%', '96% 50%'];
+const STORAGE_KEY = 'toxic-teddies-arrow-escape:toxic-face-v2';
 const DIRS = {
   up: { dr: -1, dc: 0, dx: 0, dy: -1 },
   right: { dr: 0, dc: 1, dx: 1, dy: 0 },
@@ -9,11 +8,11 @@ const DIRS = {
   left: { dr: 0, dc: -1, dx: -1, dy: 0 }
 };
 const LEVELS = [
-  { name: 'EASY', cols: 13, rows: 21, min: 3, max: 6 },
-  { name: 'GROSS', cols: 15, rows: 23, min: 3, max: 7 },
-  { name: 'TOXIC', cols: 17, rows: 25, min: 3, max: 8 },
-  { name: 'VILE', cols: 19, rows: 27, min: 3, max: 9 },
-  { name: 'LEGENDARY', cols: 21, rows: 29, min: 3, max: 10 }
+  { name: 'EASY', cols: 15, rows: 15, min: 3, max: 6 },
+  { name: 'GROSS', cols: 17, rows: 17, min: 3, max: 7 },
+  { name: 'TOXIC', cols: 19, rows: 19, min: 3, max: 8 },
+  { name: 'VILE', cols: 21, rows: 21, min: 3, max: 9 },
+  { name: 'LEGENDARY', cols: 23, rows: 23, min: 3, max: 10 }
 ];
 
 const els = Object.fromEntries([
@@ -55,7 +54,7 @@ function boot() {
   const teddyId = params.get('teddy');
   const level = Number(params.get('level'));
   const index = TEDDIES.findIndex(t => t.id === teddyId);
-  if (index >= 0) openGame(index, Number.isInteger(level) && level >= 1 && level <= 5 ? level : 1);
+  if (index >= 0) openGame(index, Number.isInteger(level) && level >= 1 && level <= LEVELS_PER_TEDDY ? level : 1);
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
@@ -72,11 +71,14 @@ function bindEvents() {
 function renderHome() {
   els.teddyGrid.innerHTML = '';
   TEDDIES.forEach((teddy, index) => {
-    const done = Array.from({ length: 5 }, (_, i) => completed(teddy.id, i + 1)).filter(Boolean).length;
+    const done = Array.from({ length: LEVELS_PER_TEDDY }, (_, i) => completed(teddy.id, i + 1)).filter(Boolean).length;
     const card = document.createElement('button');
     card.className = 'teddy-card';
     card.type = 'button';
-    card.innerHTML = `<div class="teddy-card-art" style="--card-accent:${teddy.accent};--card-fur:${teddy.palette[0]}"><span>☣</span></div><div><h3>${teddy.primary}</h3><p>${teddy.alternate}</p><strong>${done}/5</strong></div>`;
+    card.style.setProperty('--card-accent', teddy.accent);
+    card.innerHTML = `
+      <div class="teddy-card-art"><span class="mini-button-eye"></span><span class="mini-eye"></span><span class="mini-grin">▥</span></div>
+      <div><h3>${teddy.primary}</h3><p>${teddy.alternate}</p><strong>${done}/5</strong></div>`;
     card.addEventListener('click', () => openGame(index, latestUnlocked(teddy)));
     els.teddyGrid.append(card);
   });
@@ -84,7 +86,7 @@ function renderHome() {
 
 function latestUnlocked(teddy) {
   let target = 1;
-  for (let level = 1; level <= 5; level += 1) if (unlocked(teddy.id, level)) target = level;
+  for (let level = 1; level <= LEVELS_PER_TEDDY; level += 1) if (unlocked(teddy.id, level)) target = level;
   return target;
 }
 
@@ -93,6 +95,7 @@ function showHome() {
   clearPressTimer();
   els.gameView.classList.add('hidden');
   els.homeView.classList.remove('hidden');
+  document.body.classList.remove('game-active');
   history.replaceState({}, '', location.pathname);
   renderHome();
 }
@@ -102,6 +105,7 @@ function openGame(teddyIndex, level) {
   state.level = level;
   els.homeView.classList.add('hidden');
   els.gameView.classList.remove('hidden');
+  document.body.classList.add('game-active');
   const url = new URL(location.href);
   url.searchParams.set('teddy', currentTeddy().id);
   url.searchParams.set('level', String(level));
@@ -117,7 +121,8 @@ function buildLevel() {
   state.puzzle = generateSolvablePuzzle(teddy, state.level, cfg);
   els.levelTitle.textContent = `Level ${state.level}`;
   els.characterName.textContent = teddy.primary;
-  els.boardBackdrop.style.setProperty('--backdrop-position', BACKDROP_POSITIONS[state.level - 1]);
+  document.documentElement.style.setProperty('--active-accent', teddy.accent);
+  els.boardBackdrop.style.backgroundImage = "url('./assets/backdrops/toxic-toby-expression-sheet.svg')";
   els.board.style.setProperty('--cols', cfg.cols);
   els.board.style.setProperty('--rows', cfg.rows);
   els.board.setAttribute('viewBox', `0 0 ${cfg.cols * 50} ${cfg.rows * 50}`);
@@ -125,7 +130,7 @@ function buildLevel() {
   renderLives();
   renderLevelButtons();
   updateProgress();
-  setStatus(`${cfg.name} · choose a piece with an open lane`);
+  setStatus(`${cfg.name} · clear the open arrow paths`);
 }
 
 function resetLevel() {
@@ -138,7 +143,7 @@ function resetLevel() {
 function renderLevelButtons() {
   els.levelButtons.innerHTML = '';
   const teddy = currentTeddy();
-  for (let level = 1; level <= 5; level += 1) {
+  for (let level = 1; level <= LEVELS_PER_TEDDY; level += 1) {
     const button = document.createElement('button');
     button.textContent = level;
     button.className = 'level-chip';
@@ -162,20 +167,24 @@ function renderLives() {
 function renderPieces() {
   els.pieceLayer.innerHTML = '';
   const cfg = currentLevel();
+  const teddy = currentTeddy();
   const ns = 'http://www.w3.org/2000/svg';
   const defs = document.createElementNS(ns, 'defs');
-  defs.innerHTML = `<marker id="pieceArrow" viewBox="0 0 16 16" refX="13" refY="8" markerWidth="9" markerHeight="9" orient="auto" markerUnits="strokeWidth"><path d="M1 1L14 8L1 15" fill="none" stroke="#76583a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></marker>`;
+  defs.innerHTML = `
+    <filter id="toxicGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="pieceArrowToxic" viewBox="0 0 16 16" refX="13" refY="8" markerWidth="8" markerHeight="8" orient="auto" markerUnits="strokeWidth"><path d="M1 1L14 8L1 15" fill="none" stroke="#b7ec2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="pieceArrowStitch" viewBox="0 0 16 16" refX="13" refY="8" markerWidth="8" markerHeight="8" orient="auto" markerUnits="strokeWidth"><path d="M1 1L14 8L1 15" fill="none" stroke="#9b5427" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="pieceArrowRust" viewBox="0 0 16 16" refX="13" refY="8" markerWidth="8" markerHeight="8" orient="auto" markerUnits="strokeWidth"><path d="M1 1L14 8L1 15" fill="none" stroke="#d17a36" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></marker>`;
   els.pieceLayer.append(defs);
+  els.pieceLayer.append(renderFaceFeatures(cfg, teddy, ns));
 
   state.puzzle.pieces.forEach(piece => {
     const group = document.createElementNS(ns, 'g');
-    group.classList.add('path-piece');
+    group.classList.add('path-piece', `piece-${piece.variant}`);
     group.dataset.id = piece.id;
     const points = piece.cells.map(({ row, col }) => `${col * 50 + 25},${row * 50 + 25}`).join(' ');
     const visible = document.createElementNS(ns, 'polyline');
     visible.setAttribute('points', points);
     visible.setAttribute('class', 'piece-line');
-    visible.setAttribute('marker-end', 'url(#pieceArrow)');
+    visible.setAttribute('marker-end', `url(#pieceArrow${piece.variant === 'stitch' ? 'Stitch' : piece.variant === 'rust' ? 'Rust' : 'Toxic'})`);
     const hit = document.createElementNS(ns, 'polyline');
     hit.setAttribute('points', points);
     hit.setAttribute('class', 'piece-hit');
@@ -192,8 +201,48 @@ function renderPieces() {
     piece.element = group;
     els.pieceLayer.append(group);
   });
-
   els.previewLayer.setAttribute('viewBox', `0 0 ${cfg.cols * 50} ${cfg.rows * 50}`);
+}
+
+function renderFaceFeatures(cfg, teddy, ns) {
+  const width = cfg.cols * 50;
+  const height = cfg.rows * 50;
+  const cx = width / 2;
+  const eyeY = height * .43;
+  const eyeOffset = width * .21;
+  const eyeR = width * .105;
+  const group = document.createElementNS(ns, 'g');
+  group.setAttribute('class', 'face-features');
+  group.setAttribute('pointer-events', 'none');
+  const accent = teddy.accent;
+  group.innerHTML = `
+    <g class="center-stitches">
+      <path d="M${cx} ${height*.08}V${height*.48}" />
+      ${Array.from({length:8},(_,i)=>{const y=height*(.12+i*.045);return `<path d="M${cx-width*.035} ${y}H${cx+width*.035}"/>`;}).join('')}
+    </g>
+    <g class="button-eye">
+      <circle cx="${cx-eyeOffset}" cy="${eyeY}" r="${eyeR}" />
+      <path d="M${cx-eyeOffset-eyeR*.38} ${eyeY-eyeR*.38}L${cx-eyeOffset+eyeR*.38} ${eyeY+eyeR*.38}M${cx-eyeOffset+eyeR*.38} ${eyeY-eyeR*.38}L${cx-eyeOffset-eyeR*.38} ${eyeY+eyeR*.38}" />
+    </g>
+    <g class="infected-eye">
+      <circle class="eye-white" cx="${cx+eyeOffset}" cy="${eyeY}" r="${eyeR}" />
+      <circle class="iris" cx="${cx+eyeOffset}" cy="${eyeY}" r="${eyeR*.48}" fill="${accent}" />
+      <circle class="pupil" cx="${cx+eyeOffset}" cy="${eyeY}" r="${eyeR*.18}" />
+      <path class="eye-drip" d="M${cx+eyeOffset-eyeR*.52} ${eyeY+eyeR*.72}Q${cx+eyeOffset-eyeR*.42} ${eyeY+eyeR*1.22} ${cx+eyeOffset-eyeR*.28} ${eyeY+eyeR*.72}M${cx+eyeOffset+eyeR*.2} ${eyeY+eyeR*.78}Q${cx+eyeOffset+eyeR*.34} ${eyeY+eyeR*1.35} ${cx+eyeOffset+eyeR*.48} ${eyeY+eyeR*.76}" />
+    </g>
+    <g class="nose-feature">
+      <ellipse cx="${cx}" cy="${height*.60}" rx="${width*.095}" ry="${height*.055}" />
+      <path d="M${cx-width*.035} ${height*.595}Q${cx} ${height*.62} ${cx+width*.035} ${height*.595}" />
+    </g>
+    <g class="mouth-feature">
+      <path class="mouth-bg" d="M${cx-width*.32} ${height*.70}Q${cx} ${height*.86} ${cx+width*.32} ${height*.70}Q${cx} ${height*.79} ${cx-width*.32} ${height*.70}Z" />
+      ${Array.from({length:9},(_,i)=>{const x=cx-width*.27+i*width*.0675;const y=height*(i%2? .735:.72);return `<rect x="${x}" y="${y}" width="${width*.052}" height="${height*.07}" rx="${width*.008}"/>`;}).join('')}
+    </g>
+    <g class="cheek-patch">
+      <path d="M${width*.09} ${height*.63}L${width*.22} ${height*.58}L${width*.25} ${height*.72}L${width*.12} ${height*.77}Z" />
+      ${Array.from({length:5},(_,i)=>`<path d="M${width*(.105+i*.026)} ${height*.62}L${width*(.125+i*.026)} ${height*.75}"/>`).join('')}
+    </g>`;
+  return group;
 }
 
 function beginLongPress(event, piece) {
@@ -220,7 +269,7 @@ function previewPiece(piece) {
   piece.element.classList.add('inspecting');
   if (blockers[0]) blockers[0].element.classList.add('blocking');
   drawPreviewRay(piece, blockers.length > 0);
-  setStatus(blockers.length ? 'Blocked — clear the first piece in this lane' : 'Open lane — this piece can leave now');
+  setStatus(blockers.length ? 'Blocked — clear the first path in this lane' : 'Open lane — this path can leave now');
   state.previewTimer = setTimeout(clearPreview, 1500);
 }
 
@@ -280,7 +329,7 @@ function loseLife(piece, blocker) {
   blocker.element.classList.add('blocking');
   void piece.element.getBoundingClientRect();
   piece.element.classList.add('blocked-bump');
-  setStatus('Blocked piece — one toxic drop lost');
+  setStatus('Blocked path — one toxic drop lost');
   navigator.vibrate?.([35, 25, 45]);
   setTimeout(() => blocker.element?.classList.remove('blocking'), 650);
   if (state.lives === 0) setTimeout(() => els.gameOverModal.classList.remove('hidden'), 350);
@@ -316,7 +365,7 @@ function showHint() {
   const piece = open[Math.floor(rng() * open.length)];
   piece.element.classList.add('hinting');
   drawPreviewRay(piece, false);
-  setStatus('This piece has an open lane');
+  setStatus('This path has an open lane');
   state.previewTimer = setTimeout(clearPreview, 1800);
 }
 
@@ -337,7 +386,7 @@ function completeLevel() {
   persist();
   renderLevelButtons();
   els.completionTitle.textContent = `${teddy.primary} · Level ${state.level}`;
-  els.completionCopy.textContent = state.level === 5 ? `${teddy.primary}'s five-level set is cleared.` : `Level ${state.level + 1} is unlocked.`;
+  els.completionCopy.textContent = state.level === 5 ? `${teddy.primary}'s five-level face set is cleared.` : `Level ${state.level + 1} is unlocked.`;
   els.nextButton.textContent = state.level === 5 ? 'Choose another Teddy' : `Play level ${state.level + 1}`;
   setTimeout(() => els.completionModal.classList.remove('hidden'), 320);
 }
@@ -352,13 +401,13 @@ function hideModals() {
 }
 
 function generateSolvablePuzzle(teddy, level, cfg) {
-  for (let attempt = 0; attempt < 80; attempt += 1) {
-    const rng = mulberry32(hashString(`${teddy.id}:${level}:paths:${attempt}`));
-    const pieces = buildPieces(cfg, rng);
+  for (let attempt = 0; attempt < 140; attempt += 1) {
+    const rng = mulberry32(hashString(`${teddy.id}:${level}:toxic-face:${attempt}`));
+    const pieces = buildPieces(cfg, rng, teddy);
     const solved = assignDirections(pieces, cfg, rng);
-    if (solved && pieces.length >= 16) return makePuzzle(pieces);
+    if (solved && pieces.length >= 20) return makePuzzle(pieces);
   }
-  const fallback = buildFallbackPieces(cfg);
+  const fallback = buildFallbackPieces(cfg, teddy);
   assignDirections(fallback, cfg, mulberry32(99));
   return makePuzzle(fallback);
 }
@@ -375,48 +424,48 @@ function makePuzzle(pieces) {
   return { pieces, occupancy, byId, active: new Map(pieces.map(piece => [piece.id, piece])), cleared: 0 };
 }
 
-function buildPieces(cfg, rng) {
+function buildPieces(cfg, rng, teddy) {
   const mask = buildTeddyMask(cfg);
   const used = new Set();
   const pieces = [];
   let id = 0;
-  const add = cells => {
+  const add = (cells, variant = 'toxic') => {
     const clean = cells.filter(cell => mask.has(cellKey(cell.row, cell.col)) && !used.has(cellKey(cell.row, cell.col)));
     if (clean.length < 2 || clean.length !== cells.length) return false;
     clean.forEach(cell => used.add(cellKey(cell.row, cell.col)));
-    pieces.push({ id: `p${id++}`, cells: clean });
+    pieces.push({ id: `p${id++}`, cells: clean, variant });
     return true;
   };
 
   const cx = Math.floor(cfg.cols / 2);
-  const eyeY = Math.floor(cfg.rows * .31);
-  const eyeOffset = Math.max(2, Math.floor(cfg.cols * .21));
-  const spiral = (centerX, centerY, radius) => {
-    const cells = [];
-    for (let x = centerX - radius; x <= centerX + radius; x += 1) cells.push({ row: centerY - radius, col: x });
-    for (let y = centerY - radius + 1; y <= centerY + radius; y += 1) cells.push({ row: y, col: centerX + radius });
-    for (let x = centerX + radius - 1; x >= centerX - radius + 1; x -= 1) cells.push({ row: centerY + radius, col: x });
-    for (let y = centerY + radius - 1; y >= centerY; y -= 1) cells.push({ row: y, col: centerX - radius + 1 });
-    return cells;
-  };
-  add(spiral(cx - eyeOffset, eyeY, Math.max(1, Math.floor(cfg.cols / 9))));
-  add(spiral(cx + eyeOffset, eyeY, Math.max(1, Math.floor(cfg.cols / 9))));
+  const earY = Math.floor(cfg.rows * .18);
+  const earOffset = Math.floor(cfg.cols * .34);
+  const eyeY = Math.floor(cfg.rows * .43);
+  const eyeOffset = Math.floor(cfg.cols * .21);
 
-  const mouthY = Math.floor(cfg.rows * .52);
-  const mouthCells = [];
-  for (let x = cx - 3; x <= cx + 3; x += 1) mouthCells.push({ row: mouthY, col: x });
-  mouthCells.push({ row: mouthY + 1, col: cx + 3 }, { row: mouthY + 2, col: cx + 3 });
-  for (let x = cx + 2; x >= cx - 2; x -= 1) mouthCells.push({ row: mouthY + 2, col: x });
-  add(mouthCells);
+  add(rectRing(cx - earOffset, earY, Math.max(2, Math.floor(cfg.cols * .12))), 'toxic');
+  add(rectRing(cx + earOffset, earY, Math.max(2, Math.floor(cfg.cols * .12))), 'stitch');
+  add(rectRing(cx - eyeOffset, eyeY, Math.max(2, Math.floor(cfg.cols * .10))), 'toxic');
+  add(rectRing(cx + eyeOffset, eyeY, Math.max(2, Math.floor(cfg.cols * .10))), 'toxic');
+
+  const seam = [];
+  for (let row = Math.floor(cfg.rows * .08); row <= Math.floor(cfg.rows * .50); row += 1) seam.push({ row, col: cx });
+  splitRun(seam, 3, 5, rng).forEach(chunk => add(chunk, 'stitch'));
+
+  const brows = [
+    lineCells(Math.floor(cfg.rows*.31), Math.floor(cfg.cols*.22), Math.floor(cfg.cols*.43), true),
+    lineCells(Math.floor(cfg.rows*.31), Math.floor(cfg.cols*.57), Math.floor(cfg.cols*.78), true)
+  ];
+  brows.forEach(cells => splitRun(cells, 3, 6, rng).forEach(chunk => add(chunk, 'toxic')));
 
   for (let row = 0; row < cfg.rows; row += 1) {
-    if (row % 4 >= 2) continue;
+    if (row % 3 === 2) continue;
     let col = 0;
     while (col < cfg.cols) {
       while (col < cfg.cols && (!mask.has(cellKey(row, col)) || used.has(cellKey(row, col)))) col += 1;
       const run = [];
       while (col < cfg.cols && mask.has(cellKey(row, col)) && !used.has(cellKey(row, col))) { run.push({ row, col }); col += 1; }
-      splitRun(run, cfg.min, cfg.max, rng).forEach(add);
+      splitRun(run, cfg.min, cfg.max, rng).forEach(chunk => add(chunk, variantFor(chunk, cfg, teddy)));
     }
   }
 
@@ -426,10 +475,37 @@ function buildPieces(cfg, rng) {
       while (row < cfg.rows && (!mask.has(cellKey(row, col)) || used.has(cellKey(row, col)))) row += 1;
       const run = [];
       while (row < cfg.rows && mask.has(cellKey(row, col)) && !used.has(cellKey(row, col))) { run.push({ row, col }); row += 1; }
-      splitRun(run, cfg.min, cfg.max, rng).forEach(add);
+      splitRun(run, cfg.min, cfg.max, rng).forEach(chunk => add(chunk, variantFor(chunk, cfg, teddy)));
     }
   }
   return pieces;
+}
+
+function lineCells(row, start, end, horizontal) {
+  const cells = [];
+  if (horizontal) for (let col = start; col <= end; col += 1) cells.push({ row, col });
+  else for (let r = start; r <= end; r += 1) cells.push({ row: r, col: row });
+  return cells;
+}
+
+function rectRing(centerX, centerY, radius) {
+  const cells = [];
+  for (let x = centerX - radius; x <= centerX + radius; x += 1) cells.push({ row: centerY - radius, col: x });
+  for (let y = centerY - radius + 1; y <= centerY + radius; y += 1) cells.push({ row: y, col: centerX + radius });
+  for (let x = centerX + radius - 1; x >= centerX - radius; x -= 1) cells.push({ row: centerY + radius, col: x });
+  for (let y = centerY + radius - 1; y > centerY - radius; y -= 1) cells.push({ row: y, col: centerX - radius });
+  return cells;
+}
+
+function variantFor(cells, cfg, teddy) {
+  const avgCol = cells.reduce((sum, c) => sum + c.col, 0) / cells.length;
+  const avgRow = cells.reduce((sum, c) => sum + c.row, 0) / cells.length;
+  const center = Math.abs(avgCol - cfg.cols / 2) < 1.2;
+  const earBand = avgRow < cfg.rows * .30 && (avgCol < cfg.cols * .28 || avgCol > cfg.cols * .72);
+  const featureBand = teddy.feature === 'rust' || teddy.feature === 'trash' || teddy.feature === 'patchwork';
+  if (center || earBand) return 'stitch';
+  if (featureBand && (Math.floor(avgRow + avgCol) % 5 === 0)) return 'rust';
+  return 'toxic';
 }
 
 function splitRun(run, min, max, rng) {
@@ -452,15 +528,18 @@ function buildTeddyMask(cfg) {
     for (let col = 0; col < cfg.cols; col += 1) {
       const x = (col / (cfg.cols - 1)) * 2 - 1;
       const y = (row / (cfg.rows - 1)) * 2 - 1;
-      const head = ellipse(x, y, 0, -0.35, .72, .50);
-      const leftEar = ellipse(x, y, -.62, -.77, .28, .24);
-      const rightEar = ellipse(x, y, .62, -.77, .28, .24);
-      const torso = ellipse(x, y, 0, .42, .59, .55);
-      const leftArm = ellipse(x, y, -.67, .34, .18, .37);
-      const rightArm = ellipse(x, y, .67, .34, .18, .37);
-      const leftFoot = ellipse(x, y, -.34, .90, .31, .17);
-      const rightFoot = ellipse(x, y, .34, .90, .31, .17);
-      if (head || leftEar || rightEar || torso || leftArm || rightArm || leftFoot || rightFoot) mask.add(cellKey(row, col));
+      const head = ellipse(x, y, 0, .02, .79, .82);
+      const leftEar = ellipse(x, y, -.67, -.68, .31, .31);
+      const rightEar = ellipse(x, y, .67, -.68, .31, .31);
+      const silhouette = head || leftEar || rightEar;
+      if (!silhouette) continue;
+      const leftEyeHole = ellipse(x, y, -.23, -.13, .13, .13);
+      const rightEyeHole = ellipse(x, y, .23, -.13, .13, .13);
+      const noseHole = ellipse(x, y, 0, .20, .13, .09);
+      const mouthHole = ellipse(x, y, 0, .50, .40, .15);
+      const innerEarHole = ellipse(x, y, -.67, -.68, .13, .13) || ellipse(x, y, .67, -.68, .13, .13);
+      if (leftEyeHole || rightEyeHole || noseHole || mouthHole || innerEarHole) continue;
+      mask.add(cellKey(row, col));
     }
   }
   return mask;
@@ -472,7 +551,7 @@ function assignDirections(pieces, cfg, rng) {
   pieces.forEach(piece => piece.cells.forEach(cell => occupancy.set(cellKey(cell.row, cell.col), piece.id)));
   const active = new Set(pieces.map(piece => piece.id));
   const byId = new Map(pieces.map(piece => [piece.id, piece]));
-  let safety = pieces.length * 5;
+  let safety = pieces.length * 7;
   while (active.size && safety-- > 0) {
     const candidates = [];
     for (const id of active) {
@@ -483,7 +562,7 @@ function assignDirections(pieces, cfg, rng) {
     }
     if (!candidates.length) return false;
     const edgeBiased = candidates.sort((a, b) => edgeScore(b.piece, b.dir, cfg) - edgeScore(a.piece, a.dir, cfg));
-    const pool = edgeBiased.slice(0, Math.max(1, Math.ceil(edgeBiased.length * .45)));
+    const pool = edgeBiased.slice(0, Math.max(1, Math.ceil(edgeBiased.length * .48)));
     const choice = pool[Math.floor(rng() * pool.length)];
     if (choice.reverse) choice.piece.cells.reverse();
     choice.piece.dir = choice.dir;
@@ -531,18 +610,26 @@ function edgeScore(piece, dirName, cfg) {
   return lead.row;
 }
 
-function buildFallbackPieces(cfg) {
+function buildFallbackPieces(cfg, teddy) {
   const mask = buildTeddyMask(cfg);
   const pieces = [];
   let id = 0;
   for (let row = 0; row < cfg.rows; row += 1) {
-    const run = [];
+    let run = [];
     for (let col = 0; col < cfg.cols; col += 1) {
       if (mask.has(cellKey(row, col))) run.push({ row, col });
-      else if (run.length >= 2) { pieces.push({ id: `f${id++}`, cells: run.splice(0) }); }
-      else run.length = 0;
+      else {
+        if (run.length >= 2) {
+          const cells = run;
+          pieces.push({ id: `f${id++}`, cells, variant: variantFor(cells, cfg, teddy) });
+        }
+        run = [];
+      }
     }
-    if (run.length >= 2) pieces.push({ id: `f${id++}`, cells: run });
+    if (run.length >= 2) {
+      const cells = run;
+      pieces.push({ id: `f${id++}`, cells, variant: variantFor(cells, cfg, teddy) });
+    }
   }
   return pieces;
 }
