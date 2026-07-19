@@ -1,8 +1,10 @@
-const STORAGE_KEY = "toxic-teddies-face-trails:v1";
+const STORAGE_KEY = "toxic-teddies-face-trails:v2";
+const TOTAL_FOUNDING_TEDDIES = 12;
 
 const els = {
   mapHost: document.querySelector("#mapHost"),
   loadingState: document.querySelector("#loadingState"),
+  loadingText: document.querySelector("#loadingText"),
   lives: document.querySelector("#lives"),
   trailList: document.querySelector("#trailList"),
   segmentProgress: document.querySelector("#segmentProgress"),
@@ -22,12 +24,29 @@ const els = {
   replayButton: document.querySelector("#replayButton"),
   collectButton: document.querySelector("#collectButton"),
   tryAgainButton: document.querySelector("#tryAgainButton"),
+  collectionButton: document.querySelector("#collectionButton"),
   collectionCount: document.querySelector("#collectionCount"),
   lockedPortrait: document.querySelector("#lockedPortrait"),
-  soundButton: document.querySelector("#soundButton")
+  soundButton: document.querySelector("#soundButton"),
+  levelSelect: document.querySelector("#levelSelect"),
+  levelKicker: document.querySelector("#levelKicker"),
+  missionTitle: document.querySelector("#missionTitle"),
+  alternateName: document.querySelector("#alternateName"),
+  faceRuleText: document.querySelector("#faceRuleText"),
+  routeTitle: document.querySelector("#routeTitle"),
+  difficultyBadge: document.querySelector("#difficultyBadge"),
+  rewardTitle: document.querySelector("#rewardTitle"),
+  rewardText: document.querySelector("#rewardText"),
+  completionTitle: document.querySelector("#completionTitle"),
+  completionTagline: document.querySelector("#completionTagline"),
+  loreCopy: document.querySelector("#loreCopy"),
+  gameOverTitle: document.querySelector("#gameOverTitle")
 };
 
 const state = {
+  levels: [],
+  levelCharacters: new Map(),
+  currentLevel: null,
   character: null,
   config: null,
   svg: null,
@@ -46,9 +65,9 @@ const state = {
 
 function loadSave() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? { unlocked: [], completed: {} };
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? { unlocked: [], completed: {}, lastLevelId: null };
   } catch {
-    return { unlocked: [], completed: {} };
+    return { unlocked: [], completed: {}, lastLevelId: null };
   }
 }
 
@@ -57,144 +76,212 @@ function persistSave() {
   updateCollectionUI();
 }
 
-function updateCollectionUI() {
-  const unlockedCount = new Set(state.save.unlocked ?? []).size;
-  els.collectionCount.textContent = `${unlockedCount} / 12`;
-  if (state.character && state.save.unlocked?.includes(state.character.id)) {
-    els.lockedPortrait.classList.add("unlocked");
-    if (!els.lockedPortrait.querySelector("svg")) {
-      fetch(state.character.revealFile)
-        .then((response) => response.text())
-        .then((svg) => { els.lockedPortrait.innerHTML = svg; })
-        .catch(() => { els.lockedPortrait.textContent = "✓"; });
-    }
-  }
-}
-
 async function boot() {
+  bindStaticEvents();
   try {
-    const levels = await fetchJson("./data/levels.json");
-    const level = levels.levels.find((item) => item.status === "playable");
-    if (!level) throw new Error("No playable level exists.");
+    const catalog = await fetchJson("./data/levels.json");
+    state.levels = catalog.levels
+      .filter((level) => level.status === "playable")
+      .sort((a, b) => a.order - b.order);
+    if (!state.levels.length) throw new Error("No playable level exists.");
 
-    state.character = await fetchJson(level.characterPath);
-    state.config = await fetchJson(state.character.mapDataFile);
-    const mapText = await fetchText(state.character.mapFile);
-    const revealText = await fetchText(state.character.revealFile);
+    const characters = await Promise.all(
+      state.levels.map(async (level) => [level.id, await fetchJson(level.characterPath)])
+    );
+    state.levelCharacters = new Map(characters);
+    renderLevelSelector();
 
-    els.mapHost.innerHTML = mapText;
-    els.revealHost.innerHTML = revealText;
-    state.svg = els.mapHost.querySelector("svg");
-    if (!state.svg) throw new Error("The face map SVG could not be loaded.");
+    const requestedId = new URLSearchParams(window.location.search).get("level");
+    const initialId = state.levels.some((level) => level.id === requestedId)
+      ? requestedId
+      : state.levels.some((level) => level.id === state.save.lastLevelId)
+        ? state.save.lastLevelId
+        : state.levels[0].id;
 
-    prepareSegments();
-    renderLives();
-    renderTrailList();
-    updateProgressUI();
-    updateCollectionUI();
-    bindEvents();
-    activateSegment(0);
-
-    els.loadingState.hidden = true;
-    els.startButton.disabled = false;
+    await loadLevel(initialId);
   } catch (error) {
-    console.error(error);
-    els.loadingState.innerHTML = `<p>⚠ ${escapeHtml(error.message)}</p>`;
-    els.startButton.disabled = true;
+    showLoadError(error);
   }
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Could not load ${url}`);
-  return response.json();
-}
+function bindStaticEvents() {
+  els.mapHost.addEventListener("pointerdown", handlePointerDown);
+  els.mapHost.addEventListener("pointermove", handlePointerMove);
+  els.mapHost.addEventListener("pointerup", handlePointerUp);
+  els.mapHost.addEventListener("pointercancel", handlePointerCancel);
+  els.mapHost.addEventListener("lostpointercapture", handleLostPointerCapture);
 
-async function fetchText(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Could not load ${url}`);
-  return response.text();
-}
-
-function prepareSegments() {
-  state.segments = state.config.segments.map((config) => {
-    const path = state.svg.querySelector(`[data-segment-id="${CSS.escape(config.id)}"]`);
-    if (!path) throw new Error(`Missing SVG path for segment: ${config.id}`);
-
-    const totalLength = path.getTotalLength();
-    const sampleCount = state.config.sampleCount ?? 360;
-    const samples = Array.from({ length: sampleCount + 1 }, (_, index) => {
-      const distanceAlongPath = (index / sampleCount) * totalLength;
-      const point = path.getPointAtLength(distanceAlongPath);
-      return { x: point.x, y: point.y, distanceAlongPath };
-    });
-
-    const progressPath = path.cloneNode(true);
-    progressPath.removeAttribute("data-segment-id");
-    progressPath.classList.add("trace-progress");
-    progressPath.style.stroke = "#b6f23b";
-    progressPath.style.strokeWidth = "21";
-    progressPath.style.filter = "drop-shadow(0 0 8px rgba(155, 218, 39, .7))";
-    progressPath.style.pointerEvents = "none";
-    progressPath.style.strokeDasharray = `${totalLength}`;
-    progressPath.style.strokeDashoffset = `${totalLength}`;
-    path.parentNode.insertBefore(progressPath, path.nextSibling);
-
-    path.style.cursor = "crosshair";
-    return { ...config, path, progressPath, totalLength, samples, complete: false };
+  els.levelSelect.addEventListener("change", async (event) => {
+    await loadLevel(event.target.value);
   });
-}
-
-function bindEvents() {
-  state.svg.addEventListener("pointerdown", handlePointerDown);
-  state.svg.addEventListener("pointermove", handlePointerMove);
-  state.svg.addEventListener("pointerup", handlePointerUp);
-  state.svg.addEventListener("pointercancel", handlePointerCancel);
-  state.svg.addEventListener("lostpointercapture", handleLostPointerCapture);
-
   els.resetButton.addEventListener("click", () => resetGame({ restoreLives: true }));
   els.hintButton.addEventListener("click", showHint);
-  els.startButton.addEventListener("click", () => {
-    state.started = true;
-    els.startButton.textContent = "Tracing active";
-    els.startButton.disabled = true;
-    announceCurrentSegment();
-    pulseStartMarker();
-  });
+  els.startButton.addEventListener("click", startTracing);
   els.replayButton.addEventListener("click", () => {
     els.completionModal.hidden = true;
     resetGame({ restoreLives: true });
-    state.started = true;
-    els.startButton.textContent = "Tracing active";
-    els.startButton.disabled = true;
+    startTracing();
   });
   els.collectButton.addEventListener("click", collectCharacter);
   els.closeCompletion.addEventListener("click", () => { els.completionModal.hidden = true; });
   els.tryAgainButton.addEventListener("click", () => {
     els.gameOverModal.hidden = true;
     resetGame({ restoreLives: true });
-    state.started = true;
-    els.startButton.textContent = "Tracing active";
-    els.startButton.disabled = true;
+    startTracing();
   });
   els.soundButton.addEventListener("click", () => {
     state.sound = !state.sound;
     els.soundButton.textContent = state.sound ? "🔊" : "🔇";
     els.soundButton.setAttribute("aria-label", state.sound ? "Mute sound" : "Enable sound");
   });
+  els.collectionButton.addEventListener("click", () => {
+    document.querySelector(".reward-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+
+async function loadLevel(levelId) {
+  const level = state.levels.find((candidate) => candidate.id === levelId);
+  if (!level) throw new Error(`Unknown level: ${levelId}`);
+
+  stopPointerCapture();
+  state.started = false;
+  state.completed = false;
+  state.currentLevel = level;
+  state.character = state.levelCharacters.get(level.id) ?? await fetchJson(level.characterPath);
+  state.config = null;
+  state.svg = null;
+  state.segments = [];
+  state.activeIndex = 0;
+  state.activeProgress = 0;
+  state.lives = state.character.lives ?? 3;
+
+  els.completionModal.hidden = true;
+  els.gameOverModal.hidden = true;
+  els.loadingState.hidden = false;
+  els.loadingText.textContent = `Growing ${state.character.primaryName}…`;
+  els.mapHost.innerHTML = "";
+  els.revealHost.innerHTML = "";
+  els.startButton.disabled = true;
+  els.startButton.textContent = "Loading face map";
+  els.levelSelect.value = level.id;
+
+  try {
+    const [config, mapText, revealText] = await Promise.all([
+      fetchJson(state.character.mapDataFile),
+      fetchText(state.character.mapFile),
+      fetchText(state.character.revealFile)
+    ]);
+
+    state.config = config;
+    els.mapHost.innerHTML = mapText;
+    els.revealHost.innerHTML = revealText;
+    state.svg = els.mapHost.querySelector("svg");
+    if (!state.svg) throw new Error("The face map SVG could not be loaded.");
+
+    prepareSegments();
+    renderCharacterUI();
+    resetGame({ restoreLives: true });
+    updateCollectionUI();
+
+    state.save.lastLevelId = level.id;
+    persistSave();
+    updateLevelUrl(level.id);
+
+    els.loadingState.hidden = true;
+    els.startButton.disabled = false;
+    els.startButton.textContent = "Start tracing";
+  } catch (error) {
+    showLoadError(error);
+  }
+}
+
+function renderLevelSelector() {
+  els.levelSelect.innerHTML = "";
+  for (const level of state.levels) {
+    const character = state.levelCharacters.get(level.id);
+    const option = document.createElement("option");
+    option.value = level.id;
+    option.textContent = `${String(level.order).padStart(2, "0")} · ${character?.primaryName ?? level.id}`;
+    els.levelSelect.append(option);
+  }
+}
+
+function renderCharacterUI() {
+  const character = state.character;
+  const levelNumber = String(state.currentLevel.order).padStart(2, "0");
+  const firstName = character.primaryName.split(" ")[0];
+  const difficulty = String(character.difficulty ?? "easy").toUpperCase();
+
+  document.title = `${character.primaryName} · Toxic Teddies Face Trails`;
+  els.levelKicker.textContent = `LEVEL ${levelNumber} · ${difficulty}`;
+  els.missionTitle.textContent = character.primaryName;
+  els.alternateName.textContent = `also known as ${character.alternateName}`;
+  els.mapHost.setAttribute("aria-label", `${character.primaryName} face tracing map`);
+  els.faceRuleText.textContent = `Every trail follows ${character.primaryName}’s ears, eyes, damage, mouth, and mutation. This is not a maze placed over a picture.`;
+  els.routeTitle.textContent = `${firstName}’s mutations`;
+  els.difficultyBadge.textContent = difficulty;
+  els.rewardTitle.textContent = `Reveal ${character.primaryName}`;
+  els.rewardText.textContent = "Finish every face trail to unlock the full-color collection portrait.";
+  els.lockedPortrait.setAttribute("aria-label", `Locked ${character.primaryName} portrait`);
+  els.completionTitle.textContent = character.primaryName;
+  els.completionTagline.textContent = character.tagline;
+  els.loreCopy.textContent = character.lore;
+  els.gameOverTitle.textContent = `${firstName} escaped your finger.`;
+  els.collectButton.textContent = state.save.unlocked?.includes(character.id) ? "Collected ✓" : "Add to collection";
+  els.collectButton.disabled = state.save.unlocked?.includes(character.id);
+}
+
+function prepareSegments() {
+  state.segments = state.config.segments
+    .slice()
+    .sort((a, b) => a.order - b.order)
+    .map((config) => {
+      const path = state.svg.querySelector(`[data-segment-id="${selectorEscape(config.id)}"]`);
+      if (!path) throw new Error(`Missing SVG path for segment: ${config.id}`);
+
+      const totalLength = path.getTotalLength();
+      const sampleCount = state.config.sampleCount ?? 360;
+      const samples = Array.from({ length: sampleCount + 1 }, (_, index) => {
+        const distanceAlongPath = (index / sampleCount) * totalLength;
+        const point = path.getPointAtLength(distanceAlongPath);
+        return { x: point.x, y: point.y, distanceAlongPath };
+      });
+
+      const progressPath = path.cloneNode(true);
+      progressPath.removeAttribute("data-segment-id");
+      progressPath.classList.add("trace-progress");
+      progressPath.style.stroke = "#b6f23b";
+      progressPath.style.strokeWidth = "21";
+      progressPath.style.filter = "drop-shadow(0 0 8px rgba(155, 218, 39, .7))";
+      progressPath.style.pointerEvents = "none";
+      progressPath.style.strokeDasharray = `${totalLength}`;
+      progressPath.style.strokeDashoffset = `${totalLength}`;
+      path.parentNode.insertBefore(progressPath, path.nextSibling);
+      path.style.cursor = "crosshair";
+
+      return { ...config, path, progressPath, totalLength, samples, complete: false };
+    });
+}
+
+function startTracing() {
+  if (!state.svg || state.completed) return;
+  state.started = true;
+  els.startButton.textContent = "Tracing active";
+  els.startButton.disabled = true;
+  announceCurrentSegment();
+  pulseStartMarker();
 }
 
 function handlePointerDown(event) {
-  if (!state.started || state.completed || state.tracing) return;
+  if (!state.started || state.completed || state.tracing || !state.svg) return;
   const segment = currentSegment();
   if (!segment) return;
 
   const point = clientToSvg(event.clientX, event.clientY);
   const startSampleIndex = segment.direction === "reverse" ? segment.samples.length - 1 : 0;
   const startPoint = segment.samples[startSampleIndex];
-  const startDistance = distance(point, startPoint);
 
-  if (startDistance > (state.config.startRadius ?? 40)) {
+  if (distance(point, startPoint) > (state.config.startRadius ?? 40)) {
     failAttempt("Wrong starting point", `Begin at the glowing marker for ${segment.label}.`);
     return;
   }
@@ -203,7 +290,7 @@ function handlePointerDown(event) {
   state.pointerId = event.pointerId;
   state.lastSampleIndex = startSampleIndex;
   state.activeProgress = 0;
-  state.svg.setPointerCapture(event.pointerId);
+  els.mapHost.setPointerCapture(event.pointerId);
   updateInstruction("Keep tracing", `Stay inside ${segment.label.toLowerCase()} and follow the arrow.`, false);
   event.preventDefault();
 }
@@ -215,7 +302,7 @@ function handlePointerMove(event) {
   const nearest = findNearestSample(segment, point);
 
   if (nearest.distance > segment.tolerance) {
-    failAttempt("You left Molly’s face", `The trail is only ${segment.tolerance} units wide.`, true);
+    failAttempt("You left the Teddy’s face", `The trail is only ${segment.tolerance} units wide.`, true);
     return;
   }
 
@@ -230,8 +317,9 @@ function handlePointerMove(event) {
     return;
   }
 
-  if (isForward) state.lastSampleIndex = Math.max(state.lastSampleIndex, nearest.index);
-  else state.lastSampleIndex = Math.min(state.lastSampleIndex, nearest.index);
+  state.lastSampleIndex = isForward
+    ? Math.max(state.lastSampleIndex, nearest.index)
+    : Math.min(state.lastSampleIndex, nearest.index);
 
   const denominator = segment.samples.length - 1;
   state.activeProgress = isForward
@@ -246,12 +334,8 @@ function handlePointerMove(event) {
 function handlePointerUp(event) {
   if (!state.tracing || event.pointerId !== state.pointerId) return;
   releasePointer(event.pointerId);
-
-  if (state.activeProgress >= 0.965) {
-    completeCurrentSegment();
-  } else {
-    failAttempt("Trail interrupted", "Finish the entire mutation before lifting your finger.");
-  }
+  if (state.activeProgress >= 0.965) completeCurrentSegment();
+  else failAttempt("Trail interrupted", "Finish the entire mutation before lifting your finger.");
 }
 
 function handlePointerCancel(event) {
@@ -268,8 +352,12 @@ function handleLostPointerCapture() {
   }
 }
 
+function stopPointerCapture() {
+  if (state.pointerId !== null) releasePointer(state.pointerId);
+}
+
 function releasePointer(pointerId) {
-  if (state.svg.hasPointerCapture?.(pointerId)) state.svg.releasePointerCapture(pointerId);
+  if (els.mapHost.hasPointerCapture?.(pointerId)) els.mapHost.releasePointerCapture(pointerId);
   state.tracing = false;
   state.pointerId = null;
 }
@@ -303,7 +391,7 @@ function completeLevel() {
   };
   persistSave();
   playVictory();
-  updateInstruction("Face map complete", "Moldy Molly is ready to crawl out of the lunchbox.", false);
+  updateInstruction("Face map complete", `${state.character.primaryName} is ready for the collection.`, false);
   setTimeout(() => { els.completionModal.hidden = false; }, 420);
 }
 
@@ -338,7 +426,7 @@ function failAttempt(title, message, pointerAlreadyActive = false) {
 }
 
 function resetGame({ restoreLives }) {
-  if (state.pointerId !== null) releasePointer(state.pointerId);
+  stopPointerCapture();
   state.segments.forEach((segment) => {
     segment.complete = false;
     paintProgress(segment, 0);
@@ -346,16 +434,15 @@ function resetGame({ restoreLives }) {
   state.activeIndex = 0;
   state.activeProgress = 0;
   state.completed = false;
+  state.started = false;
   if (restoreLives) state.lives = state.character?.lives ?? 3;
   renderLives();
   renderTrailList();
   updateProgressUI();
   activateSegment(0);
-  updateInstruction("Start at the glowing spore", "Follow each arrow without leaving Molly’s face.", false);
-  if (!state.started) {
-    els.startButton.disabled = false;
-    els.startButton.textContent = "Start tracing";
-  }
+  updateInstruction("Start at the glowing marker", `Follow each arrow without leaving ${state.character?.primaryName ?? "the Teddy"}’s face.`, false);
+  els.startButton.disabled = false;
+  els.startButton.textContent = "Start tracing";
 }
 
 function activateSegment(index) {
@@ -364,7 +451,7 @@ function activateSegment(index) {
     segment.path.style.strokeWidth = segmentIndex === index ? "21" : "18";
   });
 
-  state.svg.querySelectorAll("[data-start-for]").forEach((marker) => {
+  state.svg?.querySelectorAll("[data-start-for]").forEach((marker) => {
     const active = marker.getAttribute("data-start-for") === state.segments[index]?.id;
     marker.setAttribute("r", active ? "15" : "10");
     marker.setAttribute("fill", active ? "#d8ff5b" : "#b6c77e");
@@ -385,7 +472,6 @@ function paintProgress(segment, progress) {
 function findNearestSample(segment, point) {
   let bestIndex = 0;
   let bestDistance = Number.POSITIVE_INFINITY;
-
   for (let index = 0; index < segment.samples.length; index += 1) {
     const sampleDistance = distance(point, segment.samples[index]);
     if (sampleDistance < bestDistance) {
@@ -393,12 +479,11 @@ function findNearestSample(segment, point) {
       bestIndex = index;
     }
   }
-
   return { index: bestIndex, distance: bestDistance };
 }
 
 function clientToSvg(clientX, clientY) {
-  const matrix = state.svg.getScreenCTM();
+  const matrix = state.svg?.getScreenCTM();
   if (!matrix) return { x: 0, y: 0 };
   const point = new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse());
   return { x: point.x, y: point.y };
@@ -440,6 +525,21 @@ function updateProgressUI() {
   els.percentProgress.textContent = `${percent}%`;
 }
 
+function updateCollectionUI() {
+  const unlockedCount = new Set(state.save.unlocked ?? []).size;
+  els.collectionCount.textContent = `${unlockedCount} / ${TOTAL_FOUNDING_TEDDIES}`;
+  els.lockedPortrait.classList.remove("unlocked");
+  els.lockedPortrait.textContent = "?";
+
+  if (state.character && state.save.unlocked?.includes(state.character.id)) {
+    els.lockedPortrait.classList.add("unlocked");
+    fetch(state.character.revealFile)
+      .then((response) => response.text())
+      .then((svg) => { els.lockedPortrait.innerHTML = svg; })
+      .catch(() => { els.lockedPortrait.textContent = "✓"; });
+  }
+}
+
 function announceCurrentSegment() {
   const segment = currentSegment();
   if (!segment) return;
@@ -455,11 +555,15 @@ function updateInstruction(title, message, isError) {
 
 function pulseStartMarker() {
   const segment = currentSegment();
-  if (!segment) return;
-  const marker = state.svg.querySelector(`[data-start-for="${CSS.escape(segment.id)}"]`);
+  if (!segment || !state.svg) return;
+  const marker = state.svg.querySelector(`[data-start-for="${selectorEscape(segment.id)}"]`);
   if (!marker?.animate) return;
   marker.animate(
-    [{ transform: "scale(1)", transformOrigin: "center", opacity: 1 }, { transform: "scale(1.45)", transformOrigin: "center", opacity: 0.58 }, { transform: "scale(1)", transformOrigin: "center", opacity: 1 }],
+    [
+      { transform: "scale(1)", transformOrigin: "center", opacity: 1 },
+      { transform: "scale(1.45)", transformOrigin: "center", opacity: 0.58 },
+      { transform: "scale(1)", transformOrigin: "center", opacity: 1 }
+    ],
     { duration: 900, iterations: 2 }
   );
 }
@@ -506,7 +610,40 @@ function playTone(frequency, seconds) {
 }
 
 function playVictory() {
-  [330, 440, 660].forEach((frequency, index) => setTimeout(() => playTone(frequency, 0.18), index * 130));
+  [330, 440, 660].forEach((frequency, index) => {
+    setTimeout(() => playTone(frequency, 0.18), index * 130);
+  });
+}
+
+function updateLevelUrl(levelId) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("level", levelId);
+  window.history.replaceState({}, "", url);
+}
+
+function showLoadError(error) {
+  console.error(error);
+  els.loadingState.hidden = false;
+  els.loadingState.innerHTML = `<p>⚠ ${escapeHtml(error.message)}</p>`;
+  els.startButton.disabled = true;
+  els.startButton.textContent = "Level unavailable";
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Could not load ${url}`);
+  return response.json();
+}
+
+async function fetchText(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Could not load ${url}`);
+  return response.text();
+}
+
+function selectorEscape(value) {
+  if (window.CSS?.escape) return CSS.escape(value);
+  return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
 }
 
 function escapeHtml(value) {
