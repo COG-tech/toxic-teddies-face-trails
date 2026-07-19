@@ -1,1 +1,0 @@
-Unit-arrow tile rendering is deprecated. Use connected path pieces with arrowheads.
