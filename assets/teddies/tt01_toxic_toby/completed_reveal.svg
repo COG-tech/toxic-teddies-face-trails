@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" role="img" aria-labelledby="title desc">
+  <title id="title">Toxic Toby full-color reveal</title>
+  <desc id="desc">A radioactive brown teddy with glowing seams, cracked eyes, and a toxic grin.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#4d5729"/><stop offset="1" stop-color="#14150d"/></radialGradient>
+    <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c18b4f"/><stop offset="0.55" stop-color="#7d5436"/><stop offset="1" stop-color="#453025"/></linearGradient>
+    <radialGradient id="toxic" cx="50%" cy="50%" r="50%"><stop stop-color="#edff87"/><stop offset="0.5" stop-color="#b2eb33"/><stop offset="1" stop-color="#55751d"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="800" height="900" rx="34" fill="url(#bg)"/>
+  <circle cx="400" cy="450" r="335" fill="#b3ef35" opacity="0.08"/>
+  <path d="M247 208 C178 165 114 199 104 273 C97 326 127 357 172 368 C124 432 112 530 139 627 C166 725 258 790 394 797 C536 804 636 746 672 642 C706 543 693 440 640 368 C688 350 712 308 699 256 C681 185 613 164 551 206 C512 165 460 143 398 143 C337 143 285 165 247 208 Z" fill="url(#fur)" stroke="#241b15" stroke-width="11"/>
+  <path d="M250 235 C210 191 161 194 135 234 C111 272 126 320 171 338 C205 351 235 334 248 302" fill="#68452f" stroke="#241b15" stroke-width="10"/>
+  <path d="M550 235 C592 193 643 198 667 241 C688 280 670 323 629 339 C595 352 568 335 556 304" fill="#714a34" stroke="#241b15" stroke-width="10"/>
+  <path d="M612 219 L668 243 L632 286 L600 257 Z" fill="#25261a" stroke="#15150f" stroke-width="7"/>
+  <path d="M219 410 C253 372 312 375 346 410 C325 453 266 459 228 437 C214 429 211 418 219 410 Z" fill="#16180f" stroke="#211a14" stroke-width="10"/>
+  <circle cx="283" cy="420" r="26" fill="url(#toxic)" filter="url(#glow)"/>
+  <path d="M454 410 C486 372 545 375 581 412 C558 454 495 461 462 437 C448 427 447 418 454 410 Z" fill="#26231a" stroke="#211a14" stroke-width="10"/>
+  <circle cx="520" cy="420" r="24" fill="#d7c99a" stroke="#15150f" stroke-width="7"/>
+  <path d="M506 402 L534 438 M534 402 L506 438" stroke="#6a241f" stroke-width="7" stroke-linecap="round"/>
+  <path d="M400 476 L447 525 L400 574 L353 525 Z" fill="#2a241b" stroke="#18140f" stroke-width="9"/>
+  <circle cx="400" cy="525" r="13" fill="#b9ef3b" filter="url(#glow)"/>
+  <path d="M287 612 C333 654 465 660 520 607 C491 675 447 699 399 699 C361 699 329 681 307 654" fill="#211411" stroke="#160f0c" stroke-width="10"/>
+  <path d="M315 628 L340 659 L360 635 L383 669 L405 640 L430 669 L452 636 L477 660 L500 624" fill="#d7c89e" stroke="#2a2017" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M401 205 L378 251 L413 280 L382 323 L420 355 L395 397" fill="none" stroke="#c6f63d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M417 699 C422 735 452 747 444 779 C437 807 414 820 400 796 C389 777 401 758 388 739 C377 723 358 717 349 703" fill="#a9e92d" stroke="#405915" stroke-width="8" filter="url(#glow)"/>
+  <g fill="url(#toxic)" stroke="#445e18" stroke-width="5">
+    <circle cx="235" cy="314" r="17"/><circle cx="565" cy="334" r="14"/><circle cx="525" cy="622" r="19"/><circle cx="300" cy="583" r="11"/>
+  </g>
+  <text x="400" y="846" text-anchor="middle" fill="#d8ff5b" font-family="Arial Black, sans-serif" font-size="48" letter-spacing="2">TOXIC TOBY</text>
+  <text x="400" y="875" text-anchor="middle" fill="#b8aa83" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">GLOWING SINCE BEDTIME</text>
+</svg>
