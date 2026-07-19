@@ -1,13 +1,13 @@
 {
-  "name": "toxic-teddies-face-trails",
-  "version": "0.1.0",
+  "name": "toxic-teddies-arrow-escape",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "node --check app.js && node scripts/validate-levels.mjs"
+    "check": "node --check app.js && node --check characters.js && node --check sw.js"
   },
   "devDependencies": {
     "vite": "^7.0.0"
