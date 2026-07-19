@@ -1,13 +1,14 @@
 # Toxic Teddies: Face Trails
 
-A collectible tracing puzzle game where **every level map is built from the face of an original Toxic Teddy**. The player traces the ears, eyes, scars, stitches, mouth, slime, mold, cracks, and mutations—not a random maze placed over character artwork.
+A collectible tracing puzzle game where **every level map is built from the face of an original Toxic Teddy**. The player traces the ears, eyes, scars, stitches, mouth, slime, mold, cracks, trash, and mutations—not a random maze placed over character artwork.
 
 ## Playable prototype
 
-Two reusable, data-driven levels are now included:
+Three reusable, data-driven levels are now included:
 
-1. **Toxic Toby / Radioactive Ricky**
-2. **Moldy Molly / Fungus Faye**
+1. **Toxic Toby / Radioactive Ricky** — easy
+2. **Moldy Molly / Fungus Faye** — easy
+3. **Dumpster Danny / Trashcan Travis** — medium
 
 Each level contains its own character metadata, SVG face map, path rules, and full-color completion reveal.
 
@@ -61,8 +62,9 @@ The generated production site is written to `dist/`. GitHub Actions runs the sam
 
 ## Current milestone status
 
-- Two playable Teddy face maps: complete
+- Three playable Teddy face maps: complete
 - Reusable tracing engine: complete
-- Local data validation: passing
-- Vite production build: passing
-- Next milestone: real-device touch tuning, visual QA, and the third Founding Teddy
+- Local data validation: configured
+- Vite production build: configured
+- Current level sequence: Toxic Toby → Moldy Molly → Dumpster Danny
+- Next milestone: mobile input hardening, a full collection screen, and Sludge Sam
