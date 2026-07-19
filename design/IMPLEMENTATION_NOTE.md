@@ -1,0 +1,1 @@
+The current unit-arrow grid is being replaced by connected line-arrow pieces. This note exists only to preserve the implementation direction during the rewrite.
