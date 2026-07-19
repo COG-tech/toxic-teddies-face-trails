@@ -1,19 +1,219 @@
-/* Reference-driven visual override: small line arrows over Teddy artwork */
-.puzzle-frame {
-  min-height: 720px;
-  background: linear-gradient(180deg, #f8f2e5, #eee3cf);
+/* Mobile-first reference skin: calm portrait layout, small line arrows, faint Teddy artwork */
+
+:root {
+  --reference-brown: #74583b;
+  --reference-muted: #9a846b;
+  --reference-paper: #f4eddf;
+  --reference-paper-deep: #ece1cf;
+  --reference-blue: #65aaf0;
+  --reference-green: #7fa83f;
+  --reference-red: #c9685c;
 }
 
-.board-stage {
+/* Keep the collection home intact. Only replace the active gameplay presentation. */
+body.game-active {
+  background: linear-gradient(180deg, #f8f2e7 0%, #efe5d4 100%);
+}
+
+body.game-active .app-shell {
+  width: min(760px, 100%);
+  padding: 0 12px 28px;
+}
+
+body.game-active .topbar {
   position: relative;
-  width: min(92vw, 650px);
-  aspect-ratio: 1 / 1.48;
-  overflow: hidden;
-  border-radius: 26px;
-  background: #f1e9d9;
+  display: grid;
+  grid-template-columns: 54px 1fr 92px;
+  align-items: center;
+  min-height: 92px;
+  padding: 12px 2px 14px;
+  border-bottom: 1px solid rgba(116, 88, 59, .12);
 }
 
-.board-backdrop {
+body.game-active .topbar::after {
+  content: attr(data-level-title);
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  color: #b56f3c;
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+  font-weight: 900;
+  letter-spacing: -.03em;
+  white-space: nowrap;
+}
+
+body.game-active .topbar::before {
+  content: attr(data-teddy-name);
+  position: absolute;
+  left: 50%;
+  top: 59px;
+  transform: translateX(-50%);
+  color: var(--reference-muted);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+body.game-active .brand-lockup,
+body.game-active .collection-counter {
+  display: none;
+}
+
+body.game-active #backButton {
+  display: grid !important;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #7c6d59;
+  font-size: 2rem;
+}
+
+body.game-active .top-actions {
+  grid-column: 3;
+  justify-self: end;
+}
+
+body.game-active #soundButton {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  background: transparent;
+  color: #7c6d59;
+  font-size: 1.25rem;
+}
+
+body.game-active .view {
+  padding-top: 0;
+}
+
+body.game-active .game-header {
+  display: block;
+  margin: 0;
+  padding: 18px 18px 12px;
+}
+
+body.game-active .game-header > div:first-child {
+  display: none;
+}
+
+body.game-active .status-cluster {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.game-active .lives {
+  gap: 9px;
+}
+
+body.game-active .toxic-drop {
+  width: 36px;
+  height: 45px;
+  font-size: 0;
+  filter: none;
+  position: relative;
+}
+
+body.game-active .toxic-drop::before {
+  content: "";
+  position: absolute;
+  inset: 1px 2px 2px;
+  background: var(--reference-blue);
+  clip-path: polygon(50% 0, 83% 40%, 100% 67%, 96% 82%, 82% 95%, 50% 100%, 18% 95%, 4% 82%, 0 67%, 17% 40%);
+  border-radius: 50%;
+}
+
+body.game-active .toxic-drop.lost::before {
+  opacity: .18;
+  filter: grayscale(1);
+}
+
+body.game-active .progress-block {
+  color: var(--reference-muted);
+  font-size: .72rem;
+}
+
+body.game-active .progress-block strong {
+  color: var(--reference-brown);
+  font-size: .95rem;
+}
+
+body.game-active .game-layout {
+  display: block;
+  width: 100%;
+}
+
+body.game-active .side-panel {
+  display: none;
+}
+
+body.game-active .puzzle-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.game-active .puzzle-card::before {
+  content: attr(data-difficulty-label);
+  display: block;
+  margin: 0 18px 8px;
+  color: var(--reference-muted);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+body.game-active .instruction-card {
+  display: none;
+}
+
+body.game-active .puzzle-frame {
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.game-active .board-stage {
+  position: relative;
+  width: min(100%, 620px);
+  aspect-ratio: .625;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 0;
+  border-radius: 24px;
+  background:
+    linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.04)),
+    var(--reference-paper);
+  box-shadow: 0 18px 54px rgba(89, 66, 37, .10);
+}
+
+body.game-active .board-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background:
+    radial-gradient(circle at 50% 48%, transparent 48%, rgba(126, 91, 53, .045) 100%),
+    linear-gradient(90deg, rgba(255,255,255,.12), transparent 18%, transparent 82%, rgba(255,255,255,.10));
+}
+
+body.game-active .board-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -22,95 +222,140 @@
   background-repeat: no-repeat;
   background-size: 500% 100%;
   background-position: var(--backdrop-position, 0% 50%);
-  opacity: .13;
-  filter: blur(1.2px) saturate(.82) contrast(.96);
-  transform: scale(1.025);
+  opacity: .055;
+  filter: blur(.35px) saturate(.82) contrast(.96);
+  transform: scale(1.015);
 }
 
-.face-shell {
-  z-index: 1;
-  opacity: .10;
-  border-width: 5px;
-  background: transparent !important;
+body.game-active .face-shell {
+  display: none;
 }
 
-.arrow-grid {
+body.game-active .arrow-grid {
   position: absolute;
-  inset: 5% 4%;
+  inset: 5.5% 4.5%;
   z-index: 2;
   width: auto;
   height: auto;
   padding: 0;
-  gap: clamp(1px, .26vw, 3px);
+  gap: 0;
+  touch-action: manipulation;
 }
 
-.arrow-tile,
-.arrow-tile.feature-eye,
-.arrow-tile.feature-button,
-.arrow-tile.feature-nose,
-.arrow-tile.feature-mouth,
-.arrow-tile.feature-accent,
-.arrow-tile.feature-scar {
+body.game-active .arrow-tile,
+body.game-active .arrow-tile.feature-eye,
+body.game-active .arrow-tile.feature-button,
+body.game-active .arrow-tile.feature-nose,
+body.game-active .arrow-tile.feature-mouth,
+body.game-active .arrow-tile.feature-accent,
+body.game-active .arrow-tile.feature-scar {
   border: 0;
   border-radius: 0;
   background: transparent !important;
   box-shadow: none;
-  color: #74583b;
+  color: var(--reference-brown);
   filter: none;
   overflow: visible;
 }
 
-.arrow-tile::before {
+body.game-active .arrow-tile::before {
   content: "";
-  width: 48%;
-  height: 18%;
-  min-height: 4px;
+  display: block;
+  width: 76%;
+  height: 34%;
+  margin: auto;
   background: currentColor;
-  border-radius: 999px;
-  clip-path: polygon(0 35%, 64% 35%, 64% 0, 100% 50%, 64% 100%, 64% 65%, 0 65%);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40'%3E%3Cpath d='M8 20H73' fill='none' stroke='black' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M61 7L76 20L61 33' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40'%3E%3Cpath d='M8 20H73' fill='none' stroke='black' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M61 7L76 20L61 33' fill='none' stroke='black' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  clip-path: none;
+  border-radius: 0;
   transform: rotate(var(--rotation));
   transform-origin: center;
   filter: none;
 }
 
-.arrow-tile.feature-accent { color: #6e5b3d; }
-.arrow-tile.feature-eye,
-.arrow-tile.feature-button,
-.arrow-tile.feature-nose,
-.arrow-tile.feature-mouth { color: #5f452f; }
+body.game-active .arrow-tile.feature-eye,
+body.game-active .arrow-tile.feature-button,
+body.game-active .arrow-tile.feature-nose,
+body.game-active .arrow-tile.feature-mouth,
+body.game-active .arrow-tile.feature-accent {
+  color: #684b32;
+}
 
-.arrow-tile.free-now {
+body.game-active .arrow-tile.free-now {
   box-shadow: none;
 }
 
-.arrow-tile.inspecting,
-.arrow-tile.hinting {
-  filter: drop-shadow(0 0 5px rgba(133, 177, 61, .72));
+body.game-active .arrow-tile.inspecting,
+body.game-active .arrow-tile.hinting {
+  filter: drop-shadow(0 0 4px rgba(127, 168, 63, .58));
 }
 
-.arrow-tile.inspecting::before,
-.arrow-tile.hinting::before,
-.arrow-tile.trajectory::before {
-  background: #7ea93b;
+body.game-active .arrow-tile.inspecting::before,
+body.game-active .arrow-tile.hinting::before,
+body.game-active .arrow-tile.trajectory::before {
+  background: var(--reference-green);
 }
 
-.arrow-tile.trajectory-blocker::before {
-  background: #c7685b;
+body.game-active .arrow-tile.trajectory-blocker::before {
+  background: var(--reference-red);
 }
 
-.arrow-tile.trajectory-blocker {
+body.game-active .arrow-tile.trajectory-blocker {
   box-shadow: none;
 }
 
-.trajectory-line {
-  opacity: .5;
-  background: #7ea93b !important;
+body.game-active .trajectory-line {
+  opacity: .34;
+  background: var(--reference-green) !important;
 }
 
-.trajectory-line.blocked {
-  background: #c7685b !important;
+body.game-active .trajectory-line.blocked {
+  background: var(--reference-red) !important;
 }
 
+body.game-active .mistake-flash {
+  border-radius: 24px;
+  background: rgba(201, 104, 92, .14);
+}
+
+body.game-active .game-controls {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 10px;
+  width: min(100%, 620px);
+  margin: 12px auto 0;
+}
+
+body.game-active .secondary-button,
+body.game-active .primary-button {
+  min-height: 46px;
+  border-radius: 14px;
+}
+
+body.game-active #resetButton {
+  width: 46px;
+  padding: 0;
+  overflow: hidden;
+  color: var(--reference-brown);
+  background: rgba(255,255,255,.46);
+  border: 1px solid rgba(116,88,59,.12);
+}
+
+body.game-active #hintButton {
+  color: #fffaf0;
+  background: var(--reference-brown);
+  box-shadow: none;
+}
+
+/* Each active level uses a different expression from the five-image backdrop sheet. */
+body.game-active:has(.level-button:nth-child(1).active) .board-backdrop { --backdrop-position: 4% 50%; }
+body.game-active:has(.level-button:nth-child(2).active) .board-backdrop { --backdrop-position: 27% 50%; }
+body.game-active:has(.level-button:nth-child(3).active) .board-backdrop { --backdrop-position: 50% 50%; }
+body.game-active:has(.level-button:nth-child(4).active) .board-backdrop { --backdrop-position: 73% 50%; }
+body.game-active:has(.level-button:nth-child(5).active) .board-backdrop { --backdrop-position: 96% 50%; }
+
+/* Keep the collection cards branded without overpowering their generated portraits. */
 .teddy-card-art {
   position: relative;
   background: #eee4d1;
@@ -125,19 +370,34 @@
   background-image: url('./assets/backdrops/toxic-toby-expression-sheet.svg');
   background-size: cover;
   background-position: center;
-  opacity: .11;
+  opacity: .045;
   filter: saturate(.85);
 }
 
 @media (max-width: 720px) {
-  .puzzle-frame { min-height: 690px; }
-  .board-stage { width: 96vw; aspect-ratio: 1 / 1.62; }
-  .arrow-grid { inset: 5% 3%; gap: 1px; }
-  .arrow-tile::before { width: 44%; height: 16%; }
+  body.game-active .app-shell { padding: 0 8px 22px; }
+  body.game-active .topbar { min-height: 86px; }
+  body.game-active .topbar::after { top: 17px; }
+  body.game-active .topbar::before { top: 55px; }
+  body.game-active .game-header { padding: 15px 14px 10px; }
+  body.game-active .board-stage {
+    width: 100%;
+    aspect-ratio: .61;
+    border-radius: 20px;
+  }
+  body.game-active .arrow-grid { inset: 5% 3.25%; }
+  body.game-active .arrow-tile::before { width: 78%; height: 35%; }
+  body.game-active .game-controls { width: 100%; }
 }
 
 @media (max-width: 430px) {
-  .puzzle-frame { min-height: 650px; }
-  .board-stage { aspect-ratio: 1 / 1.72; }
-  .arrow-tile::before { width: 42%; height: 15%; min-height: 3px; }
+  body.game-active .topbar { grid-template-columns: 44px 1fr 70px; }
+  body.game-active #backButton,
+  body.game-active #soundButton { width: 42px; height: 42px; }
+  body.game-active .toxic-drop { width: 31px; height: 40px; }
+  body.game-active .progress-block { font-size: .66rem; }
+  body.game-active .board-stage { aspect-ratio: .59; }
+  body.game-active .arrow-grid { inset: 5.5% 2.75%; }
+  body.game-active .arrow-tile::before { width: 80%; height: 36%; }
+  body.game-active .game-controls { grid-template-columns: 44px 1fr; }
 }
