@@ -17,9 +17,9 @@ export const LEVELS_PER_TEDDY = 5;
 export const TOTAL_LEVELS = TEDDIES.length * LEVELS_PER_TEDDY;
 
 export const DIFFICULTIES = [
-  { name:'EASY', tolerance:33, startRadius:48, routes:5, sampleCount:300, backtrack:11 },
-  { name:'GROSS', tolerance:29, startRadius:44, routes:7, sampleCount:360, backtrack:9 },
-  { name:'TOXIC', tolerance:25, startRadius:40, routes:9, sampleCount:420, backtrack:8 },
-  { name:'VILE', tolerance:22, startRadius:37, routes:11, sampleCount:480, backtrack:7 },
-  { name:'LEGENDARY', tolerance:19, startRadius:34, routes:13, sampleCount:560, backtrack:5 }
+  { name:'EASY', size:7, dependency:0.28, lives:3 },
+  { name:'GROSS', size:9, dependency:0.46, lives:3 },
+  { name:'TOXIC', size:11, dependency:0.64, lives:3 },
+  { name:'VILE', size:13, dependency:0.8, lives:3 },
+  { name:'LEGENDARY', size:15, dependency:0.94, lives:3 }
 ];
