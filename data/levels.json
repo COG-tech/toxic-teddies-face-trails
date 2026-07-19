@@ -2,8 +2,14 @@
   "version": 1,
   "levels": [
     {
-      "id": "tt02",
+      "id": "tt01",
       "order": 1,
+      "status": "playable",
+      "characterPath": "./assets/teddies/tt01_toxic_toby/character.json"
+    },
+    {
+      "id": "tt02",
+      "order": 2,
       "status": "playable",
       "characterPath": "./assets/teddies/tt02_moldy_molly/character.json"
     }
