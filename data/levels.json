@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "levels": [
+    {
+      "id": "tt02",
+      "order": 1,
+      "status": "playable",
+      "characterPath": "./assets/teddies/tt02_moldy_molly/character.json"
+    }
+  ]
+}
