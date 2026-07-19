@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" role="img" aria-labelledby="title desc">
+  <title id="title">Moldy Molly full-color reveal</title>
+  <desc id="desc">A damaged brown teddy covered in glowing green mold and mushrooms.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#594d2b"/><stop offset="1" stop-color="#19170f"/></radialGradient>
+    <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b78950"/><stop offset="0.55" stop-color="#7d5738"/><stop offset="1" stop-color="#4b3426"/></linearGradient>
+    <radialGradient id="mold" cx="50%" cy="50%" r="50%"><stop stop-color="#d9ff57"/><stop offset="0.48" stop-color="#8ebc27"/><stop offset="1" stop-color="#47601c"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="800" height="900" rx="34" fill="url(#bg)"/>
+  <circle cx="398" cy="455" r="330" fill="#a8d633" opacity="0.08"/>
+  <path d="M247 208 C178 165 114 199 104 273 C97 326 127 357 172 368 C124 432 112 530 139 627 C166 725 258 790 394 797 C536 804 636 746 672 642 C706 543 693 440 640 368 C688 350 712 308 699 256 C681 185 613 164 551 206 C512 165 460 143 398 143 C337 143 285 165 247 208 Z" fill="url(#fur)" stroke="#2b2118" stroke-width="11"/>
+  <path d="M250 235 C214 194 164 193 137 232 C110 270 126 322 174 339 C209 351 236 332 247 302 C258 274 250 248 227 234" fill="#6c4931" stroke="#2b2118" stroke-width="10"/>
+  <path d="M550 235 C590 194 642 197 667 239 C690 278 671 324 628 339 C594 351 567 333 556 304 C545 278 551 252 574 237" fill="#765039" stroke="#2b2118" stroke-width="10"/>
+  <path d="M617 222 L666 243 L635 284 L603 258 Z" fill="#3e382a" stroke="#1a1711" stroke-width="7"/>
+  <path d="M224 410 C252 374 310 371 345 407 C330 444 278 463 236 439 C220 430 215 419 224 410 Z" fill="#181710" stroke="#2a2118" stroke-width="10"/>
+  <circle cx="284" cy="419" r="26" fill="url(#mold)" filter="url(#glow)"/>
+  <circle cx="279" cy="413" r="7" fill="#11150a"/>
+  <path d="M456 414 C485 376 542 373 578 408 C559 449 505 462 467 438 C451 428 448 418 456 414 Z" fill="#2e291d" stroke="#2a2118" stroke-width="10"/>
+  <circle cx="520" cy="419" r="25" fill="#c8b98a" stroke="#1c1912" stroke-width="7"/>
+  <circle cx="512" cy="411" r="4" fill="#1c1912"/><circle cx="530" cy="410" r="4" fill="#1c1912"/><circle cx="513" cy="429" r="4" fill="#1c1912"/><circle cx="530" cy="429" r="4" fill="#1c1912"/>
+  <path d="M401 475 C366 477 344 499 347 525 C350 553 378 570 404 568 C433 566 458 548 458 520 C458 492 434 474 401 475 Z" fill="#33231e" stroke="#211712" stroke-width="9"/>
+  <ellipse cx="388" cy="505" rx="12" ry="8" fill="#76584c" opacity="0.7"/>
+  <path d="M274 603 C315 641 354 651 402 650 C453 650 495 636 535 601 C509 672 449 700 399 700 C346 700 298 671 274 603 Z" fill="#251714" stroke="#1b110e" stroke-width="10"/>
+  <path d="M303 624 L329 657 L347 630 L370 666 L394 636 L418 667 L443 632 L466 658 L495 618" fill="#d8c9a4" stroke="#2d2118" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M205 537 C245 518 280 520 313 544" fill="none" stroke="#d7c39a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M224 513 L236 549 M255 505 L264 541 M286 512 L292 548" stroke="#30261c" stroke-width="9" stroke-linecap="round"/>
+  <path d="M416 700 C418 739 445 748 440 781 C436 810 412 820 399 797 C388 779 401 758 389 740 C379 724 362 720 353 706" fill="#9fd72e" stroke="#405c17" stroke-width="8" filter="url(#glow)"/>
+  <g fill="url(#mold)" stroke="#3a4e16" stroke-width="5">
+    <circle cx="245" cy="285" r="25"/><circle cx="211" cy="323" r="14"/><circle cx="286" cy="256" r="16"/>
+    <circle cx="542" cy="302" r="20"/><circle cx="579" cy="337" r="12"/><circle cx="519" cy="262" r="11"/>
+    <circle cx="289" cy="625" r="18"/><circle cx="319" cy="657" r="11"/><circle cx="538" cy="592" r="17"/>
+  </g>
+  <g stroke="#3b4c18" stroke-width="7" stroke-linecap="round"><path d="M189 280 L174 233"/><path d="M553 286 L566 232"/><path d="M253 352 L237 312"/></g>
+  <g fill="#d8ff5b" stroke="#405418" stroke-width="5">
+    <path d="M145 224 C162 192 199 190 214 223 C192 236 165 238 145 224 Z"/><rect x="175" y="221" width="10" height="37" rx="5"/>
+    <path d="M536 216 C554 184 591 185 607 217 C584 232 557 232 536 216 Z"/><rect x="566" y="214" width="10" height="38" rx="5"/>
+    <path d="M215 301 C230 276 260 277 273 303 C254 314 234 314 215 301 Z"/><rect x="239" y="301" width="9" height="30" rx="5"/>
+  </g>
+  <text x="400" y="846" text-anchor="middle" fill="#d8ff5b" font-family="Arial Black, sans-serif" font-size="48" letter-spacing="2">MOLDY MOLLY</text>
+  <text x="400" y="875" text-anchor="middle" fill="#b8aa83" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">EXPIRED BUT STILL SMILING</text>
+</svg>
