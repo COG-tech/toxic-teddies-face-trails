@@ -1,0 +1,143 @@
+/* Reference-driven visual override: small line arrows over Teddy artwork */
+.puzzle-frame {
+  min-height: 720px;
+  background: linear-gradient(180deg, #f8f2e5, #eee3cf);
+}
+
+.board-stage {
+  position: relative;
+  width: min(92vw, 650px);
+  aspect-ratio: 1 / 1.48;
+  overflow: hidden;
+  border-radius: 26px;
+  background: #f1e9d9;
+}
+
+.board-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url('./assets/backdrops/toxic-toby-expression-sheet.svg');
+  background-repeat: no-repeat;
+  background-size: 500% 100%;
+  background-position: var(--backdrop-position, 0% 50%);
+  opacity: .13;
+  filter: blur(1.2px) saturate(.82) contrast(.96);
+  transform: scale(1.025);
+}
+
+.face-shell {
+  z-index: 1;
+  opacity: .10;
+  border-width: 5px;
+  background: transparent !important;
+}
+
+.arrow-grid {
+  position: absolute;
+  inset: 5% 4%;
+  z-index: 2;
+  width: auto;
+  height: auto;
+  padding: 0;
+  gap: clamp(1px, .26vw, 3px);
+}
+
+.arrow-tile,
+.arrow-tile.feature-eye,
+.arrow-tile.feature-button,
+.arrow-tile.feature-nose,
+.arrow-tile.feature-mouth,
+.arrow-tile.feature-accent,
+.arrow-tile.feature-scar {
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: #74583b;
+  filter: none;
+  overflow: visible;
+}
+
+.arrow-tile::before {
+  content: "";
+  width: 48%;
+  height: 18%;
+  min-height: 4px;
+  background: currentColor;
+  border-radius: 999px;
+  clip-path: polygon(0 35%, 64% 35%, 64% 0, 100% 50%, 64% 100%, 64% 65%, 0 65%);
+  transform: rotate(var(--rotation));
+  transform-origin: center;
+  filter: none;
+}
+
+.arrow-tile.feature-accent { color: #6e5b3d; }
+.arrow-tile.feature-eye,
+.arrow-tile.feature-button,
+.arrow-tile.feature-nose,
+.arrow-tile.feature-mouth { color: #5f452f; }
+
+.arrow-tile.free-now {
+  box-shadow: none;
+}
+
+.arrow-tile.inspecting,
+.arrow-tile.hinting {
+  filter: drop-shadow(0 0 5px rgba(133, 177, 61, .72));
+}
+
+.arrow-tile.inspecting::before,
+.arrow-tile.hinting::before,
+.arrow-tile.trajectory::before {
+  background: #7ea93b;
+}
+
+.arrow-tile.trajectory-blocker::before {
+  background: #c7685b;
+}
+
+.arrow-tile.trajectory-blocker {
+  box-shadow: none;
+}
+
+.trajectory-line {
+  opacity: .5;
+  background: #7ea93b !important;
+}
+
+.trajectory-line.blocked {
+  background: #c7685b !important;
+}
+
+.teddy-card-art {
+  position: relative;
+  background: #eee4d1;
+}
+
+.teddy-card-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: url('./assets/backdrops/toxic-toby-expression-sheet.svg');
+  background-size: cover;
+  background-position: center;
+  opacity: .11;
+  filter: saturate(.85);
+}
+
+@media (max-width: 720px) {
+  .puzzle-frame { min-height: 690px; }
+  .board-stage { width: 96vw; aspect-ratio: 1 / 1.62; }
+  .arrow-grid { inset: 5% 3%; gap: 1px; }
+  .arrow-tile::before { width: 44%; height: 16%; }
+}
+
+@media (max-width: 430px) {
+  .puzzle-frame { min-height: 650px; }
+  .board-stage { aspect-ratio: 1 / 1.72; }
+  .arrow-tile::before { width: 42%; height: 15%; min-height: 3px; }
+}
