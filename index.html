@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3ecdf" />
-  <meta name="description" content="Toxic Teddies Arrow Escape — clear the arrow paths in the right order." />
+  <meta name="description" content="Toxic Teddies Arrow Escape — clear the compiled Toxic Teddy paths in the right order." />
   <title>Toxic Teddies: Arrow Escape</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./styles.css" />
-  <link rel="stylesheet" href="./thin.css" />
+  <link rel="stylesheet" href="./compiled-patterns.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -45,11 +45,11 @@
         </div>
       </div>
 
-      <p id="statusText" class="status-text">Find a path with a clear lane</p>
+      <p id="statusText" class="status-text">Loading compiled pattern…</p>
 
       <main class="board-shell">
         <div id="boardBackdrop" class="board-backdrop" aria-hidden="true"></div>
-        <svg id="board" class="board" role="img" aria-label="Arrow puzzle shaped like a Toxic Teddy face">
+        <svg id="board" class="board" role="img" aria-label="Compiled arrow puzzle shaped like Toxic Toby">
           <g id="pieceLayer"></g>
         </svg>
         <svg id="previewLayer" class="preview-layer" aria-hidden="true"></svg>
@@ -82,6 +82,6 @@
   </div>
 
   <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
-  <script src="./app-loader.js"></script>
+  <script src="./compiled-app.js"></script>
 </body>
 </html>
