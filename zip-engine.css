@@ -1,0 +1,32 @@
+/* Arrow Escape rope engine + Toxic Toby art direction */
+.board-shell{
+  background:
+    radial-gradient(circle at 18% 12%,rgba(146,108,57,.12) 0 1px,transparent 2px),
+    radial-gradient(circle at 82% 19%,rgba(112,137,41,.10) 0 1.2px,transparent 2.4px),
+    radial-gradient(circle at 28% 82%,rgba(83,58,34,.08) 0 1px,transparent 2px),
+    radial-gradient(ellipse at 50% 47%,rgba(255,252,238,.86) 0%,rgba(235,219,185,.83) 63%,rgba(181,150,102,.24) 100%),
+    #ead9b8;
+  background-size:83px 91px,127px 119px,61px 73px,100% 100%,100% 100%;
+  border-color:rgba(92,64,35,.16);
+  box-shadow:0 20px 65px rgba(81,55,27,.12),inset 0 0 75px rgba(101,69,37,.11);
+}
+.board-shell::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.35;
+  background:
+    linear-gradient(113deg,transparent 0 47%,rgba(103,74,42,.025) 48%,transparent 49%),
+    repeating-radial-gradient(circle at 42% 36%,rgba(94,68,39,.025) 0 1px,transparent 1px 5px);
+  mix-blend-mode:multiply;
+}
+.board-backdrop{
+  filter:sepia(.62) saturate(.72) contrast(1.08);
+  mix-blend-mode:multiply;
+  background-position:var(--backdrop-position,50% 50%);
+  background-size:500% auto;
+  background-repeat:no-repeat;
+}
+.zip-piece-layer{isolation:isolate}.zip-path{cursor:pointer}.rope-body,.rope-caret{fill:none;stroke:#76573a;stroke-width:2.45;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.style-rust .rope-body,.style-rust .rope-caret,.style-stitch .rope-body,.style-stitch .rope-caret{stroke:#9b5d35}.style-slime .rope-body,.style-slime .rope-caret{stroke:#78952c}.style-tooth .rope-body,.style-tooth .rope-caret{stroke:#8b785b}.rope-caret{stroke-width:2.30}.rope-hit{fill:none;stroke:transparent;stroke-width:18;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke}.path-piece.rope-exiting{pointer-events:none;will-change:opacity}.path-piece.escape-armed .rope-caret{stroke:#8aa72e;filter:drop-shadow(0 0 2px rgba(121,151,40,.3))}.path-piece.inspecting .rope-body,.path-piece.inspecting .rope-caret,.path-piece.hinting .rope-body,.path-piece.hinting .rope-caret{stroke:#769a31}.path-piece.blocking .rope-body,.path-piece.blocking .rope-caret{stroke:#c65a45}.preview-ray{stroke-width:2;stroke-dasharray:5 7;opacity:.28}.compiled-decoration-layer{opacity:.84}.decoration.button-eye,.decoration.infected-eye,.decoration.nose,.decoration.cheek-patch,.decoration.tooth{filter:drop-shadow(0 1px 1px rgba(67,44,25,.15))}@media(max-width:620px){.rope-body{stroke-width:2.2}.rope-caret{stroke-width:2.1}.rope-hit{stroke-width:17}}
