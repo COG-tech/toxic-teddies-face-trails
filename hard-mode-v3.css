@@ -1,0 +1,65 @@
+/* Darker Toxic Teddies board, attached arrowheads, and denser hard-mode presentation. */
+:root{--ink:#4b3420;--ink-dark:#2e2117;--toxic:#8fae2f;--rust:#9c582f;--paper:#d9bd86}
+body.toxic-parchment-mode{background:
+  radial-gradient(circle at 14% 5%,rgba(139,173,48,.11),transparent 24%),
+  radial-gradient(circle at 91% 19%,rgba(72,49,25,.13),transparent 27%),
+  #efe5d1}
+.board-shell{
+  border:5px solid rgba(62,42,24,.72)!important;
+  border-radius:18px!important;
+  background:
+    radial-gradient(circle at 12% 17%,rgba(117,145,38,.22) 0 2px,transparent 3px),
+    radial-gradient(circle at 91% 72%,rgba(91,56,28,.20) 0 1.5px,transparent 3px),
+    radial-gradient(circle at 70% 9%,rgba(131,87,37,.14) 0 1px,transparent 2px),
+    repeating-linear-gradient(7deg,rgba(71,47,25,.018) 0 1px,transparent 1px 7px),
+    radial-gradient(ellipse at 50% 44%,#f3dfb0 0%,#e2c58b 58%,#b78c53 100%)!important;
+  background-size:73px 67px,109px 97px,51px 61px,100% 100%,100% 100%!important;
+  box-shadow:
+    0 18px 45px rgba(46,31,17,.28),
+    inset 0 0 0 3px rgba(255,245,208,.35),
+    inset 0 0 85px rgba(61,39,20,.30)!important;
+  overflow:hidden;
+}
+.board-shell::before{
+  content:"";
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  opacity:.68!important;
+  background:
+    radial-gradient(circle at 8% 86%,rgba(119,151,39,.22),transparent 8%),
+    radial-gradient(circle at 94% 13%,rgba(114,145,36,.18),transparent 7%),
+    radial-gradient(circle at 50% 50%,transparent 58%,rgba(48,30,16,.34) 100%),
+    repeating-radial-gradient(circle at 41% 31%,rgba(62,40,22,.05) 0 1px,transparent 1px 6px)!important;
+  mix-blend-mode:multiply;
+}
+.board-shell::after{
+  content:"☢";
+  position:absolute;right:2.5%;bottom:-1%;z-index:1;pointer-events:none;
+  font-size:clamp(58px,12vw,116px);line-height:1;color:rgba(95,118,31,.075);
+  transform:rotate(-12deg);font-family:Arial,sans-serif;
+}
+.board-backdrop{
+  opacity:.105!important;
+  filter:grayscale(.42) sepia(.72) saturate(.95) contrast(1.18)!important;
+  mix-blend-mode:multiply!important;
+  background-size:500% auto!important;
+  background-repeat:no-repeat!important;
+}
+.board,.preview-layer{inset:1.7%!important;width:96.6%!important;height:96.6%!important;z-index:3!important}
+.compiled-decoration-layer{opacity:.48!important}.decoration{filter:none!important}
+.hard-piece-layer{isolation:isolate}.hard-path{cursor:pointer}
+.hard-rope-body,.hard-rope-caret{
+  fill:none;stroke:var(--ink);stroke-width:2.85;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;
+}
+.hard-rope-caret{stroke-width:3.05}
+.style-rust .hard-rope-body,.style-rust .hard-rope-caret,.style-stitch .hard-rope-body,.style-stitch .hard-rope-caret{stroke:var(--rust)}
+.style-slime .hard-rope-body,.style-slime .hard-rope-caret{stroke:#708d20}
+.style-tooth .hard-rope-body,.style-tooth .hard-rope-caret{stroke:#756246}
+.hard-rope-hit{fill:none;stroke:transparent;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke}
+.path-piece.escape-armed .hard-rope-caret{stroke:var(--toxic);filter:drop-shadow(0 0 2px rgba(110,143,33,.42))}
+.path-piece.inspecting .hard-rope-body,.path-piece.inspecting .hard-rope-caret,.path-piece.hinting .hard-rope-body,.path-piece.hinting .hard-rope-caret{stroke:#6d921f}
+.path-piece.blocking .hard-rope-body,.path-piece.blocking .hard-rope-caret{stroke:#b63f30}
+.path-piece.rope-exiting{pointer-events:none;will-change:opacity}
+.coming-soon-teddy{opacity:.48;filter:saturate(.45)}
+.coming-soon-teddy::after{content:"COMING SOON";position:absolute;top:10px;right:10px;padding:4px 7px;border-radius:999px;background:rgba(47,34,22,.82);color:#f3e5c5;font-size:.58rem;letter-spacing:.08em;font-weight:900}
+.playable-teddy{box-shadow:0 0 0 2px rgba(125,158,43,.38),0 12px 25px rgba(50,34,18,.12)}
+@media(max-width:620px){.hard-rope-body{stroke-width:2.55}.hard-rope-caret{stroke-width:2.8}.hard-rope-hit{stroke-width:19}.board-shell{border-width:4px!important}}
