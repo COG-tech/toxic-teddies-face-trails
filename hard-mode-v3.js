@@ -1,4 +1,4 @@
-/* Dense Toxic Toby runtime v5.
+/* Dense Toxic Toby runtime v6.
  * The face is now built from hundreds of playable arrow paths. Facial features
  * are encoded by path regions/styles instead of decorative SVG shapes.
  */
@@ -10,7 +10,7 @@
     4: 'ANGRY',
     5: 'MANIACAL LAUGH',
   };
-  const FRONTIER = { 1: 4, 2: 3, 3: 2, 4: 2, 5: 1 };
+  const FRONTIER = { 1: 3, 2: 3, 3: 2, 4: 2, 5: 1 };
   const baseOpenGame = openGame;
   const baseRenderHome = renderHome;
   const baseSetStatus = setStatus;
@@ -38,7 +38,7 @@
   async function loadDenseLevelPack() {
     if (denseLevelPackPromise) return denseLevelPackPromise;
     denseLevelPackPromise = (async () => {
-      const response = await fetch('./levels/tt01/dense-levels-v5.txt?v=5', { cache: 'no-store' });
+      const response = await fetch('./levels/tt01/dense-levels-v6.txt?v=6', { cache: 'no-store' });
       if (!response.ok) throw new Error('Dense Toxic Toby level pack is missing');
       const base64 = (await response.text()).trim();
       const binary = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
@@ -96,21 +96,16 @@
     const py = dir.dx;
     return {
       base,
-      triangle: [
-        `M ${head.x} ${head.y}`,
-        `L ${base.x + px * halfWidth} ${base.y + py * halfWidth}`,
+      wings: [
+        `M ${base.x + px * halfWidth} ${base.y + py * halfWidth}`,
+        `L ${head.x} ${head.y}`,
         `L ${base.x - px * halfWidth} ${base.y - py * halfWidth}`,
-        'Z',
       ].join(' '),
     };
   }
 
-  function bodyD(points, direction, unit) {
-    if (!points.length) return '';
-    if (points.length === 1) return '';
-    const geometry = headGeometry(points[0], direction, unit);
-    const shaft = [geometry.base, ...points.slice(1)];
-    return pathD(shaft);
+  function bodyD(points, _direction, _unit) {
+    return pathD(points);
   }
 
   function setPieceGeometry(piece, points, direction, unit) {
@@ -118,7 +113,7 @@
     const geometry = headGeometry(points[0], direction, unit);
     piece._bodyElement?.setAttribute('d', bodyD(points, direction, unit));
     piece._hitElement?.setAttribute('d', pathD(points));
-    piece._caretElement?.setAttribute('d', geometry.triangle);
+    piece._caretElement?.setAttribute('d', geometry.wings);
   }
 
   renderBoard = function denseRenderBoard() {
@@ -141,7 +136,7 @@
         'data-id': piece.id,
       });
       const body = createSvg('path', { d: bodyD(points, direction, unit), class: 'piece-line dense-rope-body' });
-      const caret = createSvg('path', { d: headGeometry(points[0], direction, unit).triangle, class: 'piece-arrow dense-rope-head' });
+      const caret = createSvg('path', { d: headGeometry(points[0], direction, unit).wings, class: 'piece-arrow dense-rope-head' });
       const hit = createSvg('path', { d: pathD(points), class: 'piece-hit dense-rope-hit' });
       group.append(body, caret, hit);
       group.addEventListener('pointerdown', event => beginLongPress(event, piece));
