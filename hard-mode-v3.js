@@ -33,11 +33,29 @@
     });
   };
 
+  let denseLevelPackPromise = null;
+
+  async function loadDenseLevelPack() {
+    if (denseLevelPackPromise) return denseLevelPackPromise;
+    denseLevelPackPromise = (async () => {
+      const response = await fetch('./levels/tt01/dense-levels-v5.txt?v=5', { cache: 'no-store' });
+      if (!response.ok) throw new Error('Dense Toxic Toby level pack is missing');
+      const base64 = (await response.text()).trim();
+      const binary = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+      if (typeof DecompressionStream === 'function') {
+        const stream = new Blob([binary]).stream().pipeThrough(new DecompressionStream('gzip'));
+        return JSON.parse(await new Response(stream).text());
+      }
+      throw new Error('This browser cannot decompress the dense level pack');
+    })();
+    return denseLevelPackPromise;
+  }
+
   fetchLevel = async function denseFetchLevel() {
     const level = Math.max(1, Math.min(5, Number(state.level) || 1));
-    const response = await fetch(`./levels/tt01/level-${level}.json?v=dense-v5`, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Dense Toxic Toby level ${level} is missing`);
-    const data = await response.json();
+    const pack = await loadDenseLevelPack();
+    const data = structuredClone(pack[String(level)]);
+    if (!data) throw new Error(`Dense Toxic Toby level ${level} is missing`);
     data.level = level;
     data.teddy = 'tt01';
     data.characterName = 'Toxic Toby';
