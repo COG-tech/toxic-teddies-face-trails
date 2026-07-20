@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#c49a5a" />
-  <meta name="description" content="Toxic Teddies Arrow Escape — clear the compiled Toxic Teddy paths in the right order." />
+  <meta name="description" content="Toxic Teddies Arrow Escape — clear the dense Toxic Toby arrow face in the right order." />
   <title>Toxic Teddies: Arrow Escape</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="stylesheet" href="./compiled-patterns.css" />
-  <link rel="stylesheet" href="./zip-engine.css" />
   <link rel="stylesheet" href="./hard-mode-v3.css" />
 </head>
 <body>
@@ -19,7 +18,7 @@
         <div>
           <p class="eyebrow">SERIES 1</p>
           <h1>TOXIC TEDDIES</h1>
-          <p>Pick the open arrow path. Clear the face.</p>
+          <p>Pick the unlocked arrow. Clear the face.</p>
         </div>
         <div id="collectionCounter" class="collection-counter">0 / 60</div>
       </header>
@@ -47,11 +46,11 @@
         </div>
       </div>
 
-      <p id="statusText" class="status-text">Loading compiled pattern…</p>
+      <p id="statusText" class="status-text">Loading dense Toxic Toby pattern…</p>
 
       <main class="board-shell">
         <div id="boardBackdrop" class="board-backdrop" aria-hidden="true"></div>
-        <svg id="board" class="board" role="img" aria-label="Compiled arrow puzzle shaped like Toxic Toby">
+        <svg id="board" class="board" role="img" aria-label="Dense arrow puzzle shaped like Toxic Toby">
           <g id="pieceLayer"></g>
         </svg>
         <svg id="previewLayer" class="preview-layer" aria-hidden="true"></svg>
@@ -78,14 +77,13 @@
   <div id="gameOverModal" class="modal-backdrop hidden">
     <section class="modal-card">
       <p class="eyebrow">NO TOXIC DROPS LEFT</p>
-      <h3>Read the lanes and try again.</h3>
+      <h3>Read the arrowheads and try again.</h3>
       <button id="tryAgainButton" class="primary-button full" type="button">Try again</button>
     </section>
   </div>
 
   <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
   <script src="./compiled-app.js"></script>
-  <script src="./zip-engine.js"></script>
   <script src="./hard-mode-v3.js"></script>
 </body>
 </html>
