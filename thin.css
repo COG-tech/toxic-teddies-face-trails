@@ -1,8 +1,8 @@
 .board-shell {
   width: min(100%, 700px);
   background:
-    linear-gradient(rgba(110,84,56,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(110,84,56,.025) 1px, transparent 1px),
+    linear-gradient(rgba(110,84,56,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110,84,56,.018) 1px, transparent 1px),
     var(--paper);
   background-size: 20px 20px;
 }
@@ -12,52 +12,56 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: .22;
+  opacity: .13;
   background-image:
-    radial-gradient(circle at 13% 16%, rgba(110,84,56,.18) 0 1px, transparent 2px),
-    radial-gradient(circle at 86% 28%, rgba(110,84,56,.13) 0 1px, transparent 2px),
-    radial-gradient(circle at 32% 83%, rgba(110,84,56,.12) 0 1px, transparent 2px);
+    radial-gradient(circle at 13% 16%, rgba(110,84,56,.16) 0 1px, transparent 2px),
+    radial-gradient(circle at 86% 28%, rgba(110,84,56,.11) 0 1px, transparent 2px),
+    radial-gradient(circle at 32% 83%, rgba(110,84,56,.10) 0 1px, transparent 2px);
   background-size: 83px 89px, 121px 109px, 63px 71px;
 }
 .board,
 .preview-layer {
-  inset: 2.8%;
-  width: 94.4%;
-  height: 94.4%;
+  inset: 3.4%;
+  width: 93.2%;
+  height: 93.2%;
 }
 .board {
   shape-rendering: geometricPrecision;
 }
-.piece-line,
-.piece-arrow {
+.path-piece {
+  transition:
+    transform .86s cubic-bezier(.22,.61,.36,1),
+    opacity .72s ease,
+    filter .18s ease;
+}
+.piece-line {
   fill: none;
   stroke: var(--ink);
-  stroke-width: 3.15;
+  stroke-width: 2.75;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
 .piece-hit {
-  stroke-width: 22;
+  stroke-width: 19;
 }
-.path-piece.inspecting .piece-arrow,
-.path-piece.hinting .piece-arrow {
-  stroke: var(--green);
+.path-piece.inspecting,
+.path-piece.hinting {
+  filter: drop-shadow(0 0 3px rgba(126,169,74,.34));
 }
-.path-piece.blocking .piece-arrow {
-  stroke: var(--red);
+.path-piece.exiting {
+  opacity: .03;
 }
 .preview-ray {
-  stroke-width: 2.4;
+  stroke-width: 2.1;
   stroke-dasharray: 7 7;
-  opacity: .34;
+  opacity: .28;
 }
 @media (max-width: 620px) {
-  .piece-line,
-  .piece-arrow {
-    stroke-width: 2.85;
+  .piece-line {
+    stroke-width: 2.45;
   }
   .piece-hit {
-    stroke-width: 21;
+    stroke-width: 18;
   }
 }
