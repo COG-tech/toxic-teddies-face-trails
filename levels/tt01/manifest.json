@@ -1,1 +1,14 @@
-{"schemaVersion":1,"teddy":"tt01","characterName":"Toxic Toby","alternateName":"Radioactive Ricky","levels":[{"level":1,"expression":"neutral","pieceCount":18,"file":"levels/tt01/level-1.json"},{"level":2,"expression":"evil_grin","pieceCount":27,"file":"levels/tt01/level-2.json"},{"level":3,"expression":"gross","pieceCount":41,"file":"levels/tt01/level-3.json"},{"level":4,"expression":"angry","pieceCount":49,"file":"levels/tt01/level-4.json"},{"level":5,"expression":"maniacal_laugh","pieceCount":46,"file":"levels/tt01/level-5.json"}]}
+{
+  "schemaVersion": 6,
+  "teddy": "tt01",
+  "characterName": "Toxic Toby",
+  "alternateName": "Radioactive Ricky",
+  "pack": "levels/tt01/dense-levels-v6.txt",
+  "levels": [
+    {"level": 1, "expression": "neutral", "pieceCount": 125, "gridSize": 57, "coverage": 0.852, "openChoices": 3},
+    {"level": 2, "expression": "evil_grin", "pieceCount": 132, "gridSize": 59, "coverage": 0.851, "openChoices": 3},
+    {"level": 3, "expression": "gross", "pieceCount": 138, "gridSize": 61, "coverage": 0.839, "openChoices": 2},
+    {"level": 4, "expression": "angry", "pieceCount": 145, "gridSize": 63, "coverage": 0.846, "openChoices": 2},
+    {"level": 5, "expression": "maniacal_laugh", "pieceCount": 150, "gridSize": 65, "coverage": 0.829, "openChoices": 1}
+  ]
+}
