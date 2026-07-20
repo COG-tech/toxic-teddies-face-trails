@@ -1,4 +1,4 @@
-const CACHE_NAME='toxic-teddies-arrow-escape-v12';
+const CACHE_NAME='toxic-teddies-arrow-escape-v13';
 const CORE_ASSETS=['./','./index.html','./styles.css','./thin.css','./app-loader.js','./overlap-fix.js','./app-v5-0.txt','./app-v5-1.txt','./app-v5-2.txt','./app-v5-3.txt','./app-v5-4.txt','./app-v5-5.txt','./app-v5-6.txt','./manifest.webmanifest','./assets/backdrops/toxic-toby-expression-sheet.svg','./.nojekyll'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(CORE_ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))));self.clients.claim()});
