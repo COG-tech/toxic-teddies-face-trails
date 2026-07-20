@@ -1,4 +1,4 @@
-/* Dense Toxic Toby v5: the arrow maze itself forms the bear face. */
+/* Dense Toxic Toby v6: the arrow maze itself forms the bear face. */
 :root{--ink:#4b3420;--ink-dark:#21170f;--toxic:#84aa2e;--rust:#a45e34;--patch:#ad5b83;--paper:#dfc48f}
 .board-shell{
   width:min(100%,760px);
@@ -24,17 +24,17 @@
 .dense-piece-layer{isolation:isolate}
 .dense-path{cursor:pointer;transform-box:fill-box;transform-origin:center}
 .dense-rope-body{fill:none;stroke:#543a27;stroke-width:1.72;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.dense-rope-head{fill:#543a27;stroke:#543a27;stroke-width:.55;stroke-linejoin:miter;vector-effect:non-scaling-stroke}
-.style-rust .dense-rope-body,.style-rust .dense-rope-head,.style-stitch .dense-rope-body,.style-stitch .dense-rope-head{stroke:var(--rust);fill:var(--rust)}
-.style-slime .dense-rope-body,.style-slime .dense-rope-head{stroke:var(--toxic);fill:var(--toxic)}
-.style-patch .dense-rope-body,.style-patch .dense-rope-head{stroke:var(--patch);fill:var(--patch)}
-.style-nose .dense-rope-body,.style-nose .dense-rope-head{stroke:#17120e;fill:#17120e;stroke-width:2.05}
-.style-mouth .dense-rope-body,.style-mouth .dense-rope-head,.style-muzzle .dense-rope-body,.style-muzzle .dense-rope-head{stroke:#75523a;fill:#75523a}
-.style-tooth .dense-rope-body,.style-tooth .dense-rope-head{stroke:#d2bd8e;fill:#d2bd8e;filter:drop-shadow(0 0 1px rgba(73,50,28,.35))}
+.dense-rope-head{fill:none;stroke:#543a27;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.style-rust .dense-rope-body,.style-rust .dense-rope-head,.style-stitch .dense-rope-body,.style-stitch .dense-rope-head{stroke:var(--rust)}
+.style-slime .dense-rope-body,.style-slime .dense-rope-head{stroke:var(--toxic)}
+.style-patch .dense-rope-body,.style-patch .dense-rope-head{stroke:var(--patch)}
+.style-nose .dense-rope-body,.style-nose .dense-rope-head{stroke:#17120e;stroke-width:2.05}
+.style-mouth .dense-rope-body,.style-mouth .dense-rope-head,.style-muzzle .dense-rope-body,.style-muzzle .dense-rope-head{stroke:#75523a}
+.style-tooth .dense-rope-body,.style-tooth .dense-rope-head{stroke:#d2bd8e;filter:drop-shadow(0 0 1px rgba(73,50,28,.35))}
 .dense-rope-hit{fill:none;stroke:transparent;stroke-width:8.5;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke}
-.path-piece.escape-armed .dense-rope-head{stroke:#b0d83a;fill:#b0d83a;filter:drop-shadow(0 0 2px rgba(126,159,42,.42))}
-.path-piece.inspecting .dense-rope-body,.path-piece.inspecting .dense-rope-head,.path-piece.hinting .dense-rope-body,.path-piece.hinting .dense-rope-head{stroke:#6f9529;fill:#6f9529}
-.path-piece.blocking .dense-rope-body,.path-piece.blocking .dense-rope-head{stroke:#d65d45;fill:#d65d45;filter:drop-shadow(0 0 2px rgba(160,55,37,.35))}
+.path-piece.escape-armed .dense-rope-head{stroke:#b0d83a;filter:drop-shadow(0 0 2px rgba(126,159,42,.42))}
+.path-piece.inspecting .dense-rope-body,.path-piece.inspecting .dense-rope-head,.path-piece.hinting .dense-rope-body,.path-piece.hinting .dense-rope-head{stroke:#6f9529}
+.path-piece.blocking .dense-rope-body,.path-piece.blocking .dense-rope-head{stroke:#d65d45;filter:drop-shadow(0 0 2px rgba(160,55,37,.35))}
 .path-piece.rope-exiting{pointer-events:none;will-change:opacity}
 .path-piece.removed{visibility:hidden;pointer-events:none}
 .preview-ray{stroke-width:1.45;stroke-dasharray:3 5;opacity:.22}
@@ -42,6 +42,6 @@
 @media(max-width:620px){
   .board-shell{border-width:3px}
   .dense-rope-body{stroke-width:1.48}
-  .dense-rope-head{stroke-width:.4}
+  .dense-rope-head{stroke-width:1.35}
   .dense-rope-hit{stroke-width:8}
 }
