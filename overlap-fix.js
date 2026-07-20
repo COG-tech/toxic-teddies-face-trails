@@ -107,7 +107,8 @@ function __buildSegments(piece, pieceIndex) {
     segmentIndex: piece.cells.length,
     kind: 'arrow',
     a: { x: tip.col, y: tip.row },
-    b: { x: tip.col + direction.dc * 0.28, y: tip.row + direction.dr * 0.28 }
+    // Covers the rendered stem plus the arrowhead, not just its centre line.
+    b: { x: tip.col + direction.dc * 0.50, y: tip.row + direction.dr * 0.50 }
   });
   return segments;
 }
