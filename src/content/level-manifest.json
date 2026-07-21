@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "compiler_version": "dense-pack-v6",
+  "compiler_version": "toxic-toby-deterministic-v1",
   "levels": [
     {"id":"tt01_neutral","teddy_id":"tt01","expression_id":"neutral","level":1,"src":"./levels/tt01/level-1.json","grid_size":57,"target_paths":125,"status":"playable","qa_status":"solver_verified","version":1},
     {"id":"tt01_evil_grin","teddy_id":"tt01","expression_id":"evil_grin","level":2,"src":"./levels/tt01/level-2.json","grid_size":59,"target_paths":132,"status":"playable","qa_status":"solver_verified","version":1},
