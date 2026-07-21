@@ -5,7 +5,6 @@
  */
 (() => {
   const baseBindEvents = bindEvents;
-  const baseRemovePiece = removePiece;
   let installed = false;
 
   function arrowheadBlockers(piece) {
@@ -75,7 +74,7 @@
     setTimeout(() => piece.element?.classList.remove('pressed'), 130);
     setStatus('Clear exit. Arrow released.');
     window.ToxicNative?.hapticValid?.();
-    baseRemovePiece(piece);
+    removePiece(piece);
     const animation = state.data?.animation || {};
     const delay = Number(animation.pauseMs || 90)
       + Number(animation.maxSlideMs || animation.slideMs || 1500)
