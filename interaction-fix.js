@@ -1,12 +1,12 @@
-/* Full-lane collision interaction v7.
- * Mirrors the uploaded reference solver: a path may leave only when every cell
- * in the moving piece has an unobstructed ray to the board edge in the arrow's
- * direction. Blocked taps cost one toxic drop; clear taps use the rope-pull
- * animation from the reference engine.
+/* Arrow Escape rule engine v8.
+ * The uploaded reference checks the arrowhead only: start at path[0], raycast
+ * in the arrow direction, and block the move when that ray touches any active
+ * arrow body. Blocked taps cost one of three toxic drops.
  */
 (() => {
   const baseBindEvents = bindEvents;
   const baseLoseLife = loseLife;
+  const baseRemovePiece = removePiece;
   let installed = false;
 
   function boardContains(clientX, clientY) {
@@ -42,6 +42,7 @@
     const click = { x: clientX, y: clientY };
     let bestPiece = null;
     let bestDistance = Infinity;
+
     for (const piece of state.pieces) {
       if (piece.removed || !state.active.has(piece.id)) continue;
       const sourcePoints = piece._stationaryPoints;
@@ -59,44 +60,60 @@
     return bestDistance <= 32 ? bestPiece : null;
   }
 
-  function wholePieceBlockers(piece) {
-    if (!piece || piece.removed) return [];
+  function arrowheadBlockers(piece) {
+    if (!piece || piece.removed || !state.active.has(piece.id)) return [];
     const direction = DIRS[piece.exitDirection];
     if (!direction) return [];
+    const head = piece.cells[0];
+    let row = head[0] + direction.dr;
+    let col = head[1] + direction.dc;
+    const size = state.data.gridSize;
     const blockers = [];
     const seen = new Set();
-    const size = state.data.gridSize;
 
-    for (const [row, col] of piece.cells) {
-      let nextRow = row + direction.dr;
-      let nextCol = col + direction.dc;
-      while (nextRow >= 0 && nextRow < size && nextCol >= 0 && nextCol < size) {
-        const blockerId = state.occupancy.get(`${nextRow}:${nextCol}`);
-        if (blockerId && blockerId !== piece.id && state.active.has(blockerId) && !seen.has(blockerId)) {
-          seen.add(blockerId);
-          const blocker = state.byId.get(blockerId);
-          if (blocker) blockers.push(blocker);
-        }
-        nextRow += direction.dr;
-        nextCol += direction.dc;
+    while (row >= 0 && row < size && col >= 0 && col < size) {
+      const blockerId = state.occupancy.get(`${row}:${col}`);
+      if (blockerId && blockerId !== piece.id && state.active.has(blockerId) && !seen.has(blockerId)) {
+        seen.add(blockerId);
+        const blocker = state.byId.get(blockerId);
+        if (blocker) blockers.push(blocker);
       }
+      row += direction.dr;
+      col += direction.dc;
     }
     return blockers;
   }
 
-  blockersAhead = wholePieceBlockers;
+  function openPieces() {
+    return state.pieces.filter(piece =>
+      !piece.removed && state.active.has(piece.id) && arrowheadBlockers(piece).length === 0,
+    );
+  }
 
-  attemptMove = function limitedAttemptMove(piece) {
+  function checkDeadlockAfterMove() {
+    if (!state.active.size || state.transitionLock) return;
+    const open = openPieces();
+    if (open.length) return;
+    setStatus('DEADLOCK · NO ARROWHEAD HAS A CLEAR EXIT');
+    setTimeout(() => els.gameOverModal.classList.remove('hidden'), 240);
+  }
+
+  blockersAhead = arrowheadBlockers;
+
+  attemptMove = function referenceAttemptMove(piece) {
     if (state.transitionLock || !piece || piece.removed || !state.active.has(piece.id)) return;
     clearPreview();
-    const blockers = wholePieceBlockers(piece);
+    const blockers = arrowheadBlockers(piece);
     if (blockers.length) {
-      setStatus(`BLOCKED · ${blockers.length} LINE${blockers.length === 1 ? '' : 'S'} IN THE EXIT LANE`);
+      setStatus('BLOCKED · CLEAR THE FIRST LINE IN THIS ARROWHEAD LANE');
       baseLoseLife(piece, blockers[0]);
       return;
     }
     setStatus('CLEAR EXIT · ARROW RELEASED');
-    removePiece(piece);
+    baseRemovePiece(piece);
+    const animation = state.data?.animation || {};
+    const delay = Number(animation.pauseMs || 90) + Number(animation.maxSlideMs || animation.slideMs || 1500) + 160;
+    setTimeout(checkDeadlockAfterMove, delay);
   };
 
   function installInteractionLayer() {
@@ -119,21 +136,22 @@
       const blocked = [];
       for (const piece of state.pieces) {
         if (piece.removed || !state.active.has(piece.id)) continue;
-        const blockers = wholePieceBlockers(piece);
-        (blockers.length ? blocked : open).push(piece.id);
+        const blockers = arrowheadBlockers(piece);
+        (blockers.length ? blocked : open).push({id:piece.id,blockers:blockers.map(item=>item.id)});
       }
       return {
-        rule: 'whole_piece_clear_lane_to_edge',
+        rule: 'arrowhead_ray_clear_to_edge',
         active: state.active.size,
         openCount: open.length,
         blockedCount: blocked.length,
         open: open.slice(0, 12),
         blocked: blocked.slice(0, 12),
+        lives: state.lives,
       };
     };
   }
 
-  bindEvents = function reliableBindEvents() {
+  bindEvents = function referenceBindEvents() {
     baseBindEvents();
     installInteractionLayer();
   };
