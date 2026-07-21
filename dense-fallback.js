@@ -150,7 +150,7 @@
       for(const [region,cells] of groups){
         if(!cells.length)continue;
         const lowPriority=region==='fur'||region==='left_ear'||region==='right_ear';
-        const target=(lowPriority?.91:.96)*(totals.get(region)||1);
+        const target=(lowPriority ? .91 : .96)*(totals.get(region)||1);
         const deficit=(target-(filled.get(region)||0))/(totals.get(region)||1);
         const score=deficit+random()*.0001;
         if(score>best){best=score;desiredRegion=region;}
