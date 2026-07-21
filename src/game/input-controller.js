@@ -1,15 +1,4 @@
-function distanceToSegment(point, start, end) {
-  const vx = end.x - start.x;
-  const vy = end.y - start.y;
-  const lengthSquared = vx * vx + vy * vy;
-  if (!lengthSquared) return Math.hypot(point.x - start.x, point.y - start.y);
-  const ratio = Math.max(0, Math.min(1,
-    ((point.x - start.x) * vx + (point.y - start.y) * vy) / lengthSquared,
-  ));
-  const x = start.x + ratio * vx;
-  const y = start.y + ratio * vy;
-  return Math.hypot(point.x - x, point.y - y);
-}
+import { chooseNearestPolyline } from './input-geometry.js';
 
 function toScreenPoint(board, point) {
   const matrix = board.getScreenCTM?.();
@@ -46,26 +35,23 @@ export function createInputController({
 
   function nearestPiece(clientX, clientY) {
     if (!boardContains(clientX, clientY)) return null;
-    const click = {x: clientX, y: clientY};
     const active = getActive();
-    let bestPiece = null;
-    let bestDistance = Infinity;
+    const candidates = [];
 
     for (const piece of getPieces()) {
       if (piece.removed || !active.has(piece.id)) continue;
       const sourcePoints = piece._stationaryPoints;
       if (!sourcePoints || sourcePoints.length < 2) continue;
       const points = sourcePoints.map(point => toScreenPoint(board, point)).filter(Boolean);
-      for (let index = 1; index < points.length; index += 1) {
-        const distance = distanceToSegment(click, points[index - 1], points[index]);
-        if (distance < bestDistance) {
-          bestDistance = distance;
-          bestPiece = piece;
-        }
-      }
+      if (points.length < 2) continue;
+      candidates.push({value: piece, points});
     }
 
-    return bestDistance <= getHitTolerance() ? bestPiece : null;
+    return chooseNearestPolyline(
+      {x: clientX, y: clientY},
+      candidates,
+      getHitTolerance(),
+    )?.value || null;
   }
 
   function onPointerDown(event) {
