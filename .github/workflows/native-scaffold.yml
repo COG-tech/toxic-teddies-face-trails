@@ -78,12 +78,21 @@ jobs:
       - name: Build bundled web application
         run: npm run build
 
-      - name: Add native platforms when missing
+      - name: Display Capacitor environment
+        run: npx cap doctor
+
+      - name: Add iOS platform when missing
         shell: bash
         run: |
           if [ ! -d ios ]; then npx cap add ios; fi
+
+      - name: Add Android platform when missing
+        shell: bash
+        run: |
           if [ ! -d android ]; then npx cap add android; fi
-          npx cap sync
+
+      - name: Sync bundled app to native projects
+        run: npx cap sync
 
       - name: Build Android debug application
         working-directory: android
