@@ -23,7 +23,8 @@ export function createNativeBridge() {
   const native = Capacitor.isNativePlatform();
   const pauseListeners = new Set();
   const resumeListeners = new Set();
-  let appListenerHandle = null;
+  const backListeners = new Set();
+  const handles = [];
 
   async function initialize() {
     if (native) {
@@ -46,17 +47,24 @@ export function createNativeBridge() {
       }
     }
 
-    appListenerHandle = await App.addListener('appStateChange', ({isActive}) => {
+    handles.push(await App.addListener('appStateChange', ({isActive}) => {
       const listeners = isActive ? resumeListeners : pauseListeners;
       for (const listener of listeners) {
         Promise.resolve(listener()).catch(error => console.error('App lifecycle listener failed', error));
       }
-    });
+    }));
+
+    handles.push(await App.addListener('backButton', ({canGoBack}) => {
+      for (const listener of backListeners) {
+        if (listener({canGoBack}) === true) return;
+      }
+      if (canGoBack) window.history.back();
+      else App.exitApp().catch(() => {});
+    }));
   }
 
   async function destroy() {
-    await appListenerHandle?.remove?.();
-    appListenerHandle = null;
+    await Promise.all(handles.splice(0).map(handle => handle?.remove?.()));
   }
 
   async function readProgress() {
@@ -148,6 +156,10 @@ export function createNativeBridge() {
     onResume(listener) {
       resumeListeners.add(listener);
       return () => resumeListeners.delete(listener);
+    },
+    onBack(listener) {
+      backListeners.add(listener);
+      return () => backListeners.delete(listener);
     },
   });
 }
