@@ -1,64 +1,12 @@
-/* Arrow Escape rule engine v8.
- * The uploaded reference checks the arrowhead only: start at path[0], raycast
- * in the arrow direction, and block the move when that ray touches any active
- * arrow body. Blocked taps cost one of three toxic drops.
+/* Arrow Escape production rule engine.
+ * Path selection is owned by the extracted mobile input controller. Blocking is
+ * calculated only from visible active geometry. Blocked taps never consume a
+ * hidden life or force an unexplained sequence.
  */
 (() => {
   const baseBindEvents = bindEvents;
-  const baseLoseLife = loseLife;
   const baseRemovePiece = removePiece;
   let installed = false;
-
-  function boardContains(clientX, clientY) {
-    const rect = els.board.getBoundingClientRect();
-    return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
-  }
-
-  function screenPoint(point) {
-    const matrix = els.board.getScreenCTM?.();
-    if (!matrix) return null;
-    if (typeof DOMPoint === 'function') return new DOMPoint(point.x, point.y).matrixTransform(matrix);
-    return {
-      x: matrix.a * point.x + matrix.c * point.y + matrix.e,
-      y: matrix.b * point.x + matrix.d * point.y + matrix.f,
-    };
-  }
-
-  function distanceToSegment(point, start, end) {
-    const vx = end.x - start.x;
-    const vy = end.y - start.y;
-    const lengthSquared = vx * vx + vy * vy;
-    if (!lengthSquared) return Math.hypot(point.x - start.x, point.y - start.y);
-    const projection = Math.max(0, Math.min(1,
-      ((point.x - start.x) * vx + (point.y - start.y) * vy) / lengthSquared,
-    ));
-    const x = start.x + projection * vx;
-    const y = start.y + projection * vy;
-    return Math.hypot(point.x - x, point.y - y);
-  }
-
-  function nearestPiece(clientX, clientY) {
-    if (!boardContains(clientX, clientY)) return null;
-    const click = { x: clientX, y: clientY };
-    let bestPiece = null;
-    let bestDistance = Infinity;
-
-    for (const piece of state.pieces) {
-      if (piece.removed || !state.active.has(piece.id)) continue;
-      const sourcePoints = piece._stationaryPoints;
-      if (!sourcePoints || sourcePoints.length < 2) continue;
-      const points = sourcePoints.map(screenPoint).filter(Boolean);
-      if (points.length < 2) continue;
-      for (let index = 1; index < points.length; index += 1) {
-        const distance = distanceToSegment(click, points[index - 1], points[index]);
-        if (distance < bestDistance) {
-          bestDistance = distance;
-          bestPiece = piece;
-        }
-      }
-    }
-    return bestDistance <= 32 ? bestPiece : null;
-  }
 
   function arrowheadBlockers(piece) {
     if (!piece || piece.removed || !state.active.has(piece.id)) return [];
@@ -85,34 +33,53 @@
   }
 
   function openPieces() {
-    return state.pieces.filter(piece =>
-      !piece.removed && state.active.has(piece.id) && arrowheadBlockers(piece).length === 0,
-    );
+    return state.pieces.filter(piece => (
+      !piece.removed
+      && state.active.has(piece.id)
+      && arrowheadBlockers(piece).length === 0
+    ));
+  }
+
+  function showBlockedFeedback(piece, blocker) {
+    piece.element?.classList.add('blocked-bump', 'inspecting');
+    blocker?.element?.classList.add('blocking');
+    setStatus('That trail is still trapped.');
+    window.ToxicNative?.hapticBlocked?.();
+    window.ToxicAccessibility?.announce?.('Path blocked by another active trail.');
+    setTimeout(() => {
+      piece.element?.classList.remove('blocked-bump', 'inspecting');
+      blocker?.element?.classList.remove('blocking');
+    }, 620);
   }
 
   function checkDeadlockAfterMove() {
     if (!state.active.size || state.transitionLock) return;
-    const open = openPieces();
-    if (open.length) return;
-    setStatus('DEADLOCK · NO ARROWHEAD HAS A CLEAR EXIT');
-    setTimeout(() => els.gameOverModal.classList.remove('hidden'), 240);
+    if (openPieces().length) return;
+    setStatus('No arrowhead currently has a clear exit.');
+    window.ToxicAccessibility?.announce?.('No arrowhead currently has a clear exit.');
   }
 
   blockersAhead = arrowheadBlockers;
 
-  attemptMove = function referenceAttemptMove(piece) {
+  attemptMove = function productionAttemptMove(piece) {
     if (state.transitionLock || !piece || piece.removed || !state.active.has(piece.id)) return;
     clearPreview();
     const blockers = arrowheadBlockers(piece);
     if (blockers.length) {
-      setStatus('BLOCKED · CLEAR THE FIRST LINE IN THIS ARROWHEAD LANE');
-      baseLoseLife(piece, blockers[0]);
+      showBlockedFeedback(piece, blockers[0]);
+      window.ToxicAccessibility?.update?.(state, {blockersAhead, attemptMove});
       return;
     }
-    setStatus('CLEAR EXIT · ARROW RELEASED');
+
+    piece.element?.classList.add('pressed');
+    setTimeout(() => piece.element?.classList.remove('pressed'), 130);
+    setStatus('Clear exit. Arrow released.');
+    window.ToxicNative?.hapticValid?.();
     baseRemovePiece(piece);
     const animation = state.data?.animation || {};
-    const delay = Number(animation.pauseMs || 90) + Number(animation.maxSlideMs || animation.slideMs || 1500) + 160;
+    const delay = Number(animation.pauseMs || 90)
+      + Number(animation.maxSlideMs || animation.slideMs || 1500)
+      + 180;
     setTimeout(checkDeadlockAfterMove, delay);
   };
 
@@ -120,16 +87,27 @@
     if (installed) return;
     installed = true;
     els.board.style.pointerEvents = 'auto';
-    els.board.style.touchAction = 'manipulation';
+    els.board.style.touchAction = 'none';
 
-    document.addEventListener('click', event => {
-      if (!boardContains(event.clientX, event.clientY)) return;
-      const piece = nearestPiece(event.clientX, event.clientY);
-      if (!piece) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      attemptMove(piece);
-    }, true);
+    const factory = window.ToxicInputControllerFactory;
+    if (typeof factory !== 'function') {
+      throw new Error('Toxic Teddies mobile input controller is unavailable');
+    }
+
+    window.__toxicInputController = factory({
+      board: els.board,
+      getPieces: () => state.pieces,
+      getActive: () => state.active,
+      onSelect: piece => attemptMove(piece),
+      getHitTolerance: () => (
+        document.documentElement.classList.contains('touch-assistance') ? 40 : 32
+      ),
+      tapMovementThreshold: 12,
+      tapDurationLimit: 500,
+    });
+
+    window.addEventListener('resize', () => window.__toxicInputController?.refresh?.());
+    window.addEventListener('orientationchange', () => window.__toxicInputController?.refresh?.());
 
     window.__toxicRulesTest = () => {
       const open = [];
@@ -137,7 +115,10 @@
       for (const piece of state.pieces) {
         if (piece.removed || !state.active.has(piece.id)) continue;
         const blockers = arrowheadBlockers(piece);
-        (blockers.length ? blocked : open).push({id:piece.id,blockers:blockers.map(item=>item.id)});
+        (blockers.length ? blocked : open).push({
+          id: piece.id,
+          blockers: blockers.map(item => item.id),
+        });
       }
       return {
         rule: 'arrowhead_ray_clear_to_edge',
@@ -146,12 +127,12 @@
         blockedCount: blocked.length,
         open: open.slice(0, 12),
         blocked: blocked.slice(0, 12),
-        lives: state.lives,
+        livesEnabled: false,
       };
     };
   }
 
-  bindEvents = function referenceBindEvents() {
+  bindEvents = function productionBindEvents() {
     baseBindEvents();
     installInteractionLayer();
   };
