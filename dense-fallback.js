@@ -1,15 +1,16 @@
-/* Browser-safe dense Toxic Toby level source.
- * This replaces the compressed pack when loading and guarantees the game can
- * start on browsers where gzip streams or the packed asset fail.
+/* Browser-safe, solver-verified Toxic Toby level source v9.
+ * Mirrors the uploaded reference engine: levels are built in reverse, every
+ * path is assigned a real endpoint exit, and the completed board is simulated
+ * with whole-piece lane collision before it is accepted.
  */
 (() => {
   const EXPRESSIONS = ['neutral','evil_grin','gross','angry','maniacal_laugh'];
   const CONFIG = {
-    1:{size:57,target:125,seed:16001,frontier:3},
-    2:{size:59,target:132,seed:16002,frontier:3},
-    3:{size:61,target:138,seed:16003,frontier:2},
-    4:{size:63,target:145,seed:16004,frontier:2},
-    5:{size:65,target:150,seed:16005,frontier:1},
+    1:{size:57,target:125,seed:26001,maxPieces:220},
+    2:{size:59,target:132,seed:26002,maxPieces:225},
+    3:{size:61,target:138,seed:26003,maxPieces:235},
+    4:{size:63,target:145,seed:26004,maxPieces:245},
+    5:{size:65,target:150,seed:26005,maxPieces:255},
   };
   const STYLE = {
     button_eye:'rust',button_core:'rust',infected_eye:'slime',infected_core:'slime',
@@ -25,11 +26,12 @@
   }
   function key(row,col){return `${row}:${col}`;}
   function parse(value){const split=value.indexOf(':');return [Number(value.slice(0,split)),Number(value.slice(split+1))];}
+  function clone(value){return typeof structuredClone==='function'?structuredClone(value):JSON.parse(JSON.stringify(value));}
   function direction(head,behind){
     const dr=head[0]-behind[0],dc=head[1]-behind[1];
     if(dr===-1)return 'up';if(dr===1)return 'down';if(dc===1)return 'right';return 'left';
   }
-  function distanceToEdge(cell,size){return Math.min(cell[0],cell[1],size-1-cell[0],size-1-cell[1]);}
+  function radial(cell,size){const half=(size-1)/2;return Math.hypot(cell[0]-half,cell[1]-half);}
 
   function makeMask(size,expression){
     const half=(size-1)/2;
@@ -125,7 +127,44 @@
     return path;
   }
 
-  function clone(value){return typeof structuredClone==='function'?structuredClone(value):JSON.parse(JSON.stringify(value));}
+  function canExit(cells,exitDirection,occupancy,ownId,size){
+    const dir=DIRS[exitDirection];
+    for(const [row,col] of cells){
+      let nextRow=row+dir.dr,nextCol=col+dir.dc;
+      while(nextRow>=0&&nextRow<size&&nextCol>=0&&nextCol<size){
+        const blocker=occupancy.get(key(nextRow,nextCol));
+        if(blocker&&blocker!==ownId)return false;
+        nextRow+=dir.dr;nextCol+=dir.dc;
+      }
+    }
+    return true;
+  }
+
+  function orientationOptions(path,size){
+    const half=(size-1)/2;
+    const forwardDirection=direction(path[0],path[1]);
+    const reversed=[...path].reverse();
+    const reverseDirection=direction(reversed[0],reversed[1]);
+    return [[path,forwardDirection],[reversed,reverseDirection]]
+      .map(([cells,exitDirection])=>{
+        const head=cells[0],dir=DIRS[exitDirection];
+        const outward=(head[0]-half)*dir.dr+(head[1]-half)*dir.dc;
+        return {cells,exitDirection,outward};
+      })
+      .sort((a,b)=>b.outward-a.outward);
+  }
+
+  function verifySolution(pieces,solutionOrder,size){
+    const byId=new Map(pieces.map(piece=>[piece.id,piece]));
+    const occupancy=new Map();
+    for(const piece of pieces)for(const [row,col] of piece.cells)occupancy.set(key(row,col),piece.id);
+    for(const pieceId of solutionOrder){
+      const piece=byId.get(pieceId);
+      if(!piece||!canExit(piece.cells,piece.exitDirection,occupancy,piece.id,size))return false;
+      for(const [row,col] of piece.cells)occupancy.delete(key(row,col));
+    }
+    return true;
+  }
 
   function generate(level){
     if(cache.has(level))return clone(cache.get(level));
@@ -134,64 +173,64 @@
     const random=rng(config.seed);
     const {mask,regions}=makeMask(config.size,expression);
     const available=new Set(mask);
-    const totals=new Map();
-    const filled=new Map();
-    for(const region of regions.values())totals.set(region,(totals.get(region)||0)+1);
-    const pieces=[];
+    const placedOccupancy=new Map();
+    const added=[];
 
-    while(available.size&&pieces.length<config.target){
-      const groups=new Map();
-      for(const cellKey of available){
-        const region=regions.get(cellKey);
-        if(!groups.has(region))groups.set(region,[]);
-        groups.get(region).push(cellKey);
-      }
-      let desiredRegion=null,best=-Infinity;
-      for(const [region,cells] of groups){
-        if(!cells.length)continue;
-        const lowPriority=region==='fur'||region==='left_ear'||region==='right_ear';
-        const target=(lowPriority ? .91 : .96)*(totals.get(region)||1);
-        const deficit=(target-(filled.get(region)||0))/(totals.get(region)||1);
-        const score=deficit+random()*.0001;
-        if(score>best){best=score;desiredRegion=region;}
-      }
-      const candidates=groups.get(desiredRegion)||[...available];
-      candidates.sort((a,b)=>freeDegree(a,available)-freeDegree(b,available)||random()-.5);
-      const seedKey=candidates[0];
-      const average=Math.max(6,Math.min(15,Math.round(available.size/Math.max(1,config.target-pieces.length))));
-      const targetLength=Math.max(5,Math.min(17,average-2+Math.floor(random()*5)));
-      let path=growPath(seedKey,available,regions,targetLength,random);
-      if(path.length<2){available.delete(seedKey);continue;}
-      for(const cell of path){
-        const cellKey=key(cell[0],cell[1]);available.delete(cellKey);
-        const region=regions.get(cellKey);filled.set(region,(filled.get(region)||0)+1);
-      }
-      if(distanceToEdge(path[path.length-1],config.size)<distanceToEdge(path[0],config.size))path=path.reverse();
-      const head=path[0],behind=path[1];
-      const region=regions.get(key(head[0],head[1]))||desiredRegion||'fur';
-      pieces.push({
-        id:`p${String(pieces.length+1).padStart(3,'0')}`,
-        region,
-        style:STYLE[region]||'fur',
-        cells:path,
-        exitDirection:direction(head,behind),
-        headCell:head,
-        tipCell:head,
+    while(available.size>=2&&added.length<config.maxPieces){
+      const coverage=(mask.size-available.size)/mask.size;
+      if(coverage>=.80&&added.length>=config.target)break;
+      const candidates=[...available].sort((a,b)=>{
+        const radialDifference=radial(parse(a),config.size)-radial(parse(b),config.size);
+        return radialDifference||freeDegree(a,available)-freeDegree(b,available)||random()-.5;
       });
+      let accepted=null;
+      for(const seedKey of candidates.slice(0,Math.min(500,candidates.length))){
+        for(const targetLength of [12,10,8,6,5,4,3,2]){
+          const path=growPath(seedKey,available,regions,targetLength,random);
+          if(path.length<2)continue;
+          for(const option of orientationOptions(path,config.size)){
+            if(!canExit(option.cells,option.exitDirection,placedOccupancy,'__candidate__',config.size))continue;
+            accepted={seedKey,path,option};break;
+          }
+          if(accepted)break;
+        }
+        if(accepted)break;
+      }
+      if(!accepted)break;
+      const id=`p${String(added.length+1).padStart(3,'0')}`;
+      const region=regions.get(accepted.seedKey)||'fur';
+      const piece={
+        id,region,style:STYLE[region]||'fur',cells:accepted.option.cells,
+        exitDirection:accepted.option.exitDirection,
+        headCell:accepted.option.cells[0],tipCell:accepted.option.cells[0],
+      };
+      for(const cell of accepted.path){
+        const cellKey=key(cell[0],cell[1]);
+        available.delete(cellKey);placedOccupancy.set(cellKey,id);
+      }
+      added.push(piece);
     }
 
+    const solutionOrder=[...added].reverse().map(piece=>piece.id);
+    if(!verifySolution(added,solutionOrder,config.size))throw new Error(`Level ${level} failed full-lane solver verification`);
+
+    const startingOccupancy=new Map();
+    for(const piece of added)for(const [row,col] of piece.cells)startingOccupancy.set(key(row,col),piece.id);
+    const startingOpenPieces=added.filter(piece=>canExit(piece.cells,piece.exitDirection,startingOccupancy,piece.id,config.size)).length;
+    const coverage=(mask.size-available.size)/mask.size;
     const data={
-      schemaVersion:7,teddy:'tt01',characterName:'Toxic Toby',alternateName:'Radioactive Ricky',
-      level,expression,gridSize:config.size,cellSize:24,pieceCount:pieces.length,pieces,
-      solutionOrder:pieces.map(piece=>piece.id),strictSequence:true,allowedFrontier:config.frontier,
+      schemaVersion:9,teddy:'tt01',characterName:'Toxic Toby',alternateName:'Radioactive Ricky',
+      level,expression,gridSize:config.size,cellSize:24,pieceCount:added.length,pieces:added,
+      solutionOrder,strictSequence:false,movementRule:'whole_piece_clear_lane_to_edge',
       decorations:[],visualAnchors:['torn circular ears','button eye','infected eye','forehead seam','muzzle and black nose','cheek patch','expression mouth','radioactive slime'],
+      quality:{coverage:Number(coverage.toFixed(3)),verifiedSolvable:true,startingOpenPieces,solver:'reverse_construction_full_lane_v1'},
       animation:{pauseMs:90,baseSlideMs:420,msPerCell:34,minSlideMs:760,maxSlideMs:1500,fadeStart:.8,mode:'head_first_pull_through'},
     };
     cache.set(level,data);
     return clone(data);
   }
 
-  fetchLevel=async function browserSafeDenseFetchLevel(){
+  fetchLevel=async function browserSafeSolvedFetchLevel(){
     const level=Math.max(1,Math.min(5,Number(state.level)||1));
     return generate(level);
   };
