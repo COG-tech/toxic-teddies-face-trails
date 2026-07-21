@@ -79,14 +79,47 @@ jobs:
         run: npm run build
 
       - name: Add iOS platform when missing
+        id: add_ios
         shell: bash
         run: |
-          if [ ! -d ios ]; then npx cap add ios; fi
+          mkdir -p native-logs
+          status=0
+          if [ ! -d ios ]; then
+            npx cap add ios > native-logs/ios-add.log 2>&1 || status=$?
+          else
+            echo "iOS project already exists." > native-logs/ios-add.log
+          fi
+          cat native-logs/ios-add.log
+          echo "status=$status" >> "$GITHUB_OUTPUT"
 
       - name: Add Android platform when missing
+        id: add_android
         shell: bash
         run: |
-          if [ ! -d android ]; then npx cap add android; fi
+          mkdir -p native-logs
+          status=0
+          if [ ! -d android ]; then
+            npx cap add android > native-logs/android-add.log 2>&1 || status=$?
+          else
+            echo "Android project already exists." > native-logs/android-add.log
+          fi
+          cat native-logs/android-add.log
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Upload native generation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: native-generation-logs
+          path: native-logs
+          if-no-files-found: ignore
+
+      - name: Fail when native platform generation failed
+        if: steps.add_ios.outputs.status != '0' || steps.add_android.outputs.status != '0'
+        run: |
+          echo "iOS add status: ${{ steps.add_ios.outputs.status }}"
+          echo "Android add status: ${{ steps.add_android.outputs.status }}"
+          exit 1
 
       - name: Sync bundled app to native projects
         run: npx cap sync
