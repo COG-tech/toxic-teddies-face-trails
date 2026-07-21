@@ -1,12 +1,13 @@
-/* Guaranteed dense-maze interaction v6.
- * Every arrow is immediately playable. This deliberately bypasses the broken
- * hidden strict-sequence gate so a click always produces visible movement.
+/* Full-lane collision interaction v7.
+ * Mirrors the uploaded reference solver: a path may leave only when every cell
+ * in the moving piece has an unobstructed ray to the board edge in the arrow's
+ * direction. Blocked taps cost one toxic drop; clear taps use the rope-pull
+ * animation from the reference engine.
  */
 (() => {
   const baseBindEvents = bindEvents;
+  const baseLoseLife = loseLife;
   let installed = false;
-  let pointerHandledAt = 0;
-  let activePress = null;
 
   function boardContains(clientX, clientY) {
     const rect = els.board.getBoundingClientRect();
@@ -58,49 +59,45 @@
     return bestDistance <= 32 ? bestPiece : null;
   }
 
-  function guaranteedRemove(piece) {
-    if (!piece || piece.removed || !state.active.has(piece.id)) return false;
-    hideModals?.();
-    state.transitionLock = true;
-    piece.element?.classList.add('escape-armed');
-    piece.element?.parentNode?.appendChild(piece.element);
-    setStatus('ARROW RELEASED');
+  function wholePieceBlockers(piece) {
+    if (!piece || piece.removed) return [];
+    const direction = DIRS[piece.exitDirection];
+    if (!direction) return [];
+    const blockers = [];
+    const seen = new Set();
+    const size = state.data.gridSize;
 
-    const direction = DIRS[piece.exitDirection] || DIRS.right;
-    const boardRect = els.board.getBoundingClientRect();
-    const distance = Math.max(boardRect.width, boardRect.height) * 1.35;
-    const duration = 820;
-    const start = performance.now();
-
-    const frame = now => {
-      const raw = Math.min(1, (now - start) / duration);
-      const eased = raw < .5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
-      const x = direction.dx * distance * eased;
-      const y = direction.dy * distance * eased;
-      if (piece.element) {
-        piece.element.setAttribute('transform', `translate(${x} ${y})`);
-        piece.element.style.opacity = String(Math.max(.04, 1 - raw * .96));
+    for (const [row, col] of piece.cells) {
+      let nextRow = row + direction.dr;
+      let nextCol = col + direction.dc;
+      while (nextRow >= 0 && nextRow < size && nextCol >= 0 && nextCol < size) {
+        const blockerId = state.occupancy.get(`${nextRow}:${nextCol}`);
+        if (blockerId && blockerId !== piece.id && state.active.has(blockerId) && !seen.has(blockerId)) {
+          seen.add(blockerId);
+          const blocker = state.byId.get(blockerId);
+          if (blocker) blockers.push(blocker);
+        }
+        nextRow += direction.dr;
+        nextCol += direction.dc;
       }
-      if (raw < 1) {
-        requestAnimationFrame(frame);
-        return;
-      }
-      piece.removed = true;
-      piece.element?.classList.add('removed');
-      state.active.delete(piece.id);
-      state.transitionLock = false;
-      updateProgress();
-      if (!state.active.size) completeLevel();
-      else setStatus(`${state.active.size} ARROWS LEFT`);
-    };
-    requestAnimationFrame(frame);
-    return true;
+    }
+    return blockers;
   }
 
-  function activateAt(clientX, clientY) {
-    if (state.transitionLock) return false;
-    return guaranteedRemove(nearestPiece(clientX, clientY));
-  }
+  blockersAhead = wholePieceBlockers;
+
+  attemptMove = function limitedAttemptMove(piece) {
+    if (state.transitionLock || !piece || piece.removed || !state.active.has(piece.id)) return;
+    clearPreview();
+    const blockers = wholePieceBlockers(piece);
+    if (blockers.length) {
+      setStatus(`BLOCKED · ${blockers.length} LINE${blockers.length === 1 ? '' : 'S'} IN THE EXIT LANE`);
+      baseLoseLife(piece, blockers[0]);
+      return;
+    }
+    setStatus('CLEAR EXIT · ARROW RELEASED');
+    removePiece(piece);
+  };
 
   function installInteractionLayer() {
     if (installed) return;
@@ -110,20 +107,31 @@
 
     document.addEventListener('click', event => {
       if (!boardContains(event.clientX, event.clientY)) return;
+      const piece = nearestPiece(event.clientX, event.clientY);
+      if (!piece) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      activateAt(event.clientX, event.clientY);
+      attemptMove(piece);
     }, true);
 
-    window.__toxicInputTest = (pieceId = state.pieces.find(piece => !piece.removed)?.id) => {
-      const piece = state.byId.get(pieceId);
-      return guaranteedRemove(piece);
+    window.__toxicRulesTest = () => {
+      const open = [];
+      const blocked = [];
+      for (const piece of state.pieces) {
+        if (piece.removed || !state.active.has(piece.id)) continue;
+        const blockers = wholePieceBlockers(piece);
+        (blockers.length ? blocked : open).push(piece.id);
+      }
+      return {
+        rule: 'whole_piece_clear_lane_to_edge',
+        active: state.active.size,
+        openCount: open.length,
+        blockedCount: blocked.length,
+        open: open.slice(0, 12),
+        blocked: blocked.slice(0, 12),
+      };
     };
   }
-
-  blockersAhead = () => [];
-  attemptMove = piece => guaranteedRemove(piece);
-  loseLife = () => {};
 
   bindEvents = function reliableBindEvents() {
     baseBindEvents();
