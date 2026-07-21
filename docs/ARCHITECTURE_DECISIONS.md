@@ -1,67 +1,90 @@
-# Architecture Decision Register
+# Architecture Decision Register — Native Mobile App
 
-This file records product and technical decisions that should not be repeatedly reopened without new evidence.
+This file records product and technical decisions that should not be reopened without new evidence.
 
-## ADR-001 — GitHub Pages remains the deployment target
-
-Decision:
-
-- Deploy from `main` and repository root through GitHub Pages.
-- No Cloudflare dependency.
-- No custom GitHub Actions deployment workflow is required.
-
-Reason:
-
-- The current product is a static browser/PWA game.
-- The existing live site already uses GitHub Pages.
-- Keeping deployment simple reduces operational risk.
-
-## ADR-002 — Preserve and modularize the existing browser game
+## ADR-001 — The product is a native mobile app
 
 Decision:
 
-- Do not rewrite the app in Flutter or another large framework.
-- Incrementally extract modules from the working JavaScript prototype.
+- Primary distribution is Apple App Store and Google Play.
+- The existing GitHub Pages build is a prototype/browser demo only.
+- Production acceptance requires installable iOS and Android builds.
 
 Reason:
 
-- The current SVG renderer and geometric click system already work.
-- A rewrite would risk losing interaction behavior without creating immediate user value.
+- The product requirement is a mobile app, not a PWA.
 
-## ADR-003 — Production levels are precompiled
+## ADR-002 — Use Capacitor around the existing game core
+
+Decision:
+
+- Package the Vite/JavaScript/SVG game locally with Capacitor v8.
+- Commit and maintain native `ios/` and `android/` projects.
+- Do not rewrite the working engine in Flutter or React Native.
+
+Reason:
+
+- The current renderer and geometric touch logic already work.
+- Capacitor produces native iOS/Android projects while preserving the engine.
+
+## ADR-003 — Bundle launch content inside the app
+
+Decision:
+
+- Approved game code, Toxic Toby levels and launch assets ship in the app package.
+- The app does not load the live website as its primary experience.
+- The launch game works in airplane mode.
+
+Reason:
+
+- The app must be reliable, app-like and independently functional.
+
+## ADR-004 — Store updates replace service-worker updates
+
+Decision:
+
+- Native app code is updated through App Store and Google Play releases.
+- A service worker is not required inside the native app.
+- Future downloadable content may include versioned data/assets, not untrusted executable code.
+
+Reason:
+
+- Native store packages must remain the controlled executable source.
+
+## ADR-005 — Production levels are precompiled
 
 Decision:
 
 - The Python compiler generates and validates production level JSON.
-- The browser does not randomly create production puzzles.
+- The mobile runtime does not randomly create production puzzles.
 
 Reason:
 
-- Character recognition, fairness and solvability require deterministic authored output.
+- Recognition, fairness and solvability require deterministic authored output.
 
-## ADR-004 — The arrow paths construct the character
+## ADR-006 — The arrow paths construct the character
 
 Decision:
 
-- Character-defining face regions must be represented primarily by playable path geometry.
+- Character-defining face regions are represented primarily by playable path geometry.
 - Backdrop artwork is secondary support.
 
 Reason:
 
 - This is the product's core differentiation.
 
-## ADR-005 — One canonical content manifest
+## ADR-007 — One canonical content manifest
 
 Decision:
 
-- Characters, expressions, level availability and backdrops are manifest-driven.
+- Characters, expressions, availability and backdrops are manifest-driven.
 - Unavailable characters never fall back to another Teddy's content.
 
 Reason:
 
-- Hard-coded duplicates and fallbacks create incorrect characters, false availability and naming drift.
+- Hard-coded duplicates and fallbacks create false availability and naming drift.
 
-## ADR-006 — Dedicated backdrop files
+## ADR-008 — Dedicated backdrop files
 
 Decision:
 
@@ -70,120 +93,152 @@ Decision:
 
 Reason:
 
-- Dedicated exports provide predictable alignment, smaller files and no accidental labels.
+- Dedicated exports provide predictable alignment and no accidental labels.
 
-## ADR-007 — Input behavior is owned by one controller
+## ADR-009 — One touch-input controller
 
 Decision:
 
-- All pointer selection uses one input-controller module.
-- Presentation layers have no pointer events.
-- Visible arrowheads may be small while effective geometric selection remains generous.
+- All path selection uses one input-controller module.
+- Presentation layers receive no touch events.
+- Visible arrowheads may remain small while effective geometric selection remains generous.
+- The controller responds to app resume, viewport and orientation changes.
 
 Reason:
 
 - Competing SVG, board and document handlers previously caused broken interaction.
 
-## ADR-008 — Blocking must be visibly explainable
+## ADR-010 — Blocking must be visibly explainable
 
 Decision:
 
 - The production rule uses visible active-path geometry.
-- A blocked result returns the blocker identity and highlights it.
+- A blocked result returns blocker identity and highlights it.
 - Hidden forced order is prohibited.
-
-Reason:
-
-- Players interpreted unexplained rejection as a broken game.
 
 Open validation:
 
-- Whether blocked taps should ever cost a toxic-drop life remains a research question.
-- Lives remain disabled during fairness validation.
+- Toxic-drop life penalties remain disabled until research proves they improve the game.
 
-## ADR-009 — Progress stores exact board state
+## ADR-011 — Native save architecture
 
 Decision:
 
-- Persist removed/active path IDs, level version and compiler version.
-- Use versioned durable storage.
+- Use Capacitor Preferences for lightweight settings and flags.
+- Use Capacitor Filesystem for a versioned progress JSON file.
+- Use Capacitor App lifecycle events to save on pause/background and restore on resume.
+- Save removed path IDs, level version, compiler version and app version.
 
 Reason:
 
-- Completion-only storage does not support real resume behavior.
+- Completion-only browser storage does not support exact native resume.
 
-## ADR-010 — Service-worker cache is not progress storage
+## ADR-012 — Native APIs are purposeful and minimal
 
 Decision:
 
-- PWA caches store application and content assets only.
-- User progress uses IndexedDB or an equivalent durable application store.
+- Use official Capacitor plugins for App lifecycle, Haptics, Preferences, Filesystem, Share, Splash Screen, System/Status Bars and Screen Orientation.
+- Request no sensitive permission unless a shipped feature requires it.
 
 Reason:
 
-- Cache replacement must not erase or corrupt progress.
+- Native features make the product app-like without unnecessary privacy risk.
 
-## ADR-011 — Design system is separated from character artwork
+## ADR-013 — Design system is separate from artwork
 
 Decision:
 
-- Names, labels, progress, warnings, borders and buttons are rendered by HTML/CSS.
+- Names, labels, progress, warnings, borders and controls are rendered by the app UI.
 - Final character/backdrop art contains no interface text.
 
 Reason:
 
-- This protects spelling, accessibility, responsiveness and consistency.
+- This protects spelling, accessibility, localization and responsiveness.
 
-## ADR-012 — One complete Teddy production unit at a time
-
-Decision:
-
-- A Teddy is completed as five expressions, five backdrops, five levels, five reports and one QA package before the next Teddy moves to production.
-
-Reason:
-
-- Parallel uncontrolled generation would multiply visual, naming and difficulty inconsistency.
-
-## ADR-013 — Mobile-first interaction
+## ADR-014 — One complete Teddy production unit at a time
 
 Decision:
 
-- Portrait mobile is the primary layout.
-- Desktop is a responsive enhancement.
-- Touch accuracy cannot be used as a source of difficulty.
+- A Teddy is completed as five expressions, five backdrops, five levels, five reports and one iOS/Android QA package before the next Teddy moves to production.
 
 Reason:
 
-- The target audience is expected to play in short mobile sessions.
+- Uncontrolled parallel generation multiplies inconsistency.
 
-## ADR-014 — Accessibility is a base requirement
+## ADR-015 — Portrait-first native layout
 
 Decision:
 
-- WCAG 2.1 AA, reduced motion, high contrast, keyboard access and screen-reader state are included in the architecture.
+- Phone gameplay is portrait-first.
+- Tablet/landscape support is an intentional secondary layout.
+- Android system Back and iOS safe areas are handled explicitly.
+- Touch precision cannot be a source of difficulty.
 
 Reason:
 
-- Retrofitting accessibility after 60 levels would be more expensive and less reliable.
+- The game targets short one-handed mobile sessions.
 
-## ADR-015 — Runtime `eval()` is temporary
+## ADR-016 — Accessibility is a base requirement
+
+Decision:
+
+- VoiceOver, TalkBack, reduced motion, high contrast, large text, switch/external-keyboard support and non-color state feedback are included in the architecture.
+
+Reason:
+
+- Retrofitting accessibility after 60 levels would be costly and unreliable.
+
+## ADR-017 — Runtime `eval()` is temporary
 
 Decision:
 
 - Replace `dense-loader.js` runtime fetch-and-eval composition through incremental module migration.
-- Do not remove it until the baseline interaction tests exist.
+- Do not remove it until baseline interaction tests exist and the native shell reproduces the current behavior.
 
 Reason:
 
-- `eval()` makes debugging, security policy and testing harder, but immediate removal could break the current game.
+- `eval()` complicates testing and security, but immediate removal could break the working prototype.
 
-## ADR-016 — Product availability is honest
+## ADR-018 — Product availability is honest
 
 Decision:
 
 - The UI may show the 60-level roadmap, but playable counts include only approved content.
-- Coming-soon characters remain visibly unavailable.
+- Coming-soon characters remain unavailable.
 
 Reason:
 
-- False availability undermines trust and currently risks loading Toxic Toby data for other characters.
+- False availability undermines trust and risks loading the wrong face.
+
+## ADR-019 — Same repository for shared core and native projects
+
+Decision:
+
+- Keep the shared game engine, compiler, `ios/`, `android/`, store resources and documentation in `COG-tech/toxic-teddies-face-trails`.
+
+Reason:
+
+- One source of truth reduces version drift between platforms.
+
+## ADR-020 — Signing secrets are never committed
+
+Decision:
+
+- Apple certificates, provisioning profiles, Android keystores, passwords and store API keys remain outside Git.
+- GitHub Actions may run checks and unsigned builds; signed release workflows use secure credentials.
+
+Reason:
+
+- Store signing credentials are sensitive production secrets.
+
+## ADR-021 — App Store quality is an architecture requirement
+
+Decision:
+
+- The native app bundles substantial interactive gameplay.
+- It includes offline play, native save/lifecycle, haptics, share, system UI integration and accessibility.
+- It is not a thin remote-webview wrapper.
+
+Reason:
+
+- Store acceptance and player trust require a stable, functional, app-like experience.
