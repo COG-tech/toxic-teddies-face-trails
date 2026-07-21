@@ -1,0 +1,98 @@
+name: Native scaffold and validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - mobile/phases-1-10
+    paths:
+      - package.json
+      - capacitor.config.ts
+      - vite.config.js
+      - index.html
+      - src/**
+      - scripts/**
+      - assets/**
+      - levels/**
+      - compiled-app.js
+      - hard-mode-v3.js
+      - compiled-level-source.js
+      - interaction-fix.js
+      - mobile-enhancements.js
+      - .github/workflows/native-scaffold.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: native-scaffold-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-and-validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+        with:
+          ref: mobile/phases-1-10
+          fetch-depth: 0
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Validate compiled levels and runtime
+        run: npm run check
+
+      - name: Build bundled web application
+        run: npm run build
+
+      - name: Add native platforms when missing
+        shell: bash
+        run: |
+          if [ ! -d ios ]; then npx cap add ios; fi
+          if [ ! -d android ]; then npx cap add android; fi
+          npx cap sync
+
+      - name: Build Android debug application
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Build iOS simulator application
+        run: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -derivedDataPath build/ios-derived \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Commit generated native projects and compiler outputs
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json ios android levels/tt01/level-*.json levels/tt01/compiled-manifest.json compiler/reports
+          if git diff --cached --quiet; then
+            echo "Generated native projects are already current."
+          else
+            git commit -m "Generate Capacitor iOS and Android projects"
+            git push origin HEAD:mobile/phases-1-10
+          fi
