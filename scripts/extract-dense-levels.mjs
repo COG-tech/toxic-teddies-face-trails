@@ -1,4 +1,3 @@
-import { gunzipSync } from 'node:zlib';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -9,8 +8,13 @@ const expressions = ['neutral', 'evil_grin', 'gross', 'angry', 'maniacal_laugh']
 
 const base64 = (await readFile(sourcePath, 'utf8')).trim();
 if (!base64) throw new Error('Dense Toxic Toby level pack is empty');
+if (typeof DecompressionStream !== 'function') {
+  throw new Error('Node 22 DecompressionStream support is required');
+}
 
-const decoded = gunzipSync(Buffer.from(base64, 'base64')).toString('utf8');
+const bytes = Uint8Array.from(Buffer.from(base64, 'base64'));
+const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+const decoded = await new Response(stream).text();
 const pack = JSON.parse(decoded);
 await mkdir(outputDirectory, {recursive: true});
 
