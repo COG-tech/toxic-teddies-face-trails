@@ -41,9 +41,13 @@ jobs:
           node --check src/app/native-bridge.js
           node --check src/app/mobile-shell.js
           node --check src/content/content-registry.js
+          node --check src/game/input-geometry.js
           node --check src/game/input-controller.js
           node --check src/storage/save-store.js
           node --check src/accessibility/accessibility.js
+
+      - name: Test mobile selection and save-state behavior
+        run: npm test
 
       - name: Validate production level geometry and solver
         run: node scripts/validate-compiled-levels.mjs
