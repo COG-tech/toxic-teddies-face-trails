@@ -1,33 +1,81 @@
-# Toxic Teddies: Arrow Escape — Authoritative App Build Plan
+# Toxic Teddies: Arrow Escape — Native Mobile App Build Plan
 
-Status: planning source of truth
+Status: authoritative planning source
 Repository: `COG-tech/toxic-teddies-face-trails`
-Deployment: GitHub Pages from `main` and repository root
-Primary product: mobile-first browser/PWA puzzle game
+Primary deliverable: native iOS and Android game
+Store targets: Apple App Store and Google Play
+Technology: Vite web game core packaged locally with Capacitor v8
+Prototype target: the existing GitHub Pages build remains a browser reference/demo only
 
-## 1. Product definition
+## 1. Correction and product definition
 
-Toxic Teddies: Arrow Escape is a character-driven arrow-removal puzzle. Hundreds of connected orthogonal arrow paths form the actual face of a Toxic Teddy. The player taps a path with a clear arrowhead exit, the arrowhead leaves first, and the body follows. The character is not decorative artwork behind a generic maze: the face itself is the playable geometry.
+This project is a **mobile app**, not a PWA product.
+
+The existing browser game is valuable because its SVG renderer, compiler output and geometric tap-selection system already work. We will preserve that code as the shared game core, package the compiled app locally inside native iOS and Android containers, and add native mobile features through Capacitor.
+
+The production app will:
+
+- install from the App Store and Google Play;
+- ship as an iOS app and Android app bundle;
+- run without browser chrome;
+- bundle its approved game code, level JSON and launch content inside the app;
+- use native storage for progress;
+- use native haptics, app lifecycle, splash screen, status/system bars and sharing;
+- work offline after installation;
+- use store-delivered updates rather than service-worker updates.
+
+It will **not** be a remote website opened inside a wrapper. The app package will contain the game build and provide lasting interactive game value.
 
 Primary brand line: **The face is the puzzle.**
 
-Launch unit:
+## 2. Core mechanic
 
-- Toxic Toby / Radioactive Ricky
-- Five expressions in this fixed order:
+Hundreds of connected orthogonal arrow paths form the actual face of a Toxic Teddy.
+
+- The player taps a path with a clear arrowhead exit.
+- The arrowhead exits first.
+- The body follows through its bends.
+- Paths do not overlap, cross or self-intersect.
+- Production levels are compiled, solver-verified and shipped as immutable level data.
+- The Teddy face is constructed by the playable paths, not placed behind a generic maze.
+
+## 3. Launch scope
+
+### Mobile MVP
+
+The first store-testable app contains:
+
+- Toxic Toby / Radioactive Ricky;
+- five expressions in this fixed order:
   1. Neutral
   2. Evil Grin
   3. Gross
   4. Angry
-  5. Maniacal Laugh
+  5. Maniacal Laugh;
+- five dedicated, aligned and text-free backdrops;
+- protected mobile touch selection;
+- visible geometry-based blocking;
+- exact save and resume;
+- native haptics;
+- native splash and app icon;
+- native share sheet for completion results;
+- airplane-mode/offline play;
+- Home, Teddy, Expression, Puzzle, Completion, How to Play and Settings screens;
+- reduced motion, high contrast, VoiceOver and TalkBack support;
+- Android internal testing build and iOS TestFlight build.
 
-Expansion target:
+All other Teddies appear honestly as `Coming soon` until their complete packages pass QA.
 
-- 12 Founding Teddies
-- 5 expressions per Teddy
-- 60 compiled, tested and solvable levels
+### Full Founding 12 release
 
-## 2. Canonical Founding 12
+- 12 Founding Teddies;
+- 5 expressions each;
+- 60 compiled and approved levels;
+- 60 dedicated backdrop mappings;
+- 60 solver reports;
+- full iOS and Android release QA.
+
+## 4. Canonical Founding 12
 
 1. `tt01` Toxic Toby / Radioactive Ricky
 2. `tt02` Moldy Molly / Fungus Faye
@@ -42,76 +90,110 @@ Expansion target:
 11. `tt11` Patchwork Pat / Quilted Quinn
 12. `tt12` Plague Bear / Sickly Sonny
 
-These names are locked. Do not use Dumpster Dan, Rusty Ralph or other earlier variants.
+These names are locked.
 
-## 3. Non-negotiable product rules
+## 5. Native architecture decision
 
-- The playable paths must construct the Teddy face.
-- No path overlap, crossing or self-intersection.
-- Every arrowhead belongs to a true endpoint and matches the endpoint tangent.
-- Levels are compiled and validated before deployment.
-- The browser renders level data, handles input, saves progress and animates removal.
-- Character backdrops support recognition but may not rescue a weak arrow mask.
-- Every level must remain recognizable with the backdrop disabled.
-- No photorealistic or 3D character art.
-- No baked-in titles, logos, taglines, borders or interface labels inside final backdrop artwork.
-- No generic substitute Teddy imagery.
-- Do not claim unfinished Teddies or levels are playable.
-- No visual change reaches `main` without approval.
+### Chosen architecture
 
-## 4. Current repository audit
+Use **Capacitor v8** around the existing Vite/JavaScript/SVG game core.
 
-The current `main` branch is a working prototype, not the final architecture.
+Why:
 
-Known current-state issues:
+- it preserves the working SVG renderer and geometric input system;
+- it avoids rewriting the puzzle engine in Flutter or React Native;
+- it produces native iOS and Android projects;
+- it provides official native APIs through plugins;
+- it allows the app to bundle all launch content locally;
+- it keeps one game engine for both platforms.
 
-1. `index.html` loads three CSS files and a loader that fetches/evaluates four JavaScript files at runtime.
-2. `dense-loader.js` uses `eval()` to combine the runtime. This is fragile, difficult to test and complicates Content Security Policy.
-3. `compiled-app.js` contains UI, state, rendering, blocking, progress and content definitions in one file.
-4. `interaction-fix.js` overrides core functions after load. The working input behavior is therefore patch-based rather than owned by one module.
-5. `fetchLevel()` falls back to Toxic Toby JSON for other Teddies. This can make unfinished characters appear playable with the wrong face.
-6. The home counter displays `0 / 60`, although most of the 60 levels do not exist.
-7. The current Toxic Toby background uses one expression-sheet SVG with CSS positioning rather than five dedicated aligned backdrop assets.
-8. Progress storage records completed levels only. It does not reliably persist the exact active path state of an unfinished level.
-9. The README documents an older 7×7 to 15×15 tile system, while the current dense compiler uses much larger face grids and path counts.
-10. README and runtime describe toxic-drop lives and blocked-tap penalties, while the working-click history indicates this behavior previously made the game appear broken. The rule must be validated before it remains in production.
-11. Build/cache versions are manually repeated as `v=30` across several files.
-12. There is no single canonical manifest for characters, expressions, backdrops, level availability, asset versions and QA status.
+### Native platforms
 
-## 5. GitHub operating rules
+Commit and maintain:
 
-- `main` remains the production source and GitHub Pages deployment branch.
-- Planning and implementation occur on named branches.
-- Every phase uses a pull request.
-- Do not combine interaction, visual, content and cache changes in one uncontrolled PR.
-- Tag or record the last known working interaction commit before refactoring.
-- Each PR must include acceptance criteria and a manual regression checklist.
-- No GitHub Actions deployment workflow is required. GitHub Pages continues to publish from `main / root`.
-- Local development and validation run through VS Code/npm.
+```text
+ios/
+android/
+```
 
-Recommended branch naming:
+The app build flow is:
 
-- `planning/...`
-- `audit/...`
-- `feature/...`
-- `fix/...`
-- `content/...`
-- `test/...`
+```text
+Python compiler
+    ↓
+Validated level JSON and reports
+    ↓
+Vite web build to dist/
+    ↓
+Capacitor sync
+    ↓
+iOS Xcode project / Android Studio project
+    ↓
+TestFlight IPA / Google Play AAB
+```
 
-## 6. Target repository architecture
+### Native APIs
+
+Use official Capacitor plugins where needed:
+
+- App lifecycle;
+- Haptics;
+- Preferences for lightweight settings and flags;
+- Filesystem for the versioned save-state JSON;
+- Share for completion sharing;
+- Splash Screen;
+- Status Bar/System Bars;
+- Screen Orientation;
+- Network only if online features are later added.
+
+No permission is requested unless a shipped feature requires it.
+
+## 6. App identity to lock before native initialization
+
+Recommended identifiers:
+
+```text
+App name: Toxic Teddies: Arrow Escape
+Short name: Toxic Teddies
+Bundle ID / Application ID: com.cogtech.toxicteddies
+Initial app version: 0.1.0
+Initial iOS build: 1
+Initial Android versionCode: 1
+```
+
+Before running `npx cap init`, confirm the final bundle/application ID because changing it later creates store and signing complications.
+
+## 7. Repository role
+
+The same repository will contain:
+
+- the shared game core;
+- compiler and level data;
+- native iOS project;
+- native Android project;
+- store assets and metadata;
+- automated tests;
+- the optional GitHub Pages browser demo.
+
+`main` becomes the approved product source, not merely the live website branch.
+
+GitHub Pages may remain enabled as a prototype/demo, but it is not the production distribution target.
+
+## 8. Target repository structure
 
 ```text
 /
-  index.html
-  manifest.webmanifest
-  sw.js
   package.json
+  vite.config.js
+  capacitor.config.ts
+  index.html
 
   src/
     app/
       bootstrap.js
       router.js
       app-state.js
+      native-bridge.js
 
     game/
       input-controller.js
@@ -119,7 +201,12 @@ Recommended branch naming:
       blocking-engine.js
       removal-animation.js
       level-session.js
-      progress-store.js
+
+    storage/
+      save-schema.js
+      save-store.js
+      settings-store.js
+      migrations.js
 
     content/
       character-manifest.json
@@ -130,8 +217,9 @@ Recommended branch naming:
 
     ui/
       home-view.js
-      character-view.js
+      teddy-view.js
       expression-view.js
+      puzzle-view.js
       puzzle-hud.js
       completion-sheet.js
       settings-view.js
@@ -150,25 +238,19 @@ Recommended branch naming:
       gross.json
       angry.json
       maniacal-laugh.json
-    ...
 
   assets/
     characters/
-      tt01/
-        master.webp
-        thumbnail.webp
-      ...
-    expression-sheets/
-      internal-source-only/
     backdrops/
-      tt01/
-        neutral.webp
-        evil-grin.webp
-        gross.webp
-        angry.webp
-        maniacal-laugh.webp
-      ...
     icons/
+    audio/
+
+  mobile-resources/
+    app-icon/
+    splash/
+    store/
+      ios/
+      android/
 
   compiler/
     compile_levels.py
@@ -176,321 +258,420 @@ Recommended branch naming:
     masks/
     reports/
 
+  ios/
+  android/
+  dist/
+
   tests/
     unit/
     browser/
+    mobile/
     visual/
-    fixtures/
 
   docs/
     MASTER_APP_BUILD_PLAN.md
-    ARCHITECTURE_DECISIONS.md
+    GITHUB_EXECUTION_CHECKLIST.md
     ASSET_AND_CONTENT_PIPELINE.md
     QA_AND_RELEASE_GATES.md
-    DESIGN_SYSTEM.md
+    ARCHITECTURE_DECISIONS.md
+    STORE_RELEASE_CHECKLIST.md
 ```
 
-Migration must be incremental. Do not rewrite the entire working game at once.
+`dist/` should normally be generated rather than hand-edited.
 
-## 7. Phase plan
+## 9. Current repository audit
 
-### Phase 0 — Freeze and baseline the current build
+The current `main` branch is a useful browser prototype, not yet a native mobile app.
 
-Goal: preserve the last known working state before any refactor.
+Current issues to correct:
 
-Actions:
+1. No `capacitor.config.ts`, `ios/` or `android/` project exists.
+2. The current app launches through a browser/PWA shell rather than a store-installable native container.
+3. `dense-loader.js` fetches and evaluates four scripts at runtime using `eval()`.
+4. `compiled-app.js` mixes rendering, game state, UI, blocking, storage and content.
+5. `interaction-fix.js` overrides core behavior after load.
+6. Other Teddies can fall back to Toxic Toby level JSON.
+7. Toxic Toby uses one positioned expression-sheet SVG rather than five dedicated backdrops.
+8. Progress stores completed levels only, not exact unfinished state.
+9. `localStorage` is not the final native save system.
+10. Service-worker versioning is irrelevant to the installed native build and should not control app updates.
+11. The README describes an older sparse-grid system.
+12. The current life-loss blocker behavior conflicts with the previously confirmed working interaction and must be validated.
+13. There is no store icon, splash package, privacy manifest, store metadata or signing plan.
+14. There is no Android AAB or iOS TestFlight build process.
 
-- Record the current `main` commit SHA.
-- Capture desktop and mobile screen recordings of click/removal behavior.
-- Record current script/CSS load order.
-- Add a manual smoke-test checklist.
-- Add a visible or debug-only build version.
-- Document current rules: open path, blocked path, life loss, hint and completion.
-- Decide which current behaviors are temporary and which are production requirements.
+## 10. GitHub operating rules
 
-Acceptance gate:
+- Every phase uses a branch and pull request.
+- Do not modify approved visuals without explicit approval.
+- Record the working prototype commit before native integration.
+- Separate native-shell, interaction, content, design and release changes.
+- Every PR includes platform impact: Web core, iOS, Android or all.
+- Native configuration changes include Xcode and Android Studio test evidence.
+- `ios/` and `android/` are committed after Capacitor initialization.
+- Secrets, certificates, keystores and provisioning profiles are never committed.
+- Store signing credentials remain in Apple/Google accounts and secure local/CI secret storage.
+- GitHub Actions may run checks and unsigned builds; signed store submission remains controlled.
 
-- The current build can be restored exactly.
-- A reviewer can reproduce the current working click/removal behavior.
+Recommended branch names:
 
-### Phase 1 — Create canonical manifests and availability rules
+```text
+planning/...
+audit/...
+mobile/...
+ios/...
+android/...
+feature/...
+fix/...
+content/...
+test/...
+release/...
+```
 
-Goal: establish one source of truth for content.
-
-Actions:
-
-- Add `character-manifest.json` containing the locked Founding 12.
-- Add `expression-manifest.json` with the five fixed expression IDs and labels.
-- Add `level-manifest.json` containing availability, path count, grid size, difficulty, compiler version and QA status.
-- Add `backdrop-manifest.json` containing file path, scale, position, opacity and status.
-- Remove the Toxic Toby fallback for unfinished Teddies.
-- Render unavailable Teddies as `Coming soon`, not clickable gameplay.
-- Change collection totals to count only real available levels while optionally showing the 60-level roadmap separately.
-
-Acceptance gate:
-
-- No unfinished Teddy opens a Toxic Toby level.
-- Every playable route resolves through a manifest entry.
-
-### Phase 2 — Lock and protect the working input system
-
-Goal: make one owned input module responsible for all taps.
-
-Actions:
-
-- Extract document-level geometric selection into `input-controller.js`.
-- Preserve the working nearest-path behavior before changing algorithms.
-- Separate visible arrowhead size from effective hit tolerance.
-- Add tap-versus-pan discrimination.
-- Add rapid-tap protection during removal animation.
-- Recalculate geometry after resize, zoom and orientation changes.
-- Add automated tests for intended path selection.
-- Remove duplicate SVG click handlers only after tests pass.
-
-Acceptance gate:
-
-- Valid paths remain selectable on desktop and mobile.
-- Backdrops and feedback layers cannot intercept input.
-- A tap does not select a distant unrelated path.
-
-### Phase 3 — Toxic Toby five-backdrop system
-
-Goal: implement the immediate character-and-level mapping without touching the click system.
+## 11. Phase 0 — Freeze the working prototype
 
 Actions:
 
-- Export five separate Toxic Toby backdrop assets from the canonical expression sheet.
-- Remove labels and unused expression-sheet areas from final exports.
-- Align eyes, muzzle, ears and face silhouette with each compiled maze.
-- Add manifest values for crop, scale, X/Y position, opacity, contrast and optional blur.
-- Load by `teddy ID + expression ID`.
-- Use parchment fallback if an image fails.
-- Add `pointer-events: none` to all backdrop layers.
-- Test each level with backdrop on and off.
+- record the current `main` commit SHA;
+- capture the current click/removal behavior on desktop and a real phone;
+- document loaded CSS and JavaScript;
+- document current blocking, lives, hint and completion behavior;
+- add a baseline smoke-test checklist;
+- update README to label the current site as the prototype/reference build.
 
-Acceptance gate:
+Gate:
 
-- Each Toxic Toby level shows the correct expression.
-- The maze remains dominant.
-- Click/removal behavior is unchanged.
+- the current working interaction can be restored exactly.
 
-### Phase 4 — UX shell and design system
+## 12. Phase 1 — Bootstrap the native mobile shell
 
-Goal: replace fragmented styling with a controlled mobile-first interface.
+Branch: `mobile/capacitor-bootstrap`
 
 Actions:
 
-- Add semantic design tokens for color, type, spacing, radius, borders, shadows and motion.
-- Build reusable button, icon button, card, alert, progress, modal and bottom-sheet components.
-- Create four primary destinations outside gameplay: Play, Teddies, How to Play and Settings.
-- Hide global navigation during active gameplay.
-- Implement Home, Character, Expression, Puzzle and Completion views.
-- Keep active gameplay visually quieter than marketing and collection views.
-- Add `Coming soon` states for unavailable characters.
-- Add the brand line: `The face is the puzzle.`
+- install Capacitor core and CLI;
+- lock bundle/application ID;
+- add `capacitor.config.ts` with `webDir: 'dist'`;
+- install iOS and Android platforms;
+- add `ios/` and `android/` projects;
+- add scripts for build, sync, open and run;
+- bundle the current Vite build locally;
+- open and run in Xcode simulator and Android emulator;
+- run on at least one physical Android device;
+- configure portrait phone orientation;
+- configure safe areas and system bars;
+- add temporary app icon and splash only until approved final assets exist.
 
-Acceptance gate:
+Expected commands:
 
-- No visual layer blocks the puzzle.
-- All core components have default, focus, active, disabled and loading states where applicable.
-- Mobile controls have practical 44–48 pixel effective targets.
+```bash
+npm install @capacitor/core @capacitor/cli
+npx cap init
+npm install @capacitor/ios @capacitor/android
+npx cap add ios
+npx cap add android
+npm run build
+npx cap sync
+npx cap open ios
+npx cap open android
+```
 
-### Phase 5 — Progress storage and recovery
+Gate:
 
-Goal: save exact unfinished-level state, not only completed levels.
+- the same Toxic Toby prototype runs from a native iOS simulator and native Android app;
+- the native app loads bundled local files, not the live website URL;
+- airplane mode does not prevent launch.
 
-Actions:
-
-- Introduce a versioned progress schema.
-- Store active/removed path IDs per level.
-- Store level-data version and compiler version with progress.
-- Migrate existing localStorage completion data.
-- Use IndexedDB for durable state; keep a lightweight fallback only if necessary.
-- Save after every successful removal, restart, completion and visibility change.
-- Restore exact state after refresh, browser close and PWA reopen.
-- Add safe reset-current-level and reset-all-progress flows.
-
-Acceptance gate:
-
-- Refreshing an unfinished level restores the same remaining paths.
-- A level-data version change does not silently corrupt progress.
-
-### Phase 6 — Blocking logic and fairness
-
-Goal: restore real puzzle blocking only through visible geometry.
+## 13. Phase 2 — Canonical manifests and honest availability
 
 Actions:
 
-- Define the authoritative blocking rule in an architecture decision record.
-- Use arrowhead-direction geometry and active-path occupancy.
-- Return structured results: removable, blocker IDs and reason.
-- Highlight both the selected path and first visible blocker.
-- Use the message: `That trail is still trapped.`
-- Keep life loss disabled during validation.
-- Do not use hidden forced sequences.
-- Add deadlock detection and compiler-level solvability checks.
-- Reintroduce penalties only after user testing proves they improve the game.
+- add character, expression, level and backdrop manifests;
+- remove hard-coded duplicate content definitions;
+- remove Toxic Toby fallback for unfinished Teddies;
+- mark unfinished Teddies `Coming soon`;
+- count only approved playable content;
+- bundle approved manifests inside the native app.
 
-Acceptance gate:
+Gate:
 
-- Every rejected move is visibly explainable.
-- All five Toxic Toby levels are solvable under the production rule.
+- no unavailable Teddy can load another character's level.
 
-### Phase 7 — Head-first rope-pull animation
-
-Goal: replace whole-group translation with a path-following removal.
+## 14. Phase 3 — Protect mobile touch input
 
 Actions:
 
-- Keep 80–120 ms anticipation.
-- Move the arrowhead first.
-- Animate the body following bends in sequence.
-- Fade near the board edge.
-- Provide reduced-motion removal.
-- Keep input state safe during animation.
-- Profile on low-end Android devices.
+- extract geometric selection into one input controller;
+- preserve current nearest-path behavior before optimization;
+- use Pointer Events inside the native WebView;
+- distinguish tap from pan;
+- support pinch zoom and board reset;
+- recalculate screen transforms after rotation, resume and viewport change;
+- block rapid repeat input during unsafe animation states;
+- add native haptic feedback for valid, blocked and completion events;
+- test on real iPhone and Android screen densities.
 
-Acceptance gate:
+Gate:
 
-- Animation remains readable and near 60 fps.
-- No click regression or state corruption.
+- valid paths are reliably selected with one hand;
+- decorative layers never intercept touches;
+- touch precision is not used as difficulty.
 
-### Phase 8 — Compiler and level validation
+## 15. Phase 4 — Toxic Toby five-backdrop system
 
-Goal: make compiled level data deterministic, testable and production-safe.
+Actions:
+
+- export five dedicated square, text-free backdrops;
+- align ears, eyes, muzzle and silhouette to each maze;
+- add per-expression position, scale, opacity, contrast and saturation;
+- bundle the images in the app package;
+- provide a parchment fallback;
+- test all five without network access;
+- test all five with the backdrop disabled.
+
+Gate:
+
+- the correct expression appears on every level;
+- the arrow maze remains dominant;
+- input behavior is unchanged.
+
+## 16. Phase 5 — Native save and lifecycle recovery
+
+Use:
+
+- Capacitor Preferences for settings, onboarding state and small flags;
+- Capacitor Filesystem for a versioned `save-state.json` containing progress;
+- Capacitor App lifecycle events to save on pause/background and restore on resume.
+
+Save schema includes:
+
+- schema version;
+- app version;
+- compiler version;
+- level version;
+- completed levels;
+- removed path IDs for the active level;
+- settings;
+- timestamps.
+
+Actions:
+
+- migrate existing browser completion data where practical;
+- save after every successful removal;
+- save before backgrounding;
+- restore after force close and relaunch;
+- handle corrupted or incompatible saves safely;
+- add reset-current and reset-all flows.
+
+Gate:
+
+- force-closing the app and reopening restores the same unfinished board.
+
+## 17. Phase 6 — Fair geometry-based blocking
+
+Actions:
+
+- define one authoritative blocking rule;
+- return structured blocker data;
+- visually highlight selected and blocking paths;
+- use `That trail is still trapped.`;
+- remove hidden forced sequences;
+- keep lives disabled until user testing validates them;
+- add solver and deadlock checks;
+- map blocked/valid outcomes to native haptics.
+
+Gate:
+
+- every rejected move is visibly explainable;
+- all five Toxic Toby levels remain solvable.
+
+## 18. Phase 7 — Mobile product shell and design system
+
+Screens:
+
+- launch/splash;
+- Home;
+- Teddies;
+- Teddy detail;
+- expression selection;
+- active puzzle;
+- completion;
+- How to Play;
+- Settings;
+- accessibility;
+- legal/privacy.
+
+Native-mobile requirements:
+
+- portrait-first layout;
+- safe-area support;
+- Android system-back handling;
+- iOS swipe/back behavior where appropriate;
+- bottom navigation outside gameplay;
+- global navigation hidden during gameplay;
+- minimum practical 44–48 px controls;
+- no browser install prompts or PWA language;
+- no browser chrome assumptions.
+
+Gate:
+
+- the app feels like an installed mobile game, not a website squeezed into a phone.
+
+## 19. Phase 8 — Head-first rope-pull animation
+
+Actions:
+
+- preserve 80–120 ms anticipation;
+- move arrowhead first;
+- pull the body through bends;
+- fade near the edge;
+- add reduced-motion behavior;
+- integrate native haptics without delaying visuals;
+- profile on low-end Android and current iPhone hardware.
+
+Gate:
+
+- near-60-fps play on supported devices;
+- no state corruption or touch regression.
+
+## 20. Phase 9 — Compiler and level validation
 
 Compiler responsibilities:
 
-- generate Teddy-shaped masks;
-- define face regions;
-- fill regions with orthogonal paths;
-- prevent overlap, crossing and self-intersection;
-- keep path lengths within approved ranges;
-- attach arrowheads to true endpoints;
-- verify endpoint tangent direction;
-- validate board containment;
-- calculate dependency graph and difficulty metrics;
-- prove at least one complete solution;
-- export immutable JSON and a validation report.
+- Teddy-shaped masks;
+- expression regions;
+- orthogonal path generation;
+- no overlap, crossings or self-intersections;
+- real endpoint arrowheads;
+- endpoint tangent validation;
+- mask containment;
+- dependency and difficulty metrics;
+- complete solver proof;
+- immutable JSON and validation report.
 
-Required report fields:
+The browser/native runtime only reads approved compiled output.
 
-- teddy ID;
-- expression ID;
-- grid size;
-- path count;
-- path-length distribution;
-- initial open-path count;
-- maximum dependency depth;
-- deadlock result;
-- solver result;
-- compiler version;
-- QA status.
+Gate:
 
-Acceptance gate:
+- invalid level data cannot enter a mobile release build.
 
-- Invalid levels cannot be published.
-- The browser does not randomly generate production levels.
-
-### Phase 9 — Accessibility
-
-Goal: meet WCAG 2.1 AA and support mobile assistive technology.
+## 21. Phase 10 — Accessibility
 
 Actions:
 
-- Add visible focus states.
-- Make all standard controls keyboard operable.
-- Add an accessible path list or candidate-navigation mode.
-- Announce level identity, remaining path count, removal and blocked state.
-- Add reduced-motion and high-contrast modes.
-- Ensure color is not the only state indicator.
-- Support text scaling and reflow.
-- Test VoiceOver, TalkBack and keyboard navigation.
+- VoiceOver and TalkBack labels;
+- accessible path list or sequential path-focus mode;
+- visible focus for external keyboard/switch users;
+- reduced motion;
+- high contrast;
+- large text and reflow;
+- non-color state communication;
+- screen-reader announcements for remaining paths, removal and blocking;
+- touch-target assistance setting.
 
-Acceptance gate:
+Gate:
 
-- Core game flow is operable without precise pointer input.
-- No WCAG-critical defects remain.
+- the core flow can be completed without precise pointer input.
 
-### Phase 10 — PWA, cache and versioning
+## 22. Phase 11 — Native app quality and performance
 
-Goal: eliminate stale-build confusion and protect progress.
+Targets:
 
-Actions:
+- fast cold launch;
+- no network dependency for bundled launch content;
+- visible tap response under 50 ms;
+- near-60-fps path animation;
+- no continuous idle loops;
+- no full-board rebuild after every move;
+- memory stable across repeated level changes;
+- no app pause/resume corruption;
+- no crash on rotation or low-memory restoration.
 
-- Centralize the build version.
-- Separate app-shell, level-data and image caches.
-- Remove manually repeated version strings.
-- Never use service-worker cache as progress storage.
-- Prompt for an update after the current level, not during play.
-- Support offline reopening of cached levels.
-- Preserve progress across updates.
-- Test GitHub Pages base paths.
+Native tests:
 
-Acceptance gate:
+- iOS simulator plus physical iPhone;
+- Android emulator plus low-end and midrange physical Android;
+- background/resume;
+- force close/relaunch;
+- airplane mode;
+- low battery mode;
+- orientation and safe areas;
+- interrupted audio/haptics.
 
-- A stale build can be identified and updated.
-- Current progress survives the update.
+## 23. Phase 12 — Analytics and research
 
-### Phase 11 — Analytics and research instrumentation
+Analytics must identify platform and app build:
 
-Goal: measure comprehension, interaction reliability, fairness and retention.
+- iOS or Android;
+- app version and native build number;
+- Teddy, expression, level and compiler versions;
+- first valid tap;
+- missed tap;
+- blocked tap;
+- path removal;
+- hint;
+- restart;
+- save/restore;
+- level completion;
+- next-expression start;
+- share action.
 
-Events:
+Do not collect continuous raw touch traces in ordinary analytics.
 
-- `app_open`
-- `home_view`
-- `play_selected`
-- `tutorial_started`
-- `tutorial_completed`
-- `level_loaded`
-- `first_pointer_input`
-- `path_selected`
-- `path_removed`
-- `path_blocked`
-- `tap_missed`
-- `zoom_started`
-- `zoom_reset`
-- `hint_used`
-- `level_restarted`
-- `progress_saved`
-- `progress_restored`
-- `level_completed`
-- `next_expression_started`
-- `collection_opened`
-- `install_prompt_shown`
-- `pwa_installed`
-- `backdrop_failed`
-- `service_worker_updated`
+Research targets:
 
-Do not record continuous raw pointer traces in ordinary production analytics.
+- 80% first valid removal within 15 seconds;
+- 98% valid-tap response;
+- 80% arrow-only Teddy recognition;
+- 80% blocked-state comprehension;
+- 98% progress recovery after relaunch.
 
-Research gates:
+## 24. Phase 13 — Store preparation
 
-- first valid removal within 15 seconds for at least 80% of new users;
-- valid-tap response above 98%;
-- arrow-only Teddy recognition above 80%;
-- blocked-state comprehension above 80%;
-- progress recovery above 98%.
+### Apple
 
-### Phase 12 — Founding 12 content production
+- Apple Developer account;
+- App Store Connect record;
+- bundle ID and signing capability;
+- privacy manifest and privacy answers;
+- app icon and screenshots;
+- age rating;
+- TestFlight internal and external testing;
+- review notes explaining offline interactive gameplay and native features;
+- production archive and submission.
 
-Goal: expand one complete character package at a time.
+### Google
 
-Per-Teddy workflow:
+- Google Play Console account;
+- application ID and Play App Signing;
+- Android App Bundle;
+- data safety form;
+- content rating;
+- store listing, icon, feature graphic and screenshots;
+- internal, closed and production tracks;
+- target SDK and device-quality checks.
 
-1. Confirm canonical model reference.
-2. Confirm canonical expression sheet.
-3. Export five text-free backdrop assets.
-4. Define five face masks.
-5. Compile five levels.
-6. Validate geometry and solvability.
-7. Align each backdrop.
-8. Test recognition with backdrop disabled.
-9. Test desktop/mobile interaction.
-10. Approve difficulty.
-11. Mark manifest status playable.
-12. Release.
+Store acceptance guardrail:
+
+- the app must provide substantial interactive game content and native app behavior;
+- it must not be a thin remote-website wrapper;
+- launch content is bundled and playable offline;
+- the app includes native lifecycle, save, haptics and share integration.
+
+## 25. Phase 14 — Founding 12 production
+
+Complete one Teddy at a time:
+
+1. references approved;
+2. five backdrops exported;
+3. five masks created;
+4. five levels compiled;
+5. five solver reports passed;
+6. arrow-only recognition passed;
+7. iOS and Android interaction QA passed;
+8. difficulty approved;
+9. manifest marked playable;
+10. new store build tested before release.
 
 Recommended order after Toxic Toby:
 
@@ -506,97 +687,88 @@ Recommended order after Toxic Toby:
 10. Gas Mask Max
 11. Patchwork Pat
 
-Do not begin all 55 remaining levels in one uncontrolled batch.
+## 26. Build scripts to add
 
-### Phase 13 — Testing and release gates
+Recommended package scripts:
 
-Required automated tests:
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check": "node scripts/run-checks.mjs",
+    "mobile:sync": "npm run build && npx cap sync",
+    "mobile:ios": "npm run mobile:sync && npx cap open ios",
+    "mobile:android": "npm run mobile:sync && npx cap open android",
+    "mobile:run:ios": "npm run build && npx cap run ios",
+    "mobile:run:android": "npm run build && npx cap run android"
+  }
+}
+```
 
+Exact commands should be verified against the installed Capacitor version.
+
+## 27. CI strategy
+
+GitHub Actions should run on pull requests:
+
+- npm install;
+- lint/type checks;
 - compiler validation;
-- input selection;
-- path removal;
-- blocked feedback;
-- progress save/restore;
-- route restoration;
-- backdrop mapping;
-- offline app shell;
-- service-worker update;
-- keyboard navigation.
+- unit tests;
+- browser rendering tests;
+- unsigned Android debug build where practical.
 
-Required manual/device tests:
+Do not commit:
 
-- Chrome desktop;
-- Edge desktop;
-- Safari desktop;
-- Chrome Android;
-- Samsung Internet;
-- Safari iPhone;
-- installed iOS PWA;
-- installed Android PWA;
-- low-end Android;
-- reduced motion;
-- high contrast;
-- large text;
-- orientation change;
-- offline reopen.
+- Apple certificates;
+- provisioning profiles;
+- Android keystore;
+- store API keys;
+- private signing passwords.
 
-Release gate:
+Signed release builds remain controlled through Xcode/Play signing or secure release automation.
 
-- correct Teddy and expression;
-- recognizable arrow-only face;
-- no generic fallback art;
-- no path overlap/crossing;
-- valid click/removal;
-- fair blocking;
-- exact progress recovery;
-- no stale-cache failure;
-- no critical accessibility issue;
-- no unsupported claims of content availability.
+## 28. Definition of done — mobile MVP
 
-## 8. MVP definition
+The MVP is complete when:
 
-The first production-ready MVP is not all 60 levels.
+- native iOS and Android projects exist;
+- the game runs from bundled local assets;
+- Toxic Toby's five levels and backdrops work offline;
+- touch selection is reliable on real devices;
+- blocked feedback is fair;
+- exact progress survives force close and relaunch;
+- native haptics and share work;
+- VoiceOver/TalkBack and reduced motion work;
+- TestFlight and Google Play internal builds install successfully;
+- no other Teddy falsely appears playable.
 
-MVP includes:
+## 29. Definition of done — full mobile app
 
-- Toxic Toby’s five canonical expression levels;
-- correct expression-specific backdrops;
-- protected mobile input;
-- fair and visible blocking;
-- save/resume;
-- Home, Character, Expression, Puzzle, Completion, How to Play and Settings views;
-- responsive PWA behavior;
-- reduced motion and high contrast;
-- offline reopening of the current cached level;
-- analytics for the core funnel;
-- all other Teddies shown honestly as coming soon.
+- 60 approved level files;
+- 60 approved backdrops;
+- 60 passing solver reports;
+- all levels tested on iOS and Android;
+- canonical names everywhere;
+- no fallback character content;
+- stable saves across app updates;
+- store privacy and metadata complete;
+- App Store and Google Play production releases match the approved Git tag.
 
-## 9. Definition of done for the full app
+## 30. Immediate execution order
 
-The full Founding 12 release is complete only when:
+```text
+1. Freeze the current prototype
+2. Bootstrap Capacitor iOS and Android projects
+3. Run the existing Toxic Toby build natively on both platforms
+4. Add canonical manifests and remove false fallbacks
+5. Protect the working touch controller
+6. Implement five dedicated Toxic Toby backdrops
+7. Add native save/lifecycle recovery
+8. Validate blocking
+9. Build the mobile UI shell
+10. Produce TestFlight and Google Play internal builds
+```
 
-- all 60 level JSON files exist;
-- all 60 backdrops are mapped and aligned;
-- every level passes compiler validation and solver checks;
-- every level passes desktop and mobile interaction QA;
-- every face remains recognizable without its backdrop;
-- all character names match the canonical manifest;
-- progress survives refresh, closure and updates;
-- accessibility modes work;
-- unavailable fallbacks are removed;
-- the live GitHub Pages build matches the approved release commit.
-
-## 10. Immediate next execution order
-
-1. Merge planning documentation only after review.
-2. Create a baseline/audit branch from current `main`.
-3. Record the current working click build and add regression tests.
-4. Create the canonical manifests.
-5. Disable fake Toxic Toby fallback for other Teddies.
-6. Export and implement Toxic Toby’s five dedicated backdrops.
-7. Verify no input regression.
-8. Migrate exact progress saving.
-9. Validate production blocking behavior.
-10. Consolidate the runtime incrementally.
-
-No visual redesign or broad refactor should begin before steps 1–7 are complete.
+Do not begin the full visual redesign or remaining 55 levels before steps 1–6 pass on real mobile devices.
