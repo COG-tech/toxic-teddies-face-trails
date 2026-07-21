@@ -132,11 +132,10 @@ jobs:
         run: ./gradlew assembleDebug --no-daemon
 
       - name: Build iOS simulator application
-        id: build_ios
         shell: bash
         run: |
           mkdir -p native-logs
-          status=0
+          set -o pipefail
           xcodebuild \
             -workspace ios/App/App.xcworkspace \
             -scheme App \
@@ -144,9 +143,7 @@ jobs:
             -configuration Debug \
             -derivedDataPath build/ios-derived \
             CODE_SIGNING_ALLOWED=NO \
-            build > native-logs/ios-build.log 2>&1 || status=$?
-          tail -120 native-logs/ios-build.log
-          echo "status=$status" >> "$GITHUB_OUTPUT"
+            build 2>&1 | tee native-logs/ios-build.log
 
       - name: Upload iOS build diagnostics
         if: always()
@@ -155,10 +152,6 @@ jobs:
           name: ios-build-log
           path: native-logs/ios-build.log
           if-no-files-found: ignore
-
-      - name: Fail when iOS simulator build failed
-        if: steps.build_ios.outputs.status != '0'
-        run: exit 1
 
       - name: Commit generated native projects and compiler outputs
         if: github.event_name != 'pull_request'
