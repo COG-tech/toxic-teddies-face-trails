@@ -1,10 +1,10 @@
 (async () => {
   try {
     const [baseResponse, denseResponse, fallbackResponse, interactionResponse] = await Promise.all([
-      fetch('./compiled-app.js?v=10', { cache: 'no-store' }),
-      fetch('./hard-mode-v3.js?v=10', { cache: 'no-store' }),
-      fetch('./dense-fallback.js?v=10', { cache: 'no-store' }),
-      fetch('./interaction-fix.js?v=10', { cache: 'no-store' }),
+      fetch('./compiled-app.js?v=27', { cache: 'no-store' }),
+      fetch('./hard-mode-v3.js?v=27', { cache: 'no-store' }),
+      fetch('./dense-fallback.js?v=27', { cache: 'no-store' }),
+      fetch('./interaction-fix.js?v=27', { cache: 'no-store' }),
     ]);
     if (!baseResponse.ok || !denseResponse.ok || !fallbackResponse.ok || !interactionResponse.ok) {
       throw new Error('Toxic Toby runtime files failed to load');
