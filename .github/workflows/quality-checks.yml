@@ -25,13 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Confirm dense pack source
-        run: node -e "const fs=require('fs');const value=fs.readFileSync('levels/tt01/dense-levels-v6.txt','utf8').trim();if(!value.startsWith('H4sI'))throw new Error('Dense pack is not gzip base64');console.log('dense-pack-base64-bytes='+value.length)"
-
-      - name: Decode and parse dense pack
-        run: node --input-type=module -e "import{readFile}from'node:fs/promises';const value=(await readFile('levels/tt01/dense-levels-v6.txt','utf8')).trim();const bytes=Uint8Array.from(Buffer.from(value,'base64'));const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));const text=await new Response(stream).text();const pack=JSON.parse(text);console.log('dense-pack-json-bytes='+text.length);console.log('dense-pack-keys='+Object.keys(pack).join(','))"
-
-      - name: Extract precompiled Toxic Toby levels
+      - name: Compile deterministic Toxic Toby levels
         run: node scripts/extract-dense-levels.mjs
 
       - name: Check runtime JavaScript syntax
