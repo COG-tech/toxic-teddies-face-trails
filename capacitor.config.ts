@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.cogtech.toxicteddies',
-  appName: 'Toxic Teddies: Arrow Escape',
+  appName: 'Toxic Teddies',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
