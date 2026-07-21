@@ -25,8 +25,28 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Validate active runtime
-        run: npm run check
+      - name: Extract precompiled Toxic Toby levels
+        run: node scripts/extract-dense-levels.mjs
 
-      - name: Build browser prototype
+      - name: Check runtime JavaScript syntax
+        run: |
+          node --check dense-loader.js
+          node --check compiled-app.js
+          node --check hard-mode-v3.js
+          node --check compiled-level-source.js
+          node --check interaction-fix.js
+          node --check mobile-enhancements.js
+          node --check sw.js
+          node --check src/app/bootstrap.js
+          node --check src/app/native-bridge.js
+          node --check src/app/mobile-shell.js
+          node --check src/content/content-registry.js
+          node --check src/game/input-controller.js
+          node --check src/storage/save-store.js
+          node --check src/accessibility/accessibility.js
+
+      - name: Validate production level geometry and solver
+        run: node scripts/validate-compiled-levels.mjs
+
+      - name: Build bundled application
         run: npm run build
