@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "backdrops": [
+    {"id":"tt01_neutral","teddy_id":"tt01","expression_id":"neutral","src":"./assets/backdrops/tt01/neutral.svg","opacity":0.055,"contrast":0.9,"saturation":0.62,"blur_px":0.25,"status":"approved_crop","version":1},
+    {"id":"tt01_evil_grin","teddy_id":"tt01","expression_id":"evil_grin","src":"./assets/backdrops/tt01/evil-grin.svg","opacity":0.055,"contrast":0.9,"saturation":0.62,"blur_px":0.25,"status":"approved_crop","version":1},
+    {"id":"tt01_gross","teddy_id":"tt01","expression_id":"gross","src":"./assets/backdrops/tt01/gross.svg","opacity":0.055,"contrast":0.9,"saturation":0.62,"blur_px":0.25,"status":"approved_crop","version":1},
+    {"id":"tt01_angry","teddy_id":"tt01","expression_id":"angry","src":"./assets/backdrops/tt01/angry.svg","opacity":0.055,"contrast":0.9,"saturation":0.62,"blur_px":0.25,"status":"approved_crop","version":1},
+    {"id":"tt01_maniacal_laugh","teddy_id":"tt01","expression_id":"maniacal_laugh","src":"./assets/backdrops/tt01/maniacal-laugh.svg","opacity":0.055,"contrast":0.9,"saturation":0.62,"blur_px":0.25,"status":"approved_crop","version":1}
+  ]
+}
