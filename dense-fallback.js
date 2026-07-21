@@ -1,7 +1,7 @@
-/* Browser-safe, solver-verified Toxic Toby level source v9.
- * Mirrors the uploaded reference engine: levels are built in reverse, every
- * path is assigned a real endpoint exit, and the completed board is simulated
- * with whole-piece lane collision before it is accepted.
+/* Browser-safe, solver-verified Toxic Toby level source v10.
+ * Matches the uploaded Arrow Escape engine: path[0] is the arrowhead; only the
+ * arrowhead ray must be clear to the edge; reverse placement and full greedy
+ * simulation reject deadlocked boards.
  */
 (() => {
   const EXPRESSIONS = ['neutral','evil_grin','gross','angry','maniacal_laugh'];
@@ -129,13 +129,12 @@
 
   function canExit(cells,exitDirection,occupancy,ownId,size){
     const dir=DIRS[exitDirection];
-    for(const [row,col] of cells){
-      let nextRow=row+dir.dr,nextCol=col+dir.dc;
-      while(nextRow>=0&&nextRow<size&&nextCol>=0&&nextCol<size){
-        const blocker=occupancy.get(key(nextRow,nextCol));
-        if(blocker&&blocker!==ownId)return false;
-        nextRow+=dir.dr;nextCol+=dir.dc;
-      }
+    const [row,col]=cells[0];
+    let nextRow=row+dir.dr,nextCol=col+dir.dc;
+    while(nextRow>=0&&nextRow<size&&nextCol>=0&&nextCol<size){
+      const blocker=occupancy.get(key(nextRow,nextCol));
+      if(blocker&&blocker!==ownId)return false;
+      nextRow+=dir.dr;nextCol+=dir.dc;
     }
     return true;
   }
@@ -212,18 +211,18 @@
     }
 
     const solutionOrder=[...added].reverse().map(piece=>piece.id);
-    if(!verifySolution(added,solutionOrder,config.size))throw new Error(`Level ${level} failed full-lane solver verification`);
+    if(!verifySolution(added,solutionOrder,config.size))throw new Error(`Level ${level} failed head-ray solver verification`);
 
     const startingOccupancy=new Map();
     for(const piece of added)for(const [row,col] of piece.cells)startingOccupancy.set(key(row,col),piece.id);
     const startingOpenPieces=added.filter(piece=>canExit(piece.cells,piece.exitDirection,startingOccupancy,piece.id,config.size)).length;
     const coverage=(mask.size-available.size)/mask.size;
     const data={
-      schemaVersion:9,teddy:'tt01',characterName:'Toxic Toby',alternateName:'Radioactive Ricky',
+      schemaVersion:10,teddy:'tt01',characterName:'Toxic Toby',alternateName:'Radioactive Ricky',
       level,expression,gridSize:config.size,cellSize:24,pieceCount:added.length,pieces:added,
-      solutionOrder,strictSequence:false,movementRule:'whole_piece_clear_lane_to_edge',
+      solutionOrder,strictSequence:false,movementRule:'arrowhead_ray_clear_to_edge',
       decorations:[],visualAnchors:['torn circular ears','button eye','infected eye','forehead seam','muzzle and black nose','cheek patch','expression mouth','radioactive slime'],
-      quality:{coverage:Number(coverage.toFixed(3)),verifiedSolvable:true,startingOpenPieces,solver:'reverse_construction_full_lane_v1'},
+      quality:{coverage:Number(coverage.toFixed(3)),verifiedSolvable:true,startingOpenPieces,startingBlockedPieces:added.length-startingOpenPieces,solver:'reverse_construction_head_ray_v1'},
       animation:{pauseMs:90,baseSlideMs:420,msPerCell:34,minSlideMs:760,maxSlideMs:1500,fadeStart:.8,mode:'head_first_pull_through'},
     };
     cache.set(level,data);
