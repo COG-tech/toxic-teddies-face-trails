@@ -1,8 +1,8 @@
-# QA and Release Gates
+# QA and Release Gates — Native Mobile App
 
 ## Purpose
 
-No Toxic Teddies level or application release is complete because it renders. It is complete only after it passes content, geometry, interaction, accessibility, performance, persistence and PWA checks.
+A Toxic Teddies release is complete only after it passes content, geometry, interaction, accessibility, performance, native lifecycle, persistence, signing and store checks on iOS and Android.
 
 ## Gate A — Content identity
 
@@ -54,8 +54,6 @@ Test with backdrop disabled.
 - [ ] At least two character-specific features are visible.
 - [ ] Intended expression is reasonably identifiable.
 
-A backdrop may improve the result but cannot be the sole reason the face is recognizable.
-
 ## Gate E — Backdrop alignment
 
 - [ ] Correct image for Teddy and expression.
@@ -65,110 +63,164 @@ A backdrop may improve the result but cannot be the sole reason the face is reco
 - [ ] No false visual path boundaries.
 - [ ] `pointer-events: none` confirmed.
 - [ ] Parchment fallback works.
-- [ ] Mobile and desktop crops approved.
+- [ ] iPhone and Android phone crops approved.
+- [ ] Tablet crop approved where supported.
+- [ ] Asset is bundled locally in the app.
 
-## Gate F — Input and interaction
+## Gate F — Touch and interaction
 
 - [ ] Valid path responds to intended tap.
 - [ ] Effective target is mobile-friendly.
 - [ ] Tap between close paths selects the intended nearest path.
-- [ ] Backdrop never intercepts input.
+- [ ] Backdrop never intercepts touches.
 - [ ] Pan does not trigger accidental removal.
 - [ ] Zoom does not break hit detection.
-- [ ] Orientation change recalculates geometry.
+- [ ] Resume/orientation change recalculates geometry.
 - [ ] Rapid taps do not corrupt state.
 - [ ] Removed paths cannot be selected again.
 - [ ] Missed taps do not cost lives or trigger a modal.
+- [ ] Android system Back behaves correctly.
+- [ ] iOS safe-area gestures do not conflict with gameplay.
 
-## Gate G — Animation
+## Gate G — Native haptics and animation
 
 - [ ] Visible response begins immediately.
 - [ ] Anticipation is approximately 80–120 ms.
 - [ ] Arrowhead exits first.
-- [ ] Body follows the path bends.
+- [ ] Body follows path bends.
 - [ ] Fade occurs near the edge.
 - [ ] Input lock releases correctly.
 - [ ] Reduced-motion version works.
+- [ ] Valid, blocked and completion haptics are restrained and distinct.
+- [ ] Haptic failure does not block gameplay.
 - [ ] Animation remains smooth on target devices.
 
-## Gate H — Progress and state
+## Gate H — Native progress and lifecycle
 
 - [ ] Removed path IDs save.
-- [ ] Refresh restores exact state.
-- [ ] Browser close/reopen restores exact state.
-- [ ] PWA close/reopen restores exact state.
+- [ ] App pause/background saves state.
+- [ ] Force close/relaunch restores exact state.
+- [ ] Device reboot/relaunch restores state.
 - [ ] Completion saves once.
 - [ ] Restart resets only the intended level.
 - [ ] Reset-all requires confirmation.
 - [ ] Level-version mismatch is handled safely.
-- [ ] Existing completion data migrates.
+- [ ] Existing prototype completion data migration is tested where supported.
+- [ ] Corrupt save file falls back safely without crashing.
+- [ ] App update preserves compatible progress.
 
 ## Gate I — Accessibility
 
-- [ ] All standard controls are keyboard operable.
+- [ ] VoiceOver labels and announcements work.
+- [ ] TalkBack labels and announcements work.
+- [ ] All standard controls are keyboard/switch operable where applicable.
 - [ ] Visible focus state exists.
 - [ ] Modal focus management works.
-- [ ] Screen reader announces level identity and remaining count.
+- [ ] Level identity and remaining count are announced.
 - [ ] Removal and blocking are announced without excessive noise.
 - [ ] State is not communicated by color alone.
 - [ ] Reduced motion works.
 - [ ] High contrast works.
 - [ ] Large text reflows without clipping.
-- [ ] Practical touch target sizes are maintained.
-- [ ] VoiceOver check completed.
-- [ ] TalkBack check completed.
+- [ ] Practical touch targets are maintained.
+- [ ] Accessible path-list/candidate navigation works.
 
-WCAG-critical failure blocks release.
+Critical accessibility failure blocks release.
 
 ## Gate J — Performance
 
 Targets:
 
-- [ ] Cold first puzzle ready in approximately 3 seconds or less on average mobile 4G.
-- [ ] Warm PWA load approximately 1 second where feasible.
+- [ ] Cold installed-app launch is acceptably fast on target devices.
+- [ ] Bundled first puzzle opens without network access.
 - [ ] Initial visible tap response under 50 ms.
-- [ ] Near-60-fps removal animation on target devices.
-- [ ] No repeated full-board rebuild after every path removal.
+- [ ] Near-60-fps removal animation on supported devices.
+- [ ] No repeated full-board rebuild after every removal.
 - [ ] No permanent idle animation loop.
-- [ ] Backdrops use optimized sizes.
-- [ ] Current and next level are prefetched selectively.
-- [ ] App does not download all 60 levels on first launch.
+- [ ] Backdrops are size-optimized.
+- [ ] Memory remains stable across repeated level changes.
+- [ ] Pause/resume does not duplicate listeners or state.
+- [ ] Low-memory restoration does not crash.
+- [ ] Battery usage remains reasonable during a normal session.
 
-## Gate K — PWA and cache
+## Gate K — Capacitor native shell
 
-- [ ] Manifest validates.
-- [ ] Icons load at required sizes.
-- [ ] GitHub Pages relative paths work.
-- [ ] App shell opens offline after caching.
-- [ ] Current cached level opens offline.
-- [ ] Update is deferred until a safe point.
-- [ ] Progress survives update.
-- [ ] Build version is visible for diagnosis.
-- [ ] No mixed old/new JavaScript and CSS in test scenarios.
-- [ ] Service worker failure does not erase progress.
+- [ ] `capacitor.config.ts` uses bundled `dist` content.
+- [ ] `ios/` project builds in Xcode.
+- [ ] `android/` project builds in Android Studio.
+- [ ] iOS simulator launch passes.
+- [ ] Android emulator launch passes.
+- [ ] Physical iPhone test passes.
+- [ ] Physical Android test passes.
+- [ ] Airplane-mode launch passes.
+- [ ] App does not point to the live website as its main content source.
+- [ ] No remote executable code is required for launch gameplay.
+- [ ] Native plugins fail gracefully when unavailable.
 
-## Gate L — Responsive layout
+## Gate L — Mobile layouts and system UI
 
 Test:
 
-- [ ] 320–479 px compact mobile.
-- [ ] 480–767 px large mobile.
-- [ ] 768–1099 px tablet.
-- [ ] 1100 px+ desktop.
+- [ ] Small iPhone.
+- [ ] Standard iPhone.
+- [ ] Large iPhone.
+- [ ] Narrow Android phone.
+- [ ] Midrange Android phone.
+- [ ] Large Android phone.
+- [ ] Supported tablet layout.
 - [ ] Portrait.
-- [ ] Landscape.
-- [ ] Browser mode.
-- [ ] Installed PWA.
+- [ ] Landscape where enabled.
+- [ ] Display zoom / larger font.
+- [ ] Gesture navigation and button navigation on Android.
 
 Confirm:
 
 - [ ] Board stays square.
 - [ ] Controls remain reachable.
 - [ ] No horizontal scrolling.
-- [ ] Content does not overlap safe areas.
+- [ ] Safe areas are respected.
+- [ ] Status/system bars use approved contrast.
 - [ ] Global navigation is hidden during play.
 
-## Gate M — Copy and brand
+## Gate M — Offline and bundled content
+
+- [ ] Launch content is packaged in the app.
+- [ ] All five Toxic Toby levels open in airplane mode.
+- [ ] All five backdrops open in airplane mode.
+- [ ] Save and restore work offline.
+- [ ] No service worker is required for the native app.
+- [ ] No stale browser-cache mixture controls native updates.
+- [ ] App update is delivered through the stores.
+- [ ] Downloadable future content, if added, is data/assets only and versioned.
+
+## Gate N — Store identity and compliance
+
+### Apple
+
+- [ ] Bundle ID matches App Store Connect.
+- [ ] Version/build number is correct.
+- [ ] Signing and provisioning succeed.
+- [ ] Privacy manifest is present and accurate.
+- [ ] App Privacy answers match actual data use.
+- [ ] Age rating is complete.
+- [ ] App icon and screenshots are approved.
+- [ ] TestFlight build installs and passes smoke tests.
+- [ ] Review notes explain bundled offline interactive gameplay and native features.
+- [ ] App provides substantial game functionality beyond a repackaged website.
+
+### Google Play
+
+- [ ] Application ID matches Play Console.
+- [ ] Android App Bundle builds.
+- [ ] Play App Signing is configured.
+- [ ] Target SDK requirement is met.
+- [ ] Data Safety answers match actual data use.
+- [ ] Content rating is complete.
+- [ ] Store icon, screenshots and feature graphic are approved.
+- [ ] Internal/closed testing build installs and passes smoke tests.
+- [ ] App is stable, responsive and provides substantial gameplay.
+
+## Gate O — Copy and brand
 
 - [ ] Primary line uses `The face is the puzzle.`
 - [ ] Instructions are clear before humorous.
@@ -178,59 +230,62 @@ Confirm:
 - [ ] No inconsistent character names.
 - [ ] No licensed-property comparisons in product copy.
 - [ ] Gross-out humor remains comic, not realistic gore.
+- [ ] No PWA install/update language appears in the native app.
 
-## Required test matrix
+## Required device matrix
 
-### Desktop
+### iOS
 
-- Chrome
-- Edge
-- Safari
+- [ ] Current supported iOS simulator.
+- [ ] Physical small/standard iPhone.
+- [ ] Physical large iPhone when available.
+- [ ] TestFlight install.
+- [ ] VoiceOver.
+- [ ] Reduce Motion.
+- [ ] Larger Text.
 
-### Mobile
+### Android
 
-- Chrome Android
-- Samsung Internet
-- Safari iPhone
-- Android installed PWA
-- iOS home-screen PWA
-- Low-end Android device
+- [ ] Current emulator.
+- [ ] Low-end physical Android.
+- [ ] Midrange physical Android.
+- [ ] Google Play internal install.
+- [ ] TalkBack.
+- [ ] Gesture navigation.
+- [ ] Button navigation.
+- [ ] Font/display scaling.
 
-### Accessibility states
+### Lifecycle/connectivity
 
-- Keyboard only
-- Screen reader
-- Reduced motion
-- High contrast
-- Large text
-
-### Connectivity states
-
-- Cold online load
-- Warm cached load
-- Offline reopen
-- Reconnect
-- Service-worker update available
+- [ ] Airplane mode launch.
+- [ ] Background/resume.
+- [ ] Force close/relaunch.
+- [ ] Device reboot/relaunch.
+- [ ] Incoming interruption.
+- [ ] App update over an existing save.
 
 ## Pull-request evidence
 
-A gameplay or visual PR must include:
+A gameplay, native or visual PR includes:
 
-- before/after recording or screenshots;
-- exact build and level versions;
-- automated test result;
-- manual device checklist;
+- before/after device recording or screenshots;
+- app version and native build numbers;
+- level/compiler versions;
+- automated test results;
+- physical-device checklist;
 - accessibility impact;
 - performance impact;
-- cache impact;
+- storage/lifecycle impact;
+- store/privacy impact;
 - rollback instructions.
 
 ## Release decision
 
-A release is approved only when:
+A mobile release is approved only when:
 
 - all blocking gates pass;
-- remaining nonblocking issues are documented;
-- live content availability matches manifests;
-- GitHub Pages deploy commit is recorded;
-- post-deploy smoke test passes.
+- nonblocking issues are documented;
+- content availability matches manifests;
+- signed TestFlight and Google Play test builds pass;
+- the submitted store build matches the approved Git tag;
+- post-install smoke tests pass on both platforms.
