@@ -125,8 +125,10 @@
     return path;
   }
 
+  function clone(value){return typeof structuredClone==='function'?structuredClone(value):JSON.parse(JSON.stringify(value));}
+
   function generate(level){
-    if(cache.has(level))return structuredClone(cache.get(level));
+    if(cache.has(level))return clone(cache.get(level));
     const config=CONFIG[level];
     const expression=EXPRESSIONS[level-1];
     const random=rng(config.seed);
@@ -147,7 +149,8 @@
       let desiredRegion=null,best=-Infinity;
       for(const [region,cells] of groups){
         if(!cells.length)continue;
-        const target=(region==='fur'||region==='left_ear'||region==='right_ear'?.91:.96)*(totals.get(region)||1);
+        const lowPriority=region==='fur'||region==='left_ear'||region==='right_ear';
+        const target=(lowPriority?.91:.96)*(totals.get(region)||1);
         const deficit=(target-(filled.get(region)||0))/(totals.get(region)||1);
         const score=deficit+random()*.0001;
         if(score>best){best=score;desiredRegion=region;}
@@ -185,7 +188,7 @@
       animation:{pauseMs:90,baseSlideMs:420,msPerCell:34,minSlideMs:760,maxSlideMs:1500,fadeStart:.8,mode:'head_first_pull_through'},
     };
     cache.set(level,data);
-    return structuredClone(data);
+    return clone(data);
   }
 
   fetchLevel=async function browserSafeDenseFetchLevel(){
