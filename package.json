@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "node --check app.js && node --check characters.js && node --check sw.js && node scripts/validate-arrow-puzzles.mjs"
+    "check": "node --check dense-loader.js && node --check compiled-app.js && node --check hard-mode-v3.js && node --check dense-fallback.js && node --check interaction-fix.js && node --check sw.js && node scripts/validate-arrow-puzzles.mjs"
   },
   "devDependencies": {
     "vite": "^7.0.0"
