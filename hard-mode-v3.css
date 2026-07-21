@@ -19,19 +19,21 @@
   mix-blend-mode:multiply;
 }
 .board,.preview-layer{inset:1.2%;width:97.6%;height:97.6%}
+.board{pointer-events:auto!important;touch-action:none!important;user-select:none;-webkit-user-select:none}
 .board-backdrop{filter:sepia(.8) saturate(.7) contrast(1.08);mix-blend-mode:multiply;background-size:540% auto;background-repeat:no-repeat}
 .compiled-decoration-layer{display:none!important}
-.dense-piece-layer{isolation:isolate}
-.dense-path{cursor:pointer;transform-box:fill-box;transform-origin:center}
-.dense-rope-body{fill:none;stroke:#543a27;stroke-width:1.72;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.dense-rope-head{fill:none;stroke:#543a27;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.dense-piece-layer{isolation:isolate;pointer-events:all}
+.dense-path{cursor:pointer;transform-box:fill-box;transform-origin:center;pointer-events:visiblePainted}
+.dense-rope-body{fill:none;stroke:#543a27;stroke-width:1.72;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke}
+.dense-rope-head{fill:none;stroke:#543a27;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke}
 .style-rust .dense-rope-body,.style-rust .dense-rope-head,.style-stitch .dense-rope-body,.style-stitch .dense-rope-head{stroke:var(--rust)}
 .style-slime .dense-rope-body,.style-slime .dense-rope-head{stroke:var(--toxic)}
 .style-patch .dense-rope-body,.style-patch .dense-rope-head{stroke:var(--patch)}
 .style-nose .dense-rope-body,.style-nose .dense-rope-head{stroke:#17120e;stroke-width:2.05}
 .style-mouth .dense-rope-body,.style-mouth .dense-rope-head,.style-muzzle .dense-rope-body,.style-muzzle .dense-rope-head{stroke:#75523a}
 .style-tooth .dense-rope-body,.style-tooth .dense-rope-head{stroke:#d2bd8e;filter:drop-shadow(0 0 1px rgba(73,50,28,.35))}
-.dense-rope-hit{fill:none;stroke:transparent;stroke-width:8.5;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke}
+.dense-rope-hit{fill:none;stroke:rgba(0,0,0,.001);stroke-width:14;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke!important}
+.path-piece.pressed .dense-rope-body,.path-piece.pressed .dense-rope-head{stroke:#9abf32;filter:drop-shadow(0 0 2px rgba(126,159,42,.38))}
 .path-piece.escape-armed .dense-rope-head{stroke:#b0d83a;filter:drop-shadow(0 0 2px rgba(126,159,42,.42))}
 .path-piece.inspecting .dense-rope-body,.path-piece.inspecting .dense-rope-head,.path-piece.hinting .dense-rope-body,.path-piece.hinting .dense-rope-head{stroke:#6f9529}
 .path-piece.blocking .dense-rope-body,.path-piece.blocking .dense-rope-head{stroke:#d65d45;filter:drop-shadow(0 0 2px rgba(160,55,37,.35))}
@@ -43,5 +45,5 @@
   .board-shell{border-width:3px}
   .dense-rope-body{stroke-width:1.48}
   .dense-rope-head{stroke-width:1.35}
-  .dense-rope-hit{stroke-width:8}
+  .dense-rope-hit{stroke-width:16}
 }
