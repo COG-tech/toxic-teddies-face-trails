@@ -78,9 +78,6 @@ jobs:
       - name: Build bundled web application
         run: npm run build
 
-      - name: Display Capacitor environment
-        run: npx cap doctor
-
       - name: Add iOS platform when missing
         shell: bash
         run: |
@@ -93,6 +90,9 @@ jobs:
 
       - name: Sync bundled app to native projects
         run: npx cap sync
+
+      - name: Display Capacitor environment
+        run: npx cap doctor
 
       - name: Build Android debug application
         working-directory: android
