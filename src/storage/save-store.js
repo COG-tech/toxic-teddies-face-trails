@@ -11,7 +11,7 @@ function emptyState() {
   return {
     schemaVersion: SCHEMA_VERSION,
     appVersion: '0.3.0',
-    compilerVersion: 'dense-pack-v6',
+    compilerVersion: 'toxic-toby-deterministic-v1',
     completed: {},
     activeSession: null,
     updatedAt: new Date(0).toISOString(),
