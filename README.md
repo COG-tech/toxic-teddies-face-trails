@@ -1,70 +1,110 @@
 # Toxic Teddies: Arrow Escape
 
-A calm sequential arrow-clearing puzzle where every board is arranged to look like the face of an original Toxic Teddy.
+Toxic Teddies: Arrow Escape is being built as a native iOS and Android puzzle game for the Apple App Store and Google Play.
 
-This is **not** a tracing game.
+The current GitHub Pages build is the **browser prototype and interaction reference**, not the finished mobile app.
 
-## Core mechanic
+Primary rule:
 
-- Each puzzle is a grid of directional arrow tiles.
-- The tiles collectively form a recognizable Toxic Teddy face.
-- A tile can leave only when its arrow has a completely open lane to the perimeter.
-- Removing a tile clears its lane and can free arrows that were trapped behind it.
-- Tapping a blocked arrow costs one toxic-drop life.
-- Long-pressing any arrow previews its path and highlights the first blocker.
-- The puzzle is solved when every arrow has slid off the board.
+> **The face is the puzzle.**
 
-## Content structure
+Hundreds of connected orthogonal arrow paths form the actual face of a Toxic Teddy. The player selects a path with a clear arrowhead exit, the arrowhead leaves first, and the connected body follows through its bends.
 
-The game contains 12 Founding Teddies with five increasingly difficult puzzles each:
+## Current prototype status
 
-1. Toxic Toby / Radioactive Ricky
-2. Moldy Molly / Fungus Faye
-3. Dumpster Danny / Trashcan Travis
-4. Sludge Sam / Gooey Grant
-5. Battery Barry / Leaking Leon
-6. Maggot Mitch / Wormy Walt
-7. Burger Bear / Greasy Gina
-8. Rusty Randy / Corroded Cory
-9. Acid Andy / Meltdown Mel
-10. Gas Mask Max / Fumey Frank
-11. Patchwork Pat / Quilted Quinn
-12. Plague Bear / Sickly Sonny
+The current browser build provides:
 
-Total: **60 puzzles**.
+- Toxic Toby / Radioactive Ricky;
+- five expression levels:
+  1. Neutral
+  2. Evil Grin
+  3. Gross
+  4. Angry
+  5. Maniacal Laugh;
+- dense face-shaped path geometry;
+- document-level nearest-path selection;
+- head-ray blocking;
+- head-first pull-through animation;
+- three toxic-drop lives in the current prototype;
+- long-press preview;
+- hints;
+- completed-level persistence;
+- browser service-worker caching.
 
-## Difficulty progression
+The other eleven Founding Teddies are not yet playable. Their cards are prototype placeholders/coming-soon states and must not be treated as completed content.
 
-1. Easy — 7×7 Teddy face grid
-2. Gross — 9×9 Teddy face grid
-3. Toxic — 11×11 Teddy face grid
-4. Vile — 13×13 Teddy face grid
-5. Legendary — 15×15 Teddy face grid
+## Known prototype limitations
 
-Higher levels contain more tiles and stronger dependency chains, so more arrows must be removed in the correct order.
+- The runtime is assembled through `dense-loader.js` and indirect `eval()`.
+- Core functions are overridden across several patch files.
+- Blocked taps currently consume lives; this is not yet approved as the final mobile rule.
+- Exact unfinished path state is not saved.
+- Other Teddy cards can still route to Toxic Toby through the current override stack.
+- One complete Toxic Toby expression sheet is repositioned as five temporary backdrops.
+- The service worker is a browser-prototype feature, not the native update system.
+- Native iOS and Android projects have not yet been generated.
 
-## Experience rules
+## Native mobile target
 
-- no countdown timer;
-- no flashing visual clutter;
-- smooth directional slide animations;
-- three toxic-drop lives;
-- deterministic, guaranteed-solvable boards;
-- local progress saving;
-- responsive mouse, touch, and stylus input;
-- offline play through a service worker cache.
+The production app will use the existing Vite/JavaScript/SVG game core packaged locally through Capacitor.
 
-## Project files
+Planned native deliverables:
+
+```text
+Vite game build
+    ↓
+Capacitor native runtime
+    ↓
+ios/ Xcode project
+android/ Android Studio project
+    ↓
+TestFlight and Google Play internal testing
+    ↓
+Apple App Store and Google Play
+```
+
+The installed apps will bundle approved launch levels and assets locally, work in airplane mode, save exact progress through native storage/lifecycle handling, and add native haptics and sharing.
+
+## Authoritative planning documents
+
+Start with:
+
+```text
+docs/README_NATIVE_PLAN.md
+docs/MASTER_APP_BUILD_PLAN.md
+docs/NATIVE_MOBILE_TECHNICAL_SETUP.md
+docs/GITHUB_EXECUTION_CHECKLIST.md
+docs/QA_AND_RELEASE_GATES.md
+docs/STORE_RELEASE_CHECKLIST.md
+```
+
+Current browser baseline:
+
+```text
+docs/BASELINE_CURRENT_BUILD.md
+docs/BASELINE_SMOKE_TEST.md
+docs/BASELINE_RECORDING_CHECKLIST.md
+```
+
+## Current runtime files
 
 ```text
 index.html
 styles.css
-arrow-extras.css
-app.js
-characters.js
+compiled-patterns.css
+hard-mode-v3.css
+dense-loader.js
+compiled-app.js
+hard-mode-v3.js
+dense-fallback.js
+interaction-fix.js
+levels/tt01/
+assets/backdrops/toxic-toby-expression-sheet.svg
 manifest.webmanifest
 sw.js
 ```
+
+The exact load and override order is documented in `docs/BASELINE_CURRENT_BUILD.md`.
 
 ## Local development
 
@@ -73,10 +113,12 @@ npm install
 npm run dev
 ```
 
-## Production build
+## Browser production build
 
 ```bash
 npm run build
 ```
 
-The source files can also be served directly through GitHub Pages from `main` and `/ (root)`.
+## Important development rule
+
+Do not refactor or replace the current touch/click behavior until the baseline smoke tests are recorded and the same behavior runs inside the Capacitor iOS and Android containers.
