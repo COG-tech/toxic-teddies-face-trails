@@ -1,14 +1,15 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 10,
   "teddy": "tt01",
   "characterName": "Toxic Toby",
   "alternateName": "Radioactive Ricky",
-  "pack": "levels/tt01/dense-levels-v6.txt",
+  "movementRule": "arrowhead_ray_clear_to_edge",
+  "solver": "reverse_construction_head_ray_v1",
   "levels": [
-    {"level": 1, "expression": "neutral", "pieceCount": 125, "gridSize": 57, "coverage": 0.852, "openChoices": 3},
-    {"level": 2, "expression": "evil_grin", "pieceCount": 132, "gridSize": 59, "coverage": 0.851, "openChoices": 3},
-    {"level": 3, "expression": "gross", "pieceCount": 138, "gridSize": 61, "coverage": 0.839, "openChoices": 2},
-    {"level": 4, "expression": "angry", "pieceCount": 145, "gridSize": 63, "coverage": 0.846, "openChoices": 2},
-    {"level": 5, "expression": "maniacal_laugh", "pieceCount": 150, "gridSize": 65, "coverage": 0.829, "openChoices": 1}
+    {"level": 1, "expression": "neutral", "pieceCount": 122, "gridSize": 57, "coverage": 0.826, "startingOpenPieces": 49, "startingBlockedPieces": 73, "verifiedSolvable": true},
+    {"level": 2, "expression": "evil_grin", "pieceCount": 124, "gridSize": 59, "coverage": 0.773, "startingOpenPieces": 45, "startingBlockedPieces": 79, "verifiedSolvable": true},
+    {"level": 3, "expression": "gross", "pieceCount": 130, "gridSize": 61, "coverage": 0.799, "startingOpenPieces": 39, "startingBlockedPieces": 91, "verifiedSolvable": true},
+    {"level": 4, "expression": "angry", "pieceCount": 152, "gridSize": 63, "coverage": 0.803, "startingOpenPieces": 59, "startingBlockedPieces": 93, "verifiedSolvable": true},
+    {"level": 5, "expression": "maniacal_laugh", "pieceCount": 150, "gridSize": 65, "coverage": 0.804, "startingOpenPieces": 51, "startingBlockedPieces": 99, "verifiedSolvable": true}
   ]
 }
