@@ -7,9 +7,9 @@
   <meta name="description" content="Toxic Teddies Arrow Escape — clear the dense Toxic Toby arrow face in the right order." />
   <title>Toxic Teddies: Arrow Escape</title>
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="stylesheet" href="./styles.css?v=28" />
-  <link rel="stylesheet" href="./compiled-patterns.css?v=28" />
-  <link rel="stylesheet" href="./hard-mode-v3.css?v=28" />
+  <link rel="stylesheet" href="./styles.css?v=29" />
+  <link rel="stylesheet" href="./compiled-patterns.css?v=29" />
+  <link rel="stylesheet" href="./hard-mode-v3.css?v=29" />
 </head>
 <body>
   <div class="app-shell">
@@ -18,7 +18,7 @@
         <div>
           <p class="eyebrow">SERIES 1</p>
           <h1>TOXIC TEDDIES</h1>
-          <p>Pick an arrow. Clear the face.</p>
+          <p>Find an arrow with a clear lane. Clear the face.</p>
         </div>
         <div id="collectionCounter" class="collection-counter">0 / 60</div>
       </header>
@@ -39,14 +39,14 @@
       </header>
 
       <div class="status-row">
-        <div id="lives" class="lives" aria-label="Toxic drops"></div>
+        <div id="lives" class="lives" aria-label="Three toxic drops remaining"></div>
         <div class="progress">
           <span id="clearProgress">0 / 0</span>
           <strong id="percentProgress">0%</strong>
         </div>
       </div>
 
-      <p id="statusText" class="status-text">Loading dense Toxic Toby pattern…</p>
+      <p id="statusText" class="status-text">Loading solver-verified Toxic Toby pattern…</p>
 
       <main class="board-shell">
         <div id="boardBackdrop" class="board-backdrop" aria-hidden="true"></div>
@@ -76,13 +76,13 @@
 
   <div id="gameOverModal" class="modal-backdrop hidden">
     <section class="modal-card">
-      <p class="eyebrow">GAME PAUSED</p>
-      <h3>Press try again to restart the face.</h3>
+      <p class="eyebrow">NO TOXIC DROPS LEFT</p>
+      <h3>Read the arrowheads and clear their lanes.</h3>
       <button id="tryAgainButton" class="primary-button full" type="button">Try again</button>
     </section>
   </div>
 
-  <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js?v=28').catch(()=>{});</script>
-  <script src="./dense-loader.js?v=28"></script>
+  <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js?v=29').catch(()=>{});</script>
+  <script src="./dense-loader.js?v=29"></script>
 </body>
 </html>
