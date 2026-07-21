@@ -1,4 +1,4 @@
-/* Dense Toxic Toby v6: the arrow maze itself forms the bear face. */
+/* Dense Toxic Toby: the arrow maze itself forms the bear face. */
 :root{--ink:#4b3420;--ink-dark:#21170f;--toxic:#84aa2e;--rust:#a45e34;--patch:#ad5b83;--paper:#dfc48f}
 .board-shell{
   width:min(100%,760px);
@@ -20,7 +20,7 @@
 }
 .board,.preview-layer{inset:1.2%;width:97.6%;height:97.6%}
 .board{pointer-events:auto!important;touch-action:none!important;user-select:none;-webkit-user-select:none}
-.board-backdrop{filter:sepia(.8) saturate(.7) contrast(1.08);mix-blend-mode:multiply;background-size:540% auto;background-repeat:no-repeat}
+.board-backdrop{pointer-events:none!important;filter:sepia(.8) saturate(var(--backdrop-saturation,.62)) contrast(var(--backdrop-contrast,.9)) blur(var(--backdrop-blur,0));mix-blend-mode:multiply;background-size:cover;background-position:50% 50%;background-repeat:no-repeat}
 .compiled-decoration-layer{display:none!important}
 .dense-piece-layer{isolation:isolate;pointer-events:all}
 .dense-path{cursor:pointer;transform-box:fill-box;transform-origin:center;pointer-events:visiblePainted}
@@ -33,6 +33,7 @@
 .style-mouth .dense-rope-body,.style-mouth .dense-rope-head,.style-muzzle .dense-rope-body,.style-muzzle .dense-rope-head{stroke:#75523a}
 .style-tooth .dense-rope-body,.style-tooth .dense-rope-head{stroke:#d2bd8e;filter:drop-shadow(0 0 1px rgba(73,50,28,.35))}
 .dense-rope-hit{fill:none;stroke:rgba(0,0,0,.001);stroke-width:14;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:stroke!important}
+.touch-assistance .dense-rope-hit{stroke-width:18}
 .path-piece.pressed .dense-rope-body,.path-piece.pressed .dense-rope-head{stroke:#9abf32;filter:drop-shadow(0 0 2px rgba(126,159,42,.38))}
 .path-piece.escape-armed .dense-rope-head{stroke:#b0d83a;filter:drop-shadow(0 0 2px rgba(126,159,42,.42))}
 .path-piece.inspecting .dense-rope-body,.path-piece.inspecting .dense-rope-head,.path-piece.hinting .dense-rope-body,.path-piece.hinting .dense-rope-head{stroke:#6f9529}
@@ -46,4 +47,5 @@
   .dense-rope-body{stroke-width:1.48}
   .dense-rope-head{stroke-width:1.35}
   .dense-rope-hit{stroke-width:16}
+  .touch-assistance .dense-rope-hit{stroke-width:20}
 }

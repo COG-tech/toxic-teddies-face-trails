@@ -1,0 +1,23 @@
+:root {
+  --tt-space-1: 4px;
+  --tt-space-2: 8px;
+  --tt-space-3: 12px;
+  --tt-space-4: 16px;
+  --tt-space-6: 24px;
+  --tt-space-8: 32px;
+  --tt-radius-sm: 8px;
+  --tt-radius-md: 14px;
+  --tt-radius-lg: 22px;
+  --tt-control-min: 44px;
+  --tt-focus: #4d6412;
+  --tt-danger: #b94332;
+  --tt-success: #6f9529;
+  --tt-surface: #fbf6ed;
+  --tt-surface-muted: #f3ecdf;
+  --tt-text: #543f2b;
+  --tt-text-muted: #8a765e;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}

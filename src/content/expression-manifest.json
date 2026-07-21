@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "expressions": [
+    {"id":"neutral","level":1,"label":"Neutral","difficulty":"intro"},
+    {"id":"evil_grin","level":2,"label":"Evil Grin","difficulty":"easy"},
+    {"id":"gross","level":3,"label":"Gross","difficulty":"medium"},
+    {"id":"angry","level":4,"label":"Angry","difficulty":"hard"},
+    {"id":"maniacal_laugh","level":5,"label":"Maniacal Laugh","difficulty":"brutal"}
+  ]
+}

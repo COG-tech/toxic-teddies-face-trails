@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "series": "TT_S1",
+  "characters": [
+    {"id":"tt01","production_id":"TT_S1_001","primary":"Toxic Toby","alternate":"Radioactive Ricky","accent":"#9dbb3c","status":"playable"},
+    {"id":"tt02","production_id":"TT_S1_002","primary":"Moldy Molly","alternate":"Fungus Faye","accent":"#91b44a","status":"coming_soon"},
+    {"id":"tt03","production_id":"TT_S1_003","primary":"Dumpster Danny","alternate":"Trashcan Travis","accent":"#b18b50","status":"coming_soon"},
+    {"id":"tt04","production_id":"TT_S1_004","primary":"Sludge Sam","alternate":"Gooey Grant","accent":"#88a84b","status":"coming_soon"},
+    {"id":"tt05","production_id":"TT_S1_005","primary":"Battery Barry","alternate":"Leaking Leon","accent":"#c4aa43","status":"coming_soon"},
+    {"id":"tt06","production_id":"TT_S1_006","primary":"Maggot Mitch","alternate":"Wormy Walt","accent":"#a6b45d","status":"coming_soon"},
+    {"id":"tt07","production_id":"TT_S1_007","primary":"Burger Bear","alternate":"Greasy Gina","accent":"#b37d48","status":"coming_soon"},
+    {"id":"tt08","production_id":"TT_S1_008","primary":"Rusty Randy","alternate":"Corroded Cory","accent":"#b46c42","status":"coming_soon"},
+    {"id":"tt09","production_id":"TT_S1_009","primary":"Acid Andy","alternate":"Meltdown Mel","accent":"#9fc642","status":"coming_soon"},
+    {"id":"tt10","production_id":"TT_S1_010","primary":"Gas Mask Max","alternate":"Fumey Frank","accent":"#8ca25d","status":"coming_soon"},
+    {"id":"tt11","production_id":"TT_S1_011","primary":"Patchwork Pat","alternate":"Quilted Quinn","accent":"#b46f8f","status":"coming_soon"},
+    {"id":"tt12","production_id":"TT_S1_012","primary":"Plague Bear","alternate":"Sickly Sonny","accent":"#d2a83a","status":"coming_soon"}
+  ]
+}

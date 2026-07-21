@@ -1,15 +1,44 @@
 {
   "name": "toxic-teddies-arrow-escape",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
+    "predev": "node scripts/extract-dense-levels.mjs",
     "dev": "vite",
-    "build": "vite build",
+    "prebuild": "node scripts/extract-dense-levels.mjs",
+    "build": "vite build && node scripts/copy-runtime-assets.mjs",
     "preview": "vite preview",
-    "check": "node --check dense-loader.js && node --check compiled-app.js && node --check hard-mode-v3.js && node --check dense-fallback.js && node --check interaction-fix.js && node --check sw.js && node scripts/validate-arrow-puzzles.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "validate:levels": "node scripts/extract-dense-levels.mjs && node scripts/validate-compiled-levels.mjs",
+    "check": "node --check dense-loader.js && node --check compiled-app.js && node --check hard-mode-v3.js && node --check compiled-level-source.js && node --check interaction-fix.js && node --check mobile-enhancements.js && node --check sw.js && node --check src/app/bootstrap.js && node --check src/app/native-bridge.js && node --check src/app/mobile-shell.js && node --check src/content/content-registry.js && node --check src/game/input-geometry.js && node --check src/game/input-controller.js && node --check src/storage/save-store.js && node --check src/accessibility/accessibility.js && npm test && npm run validate:levels",
+    "mobile:sync": "npm run build && npx cap sync",
+    "mobile:add:ios": "npm run build && npx cap add ios",
+    "mobile:add:android": "npm run build && npx cap add android",
+    "mobile:ios": "npm run mobile:sync && npx cap open ios",
+    "mobile:android": "npm run mobile:sync && npx cap open android",
+    "mobile:run:ios": "npm run build && npx cap run ios",
+    "mobile:run:android": "npm run build && npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/haptics": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor/preferences": "^8.0.0",
+    "@capacitor/screen-orientation": "^8.0.0",
+    "@capacitor/share": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "typescript": "^5.9.0",
     "vite": "^7.0.0"
   }
 }

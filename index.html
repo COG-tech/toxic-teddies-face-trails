@@ -4,50 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#c49a5a" />
-  <meta name="description" content="Toxic Teddies Arrow Escape — clear the dense Toxic Toby arrow face in the right order." />
-  <meta name="toxic-teddies-build" content="prototype-baseline-c3228d70" />
+  <meta name="description" content="Toxic Teddies Arrow Escape — the face is the puzzle." />
+  <meta name="toxic-teddies-build" content="native-phases-1-10-v1" />
   <title>Toxic Teddies: Arrow Escape</title>
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="stylesheet" href="./styles.css?v=30" />
-  <link rel="stylesheet" href="./compiled-patterns.css?v=30" />
-  <link rel="stylesheet" href="./hard-mode-v3.css?v=30" />
+  <link rel="stylesheet" href="./src/design-system/tokens.css" />
+  <link rel="stylesheet" href="./styles.css?v=31" />
+  <link rel="stylesheet" href="./compiled-patterns.css?v=31" />
+  <link rel="stylesheet" href="./hard-mode-v3.css?v=31" />
+  <link rel="stylesheet" href="./src/design-system/accessibility.css" />
 </head>
 <body>
+  <div id="appStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
   <div class="app-shell">
-    <section id="homeView" class="home-view">
+    <section id="homeView" class="home-view" aria-labelledby="homeTitle">
       <header class="home-header">
         <div>
           <p class="eyebrow">SERIES 1</p>
-          <h1>TOXIC TEDDIES</h1>
-          <p>Find an arrowhead with a clear lane. Clear the face.</p>
+          <h1 id="homeTitle">TOXIC TEDDIES</h1>
+          <p>The face is the puzzle. Find a clear arrowhead and pull the whole trail free.</p>
         </div>
-        <div id="collectionCounter" class="collection-counter">0 / 60</div>
+        <div id="collectionCounter" class="collection-counter" aria-label="Playable expressions completed">0 / 5</div>
       </header>
       <div id="teddyGrid" class="teddy-grid"></div>
+      <nav class="home-utilities" aria-label="Game information and settings">
+        <button id="howToButton" class="secondary-button" type="button">How to play</button>
+        <button id="settingsButton" class="secondary-button" type="button">Settings</button>
+      </nav>
     </section>
 
-    <section id="gameView" class="game-view hidden">
+    <section id="gameView" class="game-view hidden" aria-labelledby="levelTitle">
       <header class="game-topbar">
-        <button id="backButton" class="top-icon" type="button" aria-label="Back">←</button>
+        <button id="backButton" class="top-icon" type="button" aria-label="Back to Teddies">←</button>
         <div class="game-title">
           <h2 id="levelTitle">Level 1</h2>
           <p id="characterName">Toxic Toby</p>
         </div>
         <div class="top-actions">
-          <button id="hintButton" class="top-icon" type="button" aria-label="Hint">◌</button>
-          <button id="resetButton" class="top-icon" type="button" aria-label="Reset">↻</button>
+          <button id="hintButton" class="top-icon" type="button" aria-label="Show a clear arrow trail">◌</button>
+          <button id="resetButton" class="top-icon" type="button" aria-label="Restart this expression">↻</button>
         </div>
       </header>
 
       <div class="status-row">
-        <div id="lives" class="lives" aria-label="Three toxic drops remaining"></div>
-        <div class="progress">
+        <div id="lives" class="lives" hidden aria-hidden="true"></div>
+        <div class="progress" aria-label="Puzzle progress">
           <span id="clearProgress">0 / 0</span>
           <strong id="percentProgress">0%</strong>
         </div>
       </div>
 
-      <p id="statusText" class="status-text">Loading solver-verified Toxic Toby pattern…</p>
+      <p id="statusText" class="status-text" role="status" aria-live="polite">Loading solver-verified Toxic Toby pattern…</p>
 
       <main class="board-shell">
         <div id="boardBackdrop" class="board-backdrop" aria-hidden="true"></div>
@@ -58,33 +66,77 @@
       </main>
 
       <footer class="game-footer">
-        <div id="levelButtons" class="level-buttons"></div>
+        <button id="accessibleMovesButton" class="accessible-moves-trigger" type="button">Open arrow trails</button>
+        <div id="levelButtons" class="level-buttons" aria-label="Toxic Toby expressions"></div>
       </footer>
     </section>
   </div>
 
-  <div id="completionModal" class="modal-backdrop hidden">
+  <div id="completionModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
     <section class="modal-card">
       <p class="eyebrow">FACE CLEARED</p>
       <h3 id="completionTitle">Toxic Toby · Level 1</h3>
       <p id="completionCopy"></p>
-      <div class="modal-actions">
+      <div class="modal-actions three-actions">
         <button id="replayButton" class="secondary-button" type="button">Replay</button>
-        <button id="nextButton" class="primary-button" type="button">Next level</button>
+        <button id="shareButton" class="secondary-button" type="button">Share</button>
+        <button id="nextButton" class="primary-button" type="button">Next expression</button>
       </div>
     </section>
   </div>
 
-  <div id="gameOverModal" class="modal-backdrop hidden">
+  <div id="gameOverModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deadlockTitle">
     <section class="modal-card">
-      <p class="eyebrow">NO TOXIC DROPS LEFT</p>
-      <h3>Read the arrowheads and clear their lanes.</h3>
-      <button id="tryAgainButton" class="primary-button full" type="button">Try again</button>
+      <p class="eyebrow">NO CLEAR EXIT</p>
+      <h3 id="deadlockTitle">No arrowhead currently has a clear lane.</h3>
+      <button id="tryAgainButton" class="primary-button full" type="button">Restart expression</button>
     </section>
   </div>
 
-  <script>window.__TOXIC_TEDDIES_BUILD__='prototype-baseline-c3228d70';</script>
-  <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js?v=30').catch(()=>{});</script>
-  <script src="./dense-loader.js?v=30"></script>
+  <div id="howToModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="howToTitle">
+    <section class="modal-card text-left">
+      <p class="eyebrow">HOW TO PLAY</p>
+      <h3 id="howToTitle">Pull the face apart one trail at a time.</h3>
+      <ol class="instruction-list">
+        <li>Tap an arrow trail whose arrowhead has a clear lane to the edge.</li>
+        <li>The arrowhead exits first and the connected trail follows.</li>
+        <li>A blocked trail stays in place and highlights the first visible blocker.</li>
+        <li>Use Hint or Open arrow trails when you need a clear move.</li>
+      </ol>
+      <button id="closeHowToButton" class="primary-button full" type="button">Got it</button>
+    </section>
+  </div>
+
+  <div id="settingsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <section class="modal-card text-left">
+      <p class="eyebrow">SETTINGS</p>
+      <h3 id="settingsTitle">Gameplay and accessibility</h3>
+      <label class="setting-row">
+        <span><strong>Reduced motion</strong><small>Shortens trail-removal movement.</small></span>
+        <input id="reducedMotionToggle" type="checkbox" />
+      </label>
+      <label class="setting-row">
+        <span><strong>High contrast</strong><small>Removes texture and strengthens path contrast.</small></span>
+        <input id="highContrastToggle" type="checkbox" />
+      </label>
+      <label class="setting-row">
+        <span><strong>Touch assistance</strong><small>Uses a larger invisible selection area.</small></span>
+        <input id="touchAssistanceToggle" type="checkbox" />
+      </label>
+      <button id="closeSettingsButton" class="primary-button full" type="button">Done</button>
+    </section>
+  </div>
+
+  <div id="accessibleMovesModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="accessibleMovesTitle">
+    <section class="modal-card text-left">
+      <p class="eyebrow">OPEN TRAILS</p>
+      <h3 id="accessibleMovesTitle">Choose a trail with a clear exit</h3>
+      <p id="accessibleMovesSummary"></p>
+      <div id="accessibleMovesList" class="accessible-moves-list" role="list"></div>
+      <button id="closeAccessibleMovesButton" class="secondary-button full" type="button">Close</button>
+    </section>
+  </div>
+
+  <script type="module" src="./src/app/bootstrap.js"></script>
 </body>
 </html>

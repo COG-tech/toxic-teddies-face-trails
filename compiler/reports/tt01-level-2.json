@@ -1,0 +1,15 @@
+{
+  "teddyId": "tt01",
+  "level": 2,
+  "expressionId": "evil_grin",
+  "gridSize": 59,
+  "pathCount": 124,
+  "initialOpenCount": 45,
+  "verifiedNoOverlap": true,
+  "verifiedOrthogonal": true,
+  "verifiedEndpointTangents": true,
+  "verifiedSolvable": true,
+  "movementRule": "arrowhead_ray_clear_to_edge",
+  "compilerVersion": "toxic-toby-deterministic-v1",
+  "levelVersion": 1
+}
