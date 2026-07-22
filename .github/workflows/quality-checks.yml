@@ -25,16 +25,16 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Prepare centralized version and content integrity
+      - name: Prepare centralized version, privacy and content integrity
         run: npm run prepare:build
 
-      - name: Validate runtime, saves, versions and levels
+      - name: Validate runtime, saves, store metadata, versions and levels
         run: npm run check
 
       - name: Build and verify offline bundle
         run: npm run build
 
-      - name: Upload integrity and compiler reports
+      - name: Upload integrity, compiler and store reports
         uses: actions/upload-artifact@v5
         with:
           name: toxic-teddies-quality-reports
@@ -42,4 +42,5 @@ jobs:
             src/generated/build-info.json
             src/generated/content-integrity.json
             compiler/reports
+            store/reports/store-readiness.json
           if-no-files-found: error
