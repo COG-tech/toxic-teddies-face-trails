@@ -163,7 +163,6 @@ jobs:
           if-no-files-found: ignore
 
       - name: Commit synchronized native projects and generated reports
-        if: github.event_name == 'push'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -173,5 +172,5 @@ jobs:
             echo "Native projects and generated files are already current."
           else
             git commit -m "Synchronize versioned native offline build"
-            git push origin HEAD:${GITHUB_REF_NAME}
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
