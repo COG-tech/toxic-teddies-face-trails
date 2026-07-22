@@ -1,11 +1,67 @@
 {
   "schema_version": 1,
   "compiler_version": "toxic-toby-deterministic-v1",
+  "content_version": "tt01-launch-2026.07.22.1",
   "levels": [
-    {"id":"tt01_neutral","teddy_id":"tt01","expression_id":"neutral","level":1,"src":"./levels/tt01/level-1.json","grid_size":57,"target_paths":125,"status":"playable","qa_status":"solver_verified","version":1},
-    {"id":"tt01_evil_grin","teddy_id":"tt01","expression_id":"evil_grin","level":2,"src":"./levels/tt01/level-2.json","grid_size":59,"target_paths":132,"status":"playable","qa_status":"solver_verified","version":1},
-    {"id":"tt01_gross","teddy_id":"tt01","expression_id":"gross","level":3,"src":"./levels/tt01/level-3.json","grid_size":61,"target_paths":138,"status":"playable","qa_status":"solver_verified","version":1},
-    {"id":"tt01_angry","teddy_id":"tt01","expression_id":"angry","level":4,"src":"./levels/tt01/level-4.json","grid_size":63,"target_paths":145,"status":"playable","qa_status":"solver_verified","version":1},
-    {"id":"tt01_maniacal_laugh","teddy_id":"tt01","expression_id":"maniacal_laugh","level":5,"src":"./levels/tt01/level-5.json","grid_size":65,"target_paths":150,"status":"playable","qa_status":"solver_verified","version":1}
+    {
+      "id": "tt01_neutral",
+      "teddy_id": "tt01",
+      "expression_id": "neutral",
+      "level": 1,
+      "src": "./levels/tt01/level-1.json",
+      "grid_size": 57,
+      "target_paths": 125,
+      "status": "playable",
+      "qa_status": "solver_verified",
+      "version": 1
+    },
+    {
+      "id": "tt01_evil_grin",
+      "teddy_id": "tt01",
+      "expression_id": "evil_grin",
+      "level": 2,
+      "src": "./levels/tt01/level-2.json",
+      "grid_size": 59,
+      "target_paths": 132,
+      "status": "playable",
+      "qa_status": "solver_verified",
+      "version": 1
+    },
+    {
+      "id": "tt01_gross",
+      "teddy_id": "tt01",
+      "expression_id": "gross",
+      "level": 3,
+      "src": "./levels/tt01/level-3.json",
+      "grid_size": 61,
+      "target_paths": 138,
+      "status": "playable",
+      "qa_status": "solver_verified",
+      "version": 1
+    },
+    {
+      "id": "tt01_angry",
+      "teddy_id": "tt01",
+      "expression_id": "angry",
+      "level": 4,
+      "src": "./levels/tt01/level-4.json",
+      "grid_size": 63,
+      "target_paths": 145,
+      "status": "playable",
+      "qa_status": "solver_verified",
+      "version": 1
+    },
+    {
+      "id": "tt01_maniacal_laugh",
+      "teddy_id": "tt01",
+      "expression_id": "maniacal_laugh",
+      "level": 5,
+      "src": "./levels/tt01/level-5.json",
+      "grid_size": 65,
+      "target_paths": 150,
+      "status": "playable",
+      "qa_status": "solver_verified",
+      "version": 1
+    }
   ]
 }

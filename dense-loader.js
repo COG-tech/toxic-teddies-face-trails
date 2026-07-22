@@ -1,11 +1,11 @@
 window.__toxicBootPromise = (async () => {
   try {
     const responses = await Promise.all([
-      fetch('./compiled-app.js?v=31', {cache: 'no-store'}),
-      fetch('./hard-mode-v3.js?v=31', {cache: 'no-store'}),
-      fetch('./compiled-level-source.js?v=31', {cache: 'no-store'}),
-      fetch('./interaction-fix.js?v=31', {cache: 'no-store'}),
-      fetch('./mobile-enhancements.js?v=31', {cache: 'no-store'}),
+      fetch('./compiled-app.js?v=32', {cache: 'no-store'}),
+      fetch('./hard-mode-v3.js?v=32', {cache: 'no-store'}),
+      fetch('./compiled-level-source.js?v=32', {cache: 'no-store'}),
+      fetch('./interaction-fix.js?v=32', {cache: 'no-store'}),
+      fetch('./mobile-enhancements.js?v=32', {cache: 'no-store'}),
     ]);
 
     if (responses.some(response => !response.ok)) {

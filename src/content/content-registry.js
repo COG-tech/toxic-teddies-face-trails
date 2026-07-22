@@ -20,6 +20,7 @@ export function createContentRegistry() {
     levels,
     backdrops,
     compilerVersion: levelManifest.compiler_version,
+    contentVersion: levelManifest.content_version,
     getCharacter(id) {
       return characterById.get(id) || null;
     },

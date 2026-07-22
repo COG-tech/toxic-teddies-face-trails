@@ -1,20 +1,23 @@
 {
   "name": "toxic-teddies-arrow-escape",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "predev": "node scripts/extract-dense-levels.mjs",
+    "prepare:build": "node scripts/prepare-build.mjs",
+    "predev": "npm run prepare:build",
     "dev": "vite",
-    "prebuild": "node scripts/extract-dense-levels.mjs",
-    "build": "vite build && node scripts/copy-runtime-assets.mjs",
+    "prebuild": "npm run prepare:build",
+    "build": "vite build && node scripts/copy-runtime-assets.mjs && node scripts/verify-offline-bundle.mjs",
     "preview": "vite preview",
     "test": "node --test tests/*.test.mjs",
+    "validate:versions": "node scripts/sync-app-version.mjs --check",
     "validate:levels": "node scripts/extract-dense-levels.mjs && node scripts/validate-compiled-levels.mjs",
-    "check": "node --check dense-loader.js && node --check compiled-app.js && node --check hard-mode-v3.js && node --check compiled-level-source.js && node --check interaction-fix.js && node --check mobile-enhancements.js && node --check sw.js && node --check src/app/bootstrap.js && node --check src/app/native-bridge.js && node --check src/app/mobile-shell.js && node --check src/content/content-registry.js && node --check src/game/input-geometry.js && node --check src/game/input-controller.js && node --check src/storage/save-store.js && node --check src/accessibility/accessibility.js && npm test && npm run validate:levels",
+    "verify:offline": "node scripts/verify-offline-bundle.mjs",
+    "check": "npm run validate:versions && node --check dense-loader.js && node --check compiled-app.js && node --check hard-mode-v3.js && node --check compiled-level-source.js && node --check interaction-fix.js && node --check mobile-enhancements.js && node --check sw.js && node --check src/app/bootstrap.js && node --check src/app/content-integrity.js && node --check src/app/native-bridge.js && node --check src/app/mobile-shell.js && node --check src/content/content-registry.js && node --check src/game/input-geometry.js && node --check src/game/input-controller.js && node --check src/storage/save-migrations.js && node --check src/storage/save-store.js && node --check src/accessibility/accessibility.js && npm test && npm run validate:levels",
     "mobile:sync": "npm run build && npx cap sync",
     "mobile:add:ios": "npm run build && npx cap add ios",
     "mobile:add:android": "npm run build && npx cap add android",

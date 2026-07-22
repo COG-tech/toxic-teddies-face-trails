@@ -1,12 +1,12 @@
-const CACHE_NAME = 'toxic-teddies-arrow-escape-v31';
+const CACHE_NAME = 'toxic-teddies-arrow-escape-v32';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './compiled-app.js?v=31',
-  './hard-mode-v3.js?v=31',
-  './compiled-level-source.js?v=31',
-  './interaction-fix.js?v=31',
-  './mobile-enhancements.js?v=31',
+  './compiled-app.js?v=32',
+  './hard-mode-v3.js?v=32',
+  './compiled-level-source.js?v=32',
+  './interaction-fix.js?v=32',
+  './mobile-enhancements.js?v=32',
   './manifest.webmanifest',
   './levels/tt01/level-1.json',
   './levels/tt01/level-2.json',

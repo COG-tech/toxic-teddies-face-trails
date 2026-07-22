@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.4.0",
+  "contentVersion": "tt01-launch-2026.07.22.1",
+  "buildId": "0.4.0+2.tt01-launch-2026.07.22.1",
+  "files": [
+    {
+      "path": "./compiled-app.js",
+      "bytes": 15973,
+      "sha256": "ffe34910c34007ab59f6dc9a619857a93a55ee90a67eef9147d5ef8a07ba9c70"
+    },
+    {
+      "path": "./hard-mode-v3.js",
+      "bytes": 12846,
+      "sha256": "b2abda8962b6237cd2833ce856f106fb752f05e56fa52bc79dfe2700b00ef73a"
+    },
+    {
+      "path": "./compiled-level-source.js",
+      "bytes": 1308,
+      "sha256": "711feef23274738ae63dd57c4d97c6fed21c61bd873e86e62d4ebabb8f8ad39f"
+    },
+    {
+      "path": "./interaction-fix.js",
+      "bytes": 4751,
+      "sha256": "34166819a085d46ee8b1eabd13c844f3d659dd4dbff2b27a326ec3a89105d76e"
+    },
+    {
+      "path": "./mobile-enhancements.js",
+      "bytes": 7701,
+      "sha256": "8ed9b5e60fa6aac3afa133fc15b035d67c8126aba69005071fb30326d12c5b42"
+    },
+    {
+      "path": "./levels/tt01/level-1.json",
+      "bytes": 23968,
+      "sha256": "7fd1eda9919993b5ff0b4af17568eac3b7e408cee00e38c85616bd8ec132daf5"
+    },
+    {
+      "path": "./levels/tt01/level-2.json",
+      "bytes": 24273,
+      "sha256": "356c7ad7b769defe77e04983295d2e9d658d64f5f0f8aac93bacaa12f8b983a7"
+    },
+    {
+      "path": "./levels/tt01/level-3.json",
+      "bytes": 25791,
+      "sha256": "d450168416f500aabad32ad19e8962959f383d716e3c46e9e8b9566af4211a60"
+    },
+    {
+      "path": "./levels/tt01/level-4.json",
+      "bytes": 29186,
+      "sha256": "9d044ed8d56e68812dcded1933de51b89bb3108d2da211ec805d43087e2bc358"
+    },
+    {
+      "path": "./levels/tt01/level-5.json",
+      "bytes": 29629,
+      "sha256": "f04afee63a071279212bcb5d6b5cc23cc48e7a01c27695134ac628f64bc5aa63"
+    },
+    {
+      "path": "./assets/backdrops/toxic-toby-expression-sheet.svg",
+      "bytes": 14356,
+      "sha256": "d0bda8289123d968a556d5a56dfcdc42912102506b13242dc4e20e2d430b3868"
+    },
+    {
+      "path": "./assets/backdrops/tt01/neutral.svg",
+      "bytes": 232,
+      "sha256": "6d886be7b353641ee1851343289947ba9c891918ca07a6f078e512bbbf1c36bd"
+    },
+    {
+      "path": "./assets/backdrops/tt01/evil-grin.svg",
+      "bytes": 232,
+      "sha256": "1d0e50895b3af455c64269110561533dd36580677c7beae4f3a358817bbe4888"
+    },
+    {
+      "path": "./assets/backdrops/tt01/gross.svg",
+      "bytes": 233,
+      "sha256": "76160a3ea369f9cb0f0abc8032013e66420972436e07bf9795eaa3c3729eff42"
+    },
+    {
+      "path": "./assets/backdrops/tt01/angry.svg",
+      "bytes": 233,
+      "sha256": "f5937b65d980b0c125811be39c7f94f04d52f786f19359228c0f4bcd7db9f2bd"
+    },
+    {
+      "path": "./assets/backdrops/tt01/maniacal-laugh.svg",
+      "bytes": 233,
+      "sha256": "e2b161133e47e58f485937648124116cf3f80af1b50b4faf94aaebc2574331cb"
+    }
+  ]
+}

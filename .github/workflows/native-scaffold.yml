@@ -5,7 +5,9 @@ on:
   push:
     branches:
       - mobile/phases-1-10
+      - mobile/phase-11-native-quality
     paths:
+      - app-version.json
       - package.json
       - capacitor.config.ts
       - vite.config.js
@@ -24,6 +26,7 @@ on:
     branches:
       - main
     paths:
+      - app-version.json
       - package.json
       - capacitor.config.ts
       - vite.config.js
@@ -72,10 +75,13 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Validate compiled levels and runtime
+      - name: Prepare centralized version and integrity data
+        run: npm run prepare:build
+
+      - name: Validate versions, runtime, saves and levels
         run: npm run check
 
-      - name: Build bundled web application
+      - name: Build verified offline application
         run: npm run build
 
       - name: Add iOS platform when missing
@@ -124,6 +130,9 @@ jobs:
       - name: Sync bundled app to native projects
         run: npx cap sync
 
+      - name: Verify iOS and Android contain the exact offline bundle
+        run: node scripts/verify-offline-bundle.mjs --native
+
       - name: Display Capacitor environment
         run: npx cap doctor
 
@@ -153,16 +162,16 @@ jobs:
           path: native-logs/ios-build.log
           if-no-files-found: ignore
 
-      - name: Commit generated native projects and compiler outputs
-        if: github.event_name != 'pull_request'
+      - name: Commit synchronized native projects and generated reports
+        if: github.event_name == 'push'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json ios android levels/tt01/level-*.json levels/tt01/compiled-manifest.json compiler/reports
+          git add package.json package-lock.json ios android src/generated src/content/level-manifest.json levels/tt01/level-*.json levels/tt01/compiled-manifest.json compiler/reports
           if git diff --cached --quiet; then
-            echo "Generated native projects are already current."
+            echo "Native projects and generated files are already current."
           else
-            git commit -m "Generate Capacitor iOS and Android projects"
-            git push origin HEAD:mobile/phases-1-10
+            git commit -m "Synchronize versioned native offline build"
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
