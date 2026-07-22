@@ -7,6 +7,19 @@
   const baseBindEvents = bindEvents;
   let installed = false;
 
+  function analyticsContext(extra = {}) {
+    return {
+      teddy_id: teddy()?.id,
+      expression_id: state.data?.expression,
+      level: state.level,
+      compiler_version: state.data?.compilerVersion,
+      level_version: state.data?.levelVersion,
+      remaining_paths: state.active?.size,
+      total_paths: state.pieces?.length,
+      ...extra,
+    };
+  }
+
   function arrowheadBlockers(piece) {
     if (!piece || piece.removed || !state.active.has(piece.id)) return [];
     const direction = DIRS[piece.exitDirection];
@@ -45,6 +58,10 @@
     setStatus('That trail is still trapped.');
     window.ToxicNative?.hapticBlocked?.();
     window.ToxicAccessibility?.announce?.('Path blocked by another active trail.');
+    window.ToxicAnalytics?.track?.('path_blocked', analyticsContext({
+      blocker_count: arrowheadBlockers(piece).length,
+      region: piece.region || piece.style || 'face',
+    }));
     setTimeout(() => {
       piece.element?.classList.remove('blocked-bump', 'inspecting');
       blocker?.element?.classList.remove('blocking');
@@ -60,9 +77,14 @@
 
   blockersAhead = arrowheadBlockers;
 
-  attemptMove = function productionAttemptMove(piece) {
+  attemptMove = function productionAttemptMove(piece, metadata = {}) {
     if (state.transitionLock || !piece || piece.removed || !state.active.has(piece.id)) return;
     clearPreview();
+    window.ToxicAnalytics?.track?.('path_select', analyticsContext({
+      region: piece.region || piece.style || 'face',
+      input_type: metadata.inputType || 'unknown',
+      response_ms: metadata.responseMs,
+    }));
     const blockers = arrowheadBlockers(piece);
     if (blockers.length) {
       showBlockedFeedback(piece, blockers[0]);
@@ -74,6 +96,12 @@
     setTimeout(() => piece.element?.classList.remove('pressed'), 130);
     setStatus('Clear exit. Arrow released.');
     window.ToxicNative?.hapticValid?.();
+    window.ToxicAnalytics?.track?.('path_remove', analyticsContext({
+      region: piece.region || piece.style || 'face',
+      input_type: metadata.inputType || 'unknown',
+      response_ms: metadata.responseMs,
+      removed_paths: state.pieces.length - state.active.size + 1,
+    }));
     removePiece(piece);
     const animation = state.data?.animation || {};
     const delay = Number(animation.pauseMs || 90)
@@ -97,7 +125,11 @@
       board: els.board,
       getPieces: () => state.pieces,
       getActive: () => state.active,
-      onSelect: piece => attemptMove(piece),
+      onSelect: (piece, _event, metadata) => attemptMove(piece, metadata),
+      onMiss: metadata => window.ToxicAnalytics?.track?.('path_missed', analyticsContext({
+        input_type: metadata.inputType || 'unknown',
+        response_ms: metadata.responseMs,
+      })),
       getHitTolerance: () => (
         document.documentElement.classList.contains('touch-assistance') ? 40 : 32
       ),
