@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const checkOnly = process.argv.includes('--check');
-const config = JSON.parse(await readFile(path.join(root, 'app-version.json'), 'utf8');
+const config = JSON.parse(await readFile(path.join(root, 'app-version.json'), 'utf8'));
 
 const required = [
   ['appVersion', value => /^\d+\.\d+\.\d+$/.test(value)],
