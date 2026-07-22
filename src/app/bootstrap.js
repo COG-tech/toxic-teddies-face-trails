@@ -7,6 +7,8 @@ import { verifyBundledContent } from './content-integrity.js';
 import { createNativeBridge } from './native-bridge.js';
 import { installMobileShell } from './mobile-shell.js';
 
+let startupPlatform = 'web';
+
 function showStartupFailure(error, platform) {
   console.error(error);
   document.body.innerHTML = '';
@@ -27,6 +29,7 @@ function showStartupFailure(error, platform) {
 
 async function bootstrap() {
   const bridge = createNativeBridge(buildInfo);
+  startupPlatform = bridge.platform;
   const content = createContentRegistry();
   const accessibility = createAccessibilityController();
 
@@ -82,4 +85,4 @@ async function bootstrap() {
   document.documentElement.classList.toggle('native-app', bridge.native);
 }
 
-bootstrap().catch(error => showStartupFailure(error, globalThis.Capacitor?.getPlatform?.() || 'web'));
+bootstrap().catch(error => showStartupFailure(error, startupPlatform));
