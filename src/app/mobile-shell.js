@@ -42,6 +42,12 @@ export async function installMobileShell(bridge) {
     bindToggle('touchAssistanceToggle', 'touchAssistance', true),
   ]);
 
+  const build = window.ToxicBuildInfo;
+  const buildElement = document.getElementById('buildInfo');
+  if (buildElement && build) {
+    buildElement.textContent = `Version ${build.version || build.appVersion} (${build.build || build.iosBuildNumber}) · Content ${build.contentVersion} · ${build.integrity?.fileCount || 0} files verified`;
+  }
+
   function openModal(modal, trigger) {
     if (!modal) return;
     modal.dataset.returnFocus = trigger?.id || '';
