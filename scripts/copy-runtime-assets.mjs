@@ -11,6 +11,7 @@ const files = [
   'compiled-level-source.js',
   'interaction-fix.js',
   'mobile-enhancements.js',
+  'analytics-enhancements.js',
   'sw.js',
   'manifest.webmanifest',
   '.nojekyll',

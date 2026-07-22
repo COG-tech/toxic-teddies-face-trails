@@ -11,6 +11,7 @@ const requiredFiles = [
   'compiled-level-source.js',
   'interaction-fix.js',
   'mobile-enhancements.js',
+  'analytics-enhancements.js',
   'levels/tt01/level-1.json',
   'levels/tt01/level-2.json',
   'levels/tt01/level-3.json',

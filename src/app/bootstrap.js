@@ -1,4 +1,5 @@
 import { createAccessibilityController } from '../accessibility/accessibility.js';
+import { createAnalytics } from '../analytics/analytics.js';
 import { createContentRegistry } from '../content/content-registry.js';
 import buildInfo from '../generated/build-info.json';
 import { createInputController } from '../game/input-controller.js';
@@ -38,6 +39,7 @@ async function bootstrap() {
   const appInfo = await bridge.getAppInfo();
   const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});
   const saveStore = await createSaveStore(bridge, content, buildInfo);
+  const analytics = createAnalytics({bridge, buildInfo: runtimeBuildInfo});
 
   window.ToxicNative = bridge;
   window.ToxicContent = content;
@@ -45,26 +47,33 @@ async function bootstrap() {
   window.ToxicInputControllerFactory = createInputController;
   window.ToxicAccessibility = accessibility;
   window.ToxicBuildInfo = runtimeBuildInfo;
+  window.ToxicAnalytics = analytics;
   window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;
 
   await bridge.initialize();
+  await analytics.initialize();
 
-  async function persistLifecycleState() {
+  async function persistLifecycleState(reason = 'lifecycle') {
     await window.__toxicPersistCurrentSession?.();
     await saveStore.flush();
+    await analytics.track('progress_saved', {reason});
   }
 
-  bridge.onPause(persistLifecycleState);
-  bridge.onResume(() => {
+  bridge.onPause(async () => {
+    await analytics.track('app_pause');
+    await persistLifecycleState('app_pause');
+  });
+  bridge.onResume(async () => {
     window.__toxicInputController?.refresh?.();
     window.dispatchEvent(new Event('resize'));
+    await analytics.track('app_resume');
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') persistLifecycleState().catch(console.error);
+    if (document.visibilityState === 'hidden') persistLifecycleState('visibility_hidden').catch(console.error);
     else window.__toxicInputController?.refresh?.();
   });
-  window.addEventListener('pagehide', () => persistLifecycleState().catch(console.error));
+  window.addEventListener('pagehide', () => persistLifecycleState('pagehide').catch(console.error));
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {

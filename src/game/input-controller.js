@@ -17,6 +17,7 @@ export function createInputController({
   getPieces,
   getActive,
   onSelect,
+  onMiss = () => {},
   getHitTolerance = () => 32,
   tapMovementThreshold = 12,
   tapDurationLimit = 500,
@@ -60,7 +61,7 @@ export function createInputController({
       x: event.clientX,
       y: event.clientY,
       time: performance.now(),
-      pointerType: event.pointerType,
+      pointerType: event.pointerType || 'unknown',
     });
   }
 
@@ -77,14 +78,22 @@ export function createInputController({
     const distance = Math.hypot(event.clientX - start.x, event.clientY - start.y);
     const duration = performance.now() - start.time;
     if (distance > tapMovementThreshold || duration > tapDurationLimit) return;
+    if (!boardContains(event.clientX, event.clientY)) return;
 
     const piece = nearestPiece(event.clientX, event.clientY);
-    if (!piece) return;
-
     event.preventDefault();
     event.stopImmediatePropagation();
     suppressClicksUntil = performance.now() + 450;
-    onSelect(piece, event);
+
+    const metadata = {
+      inputType: start.pointerType,
+      responseMs: Math.round(duration),
+    };
+    if (!piece) {
+      onMiss(metadata);
+      return;
+    }
+    onSelect(piece, event, metadata);
   }
 
   function onClickCapture(event) {
