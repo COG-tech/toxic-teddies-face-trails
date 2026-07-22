@@ -40,6 +40,7 @@
       expressionId: state.data.expression,
       levelVersion: state.data.levelVersion || currentLevelEntry()?.version || 1,
       compilerVersion: state.data.compilerVersion || content?.compilerVersion || 'unknown',
+      contentVersion: content?.contentVersion || window.ToxicBuildInfo?.contentVersion || 'unknown',
       removedPathIds: removedPathIds(),
       updatedAt: new Date().toISOString(),
     };
@@ -53,9 +54,12 @@
     const versionMatches = Number(session.levelVersion || 1) === Number(entry?.version || 1);
     const compilerMatches = !session.compilerVersion
       || session.compilerVersion === (state.data.compilerVersion || content?.compilerVersion);
-    if (!versionMatches || !compilerMatches) {
+    const contentMatches = !session.contentVersion
+      || session.contentVersion === (content?.contentVersion || window.ToxicBuildInfo?.contentVersion);
+    if (!versionMatches || !compilerMatches || !contentMatches) {
       state.save.activeSession = null;
       saveStore?.replace(state.save);
+      window.ToxicAccessibility?.announce?.('The puzzle was updated, so this expression restarted safely.');
       return;
     }
 
