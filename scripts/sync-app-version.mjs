@@ -69,6 +69,11 @@ if (generatedExisting !== generatedSerialized) {
   changed.push('src/generated/build-info.json');
 }
 
+if (await replaceText('index.html', value => value.replace(
+  /(<meta name="toxic-teddies-build" content=")[^"]+(" \/>)/,
+  `$1${buildId}$2`,
+))) changed.push('index.html');
+
 if (await replaceText('android/app/build.gradle', value => value
   .replace(/versionCode\s+\d+/, `versionCode ${config.androidVersionCode}`)
   .replace(/versionName\s+"[^"]+"/, `versionName "${config.appVersion}"`))) {
