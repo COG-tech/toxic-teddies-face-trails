@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "locale": "en-US",
+  "shared": {
+    "appName": "Toxic Teddies",
+    "tagline": "The Face Is the Puzzle",
+    "developerDisplayName": "COG-tech",
+    "copyright": "© 2026 COG-tech",
+    "primaryCategory": "Games / Puzzle",
+    "secondaryCategory": "Games / Casual",
+    "privacyPolicyUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/privacy.html",
+    "supportUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/support.html",
+    "marketingUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/",
+    "releaseNotes": "First native internal-test build. Includes five solver-verified Toxic Toby expressions, exact progress recovery, offline bundled gameplay, accessibility settings, and local research instrumentation."
+  },
+  "apple": {
+    "subtitle": "The Face Is the Puzzle",
+    "promotionalText": "Pull Toxic Toby's arrow trails free, one clear path at a time.",
+    "keywords": "puzzle,arrows,bear,teddy,escape,logic,offline,casual,brain,character",
+    "description": "Toxic Teddies: Arrow Escape is a handcrafted mobile puzzle where the arrows form the character's face. Find an arrowhead with a clear lane, tap it, and watch the full connected trail pull free.\n\nClear five Toxic Toby expressions: Neutral, Evil Grin, Gross, Angry, and Maniacal Laugh. Every level is precompiled and solver-verified. Blocking is based only on visible active paths, missed taps have no penalty, and unfinished progress returns exactly where you left it.\n\nFEATURES\n• The face itself is the puzzle\n• Five handcrafted Toxic Toby expressions\n• Offline play after installation\n• Exact save and restore\n• Hints and clear blocked-path feedback\n• Reduced motion, high contrast, touch assistance, and accessible open-trail controls\n• No ads, accounts, purchases, or network analytics in this release\n\nThe remaining Founding Teddies are clearly marked Coming soon.",
+    "reviewNotes": "The app launches with all five playable Toxic Toby levels bundled locally and does not require a login or network connection. Other Teddies are intentionally disabled and marked Coming soon. Research logging is off by default, remains on-device, records no touch coordinates or personal identifiers, and can only be exported deliberately from Settings. To test: open Toxic Toby, select any expression, tap an arrowhead with a clear path to the board edge, and complete the level. Progress can be tested by removing several trails, force-closing, and reopening the app."
+  },
+  "google": {
+    "shortDescription": "Pull arrow trails from Toxic Toby's face in five handcrafted offline puzzles.",
+    "fullDescription": "THE FACE IS THE PUZZLE\n\nToxic Teddies: Arrow Escape is a handcrafted logic game where connected arrow trails form Toxic Toby's face. Find an arrowhead with a clear lane to the edge, tap it, and pull the entire trail free.\n\nPLAY FIVE EXPRESSIONS\n• Neutral\n• Evil Grin\n• Gross\n• Angry\n• Maniacal Laugh\n\nFAIR, VISIBLE RULES\nBlocking comes only from visible active trails. There is no hidden forced sequence, no penalty for missed taps, and no unexplained life system.\n\nBUILT FOR MOBILE\n• Precise touch selection\n• Exact progress recovery\n• Offline bundled levels\n• Hints and restart controls\n• Reduced motion\n• High contrast\n• Touch assistance\n• Accessible open-trail chooser\n• Native haptics and sharing\n\nPRIVACY\nThis release has no ads, accounts, purchases, or network analytics. Optional research logging is disabled by default, stays on the device, contains no touch coordinates or personal identifiers, and is exported only when the user deliberately chooses to do so.\n\nThe remaining Founding Teddies are marked Coming soon until their approved levels are ready."
+  }
+}
