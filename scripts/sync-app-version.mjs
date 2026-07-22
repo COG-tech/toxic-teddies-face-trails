@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = process.cwd();
@@ -59,6 +59,7 @@ if (await replaceJson('package.json', value => ({...value, version: config.appVe
 if (await replaceJson('src/content/level-manifest.json', value => ({...value, content_version: config.contentVersion}))) changed.push('src/content/level-manifest.json');
 
 const generatedPath = path.join(root, 'src', 'generated', 'build-info.json');
+await mkdir(path.dirname(generatedPath), {recursive: true});
 let generatedExisting = '';
 try { generatedExisting = await readFile(generatedPath, 'utf8'); } catch {}
 const generatedSerialized = `${JSON.stringify(generated, null, 2)}\n`;
