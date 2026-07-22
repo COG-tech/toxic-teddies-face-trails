@@ -7,6 +7,17 @@
   <meta name="description" content="Toxic Teddies Arrow Escape — the face is the puzzle." />
   <meta name="toxic-teddies-build" content="0.4.0+2.tt01-launch-2026.07.22.1" />
   <title>Toxic Teddies: Arrow Escape</title>
+  <script>
+    (() => {
+      const onGitHubPages = location.hostname.endsWith('github.io');
+      const alreadyBundled = location.pathname.includes('/play/');
+      if (!onGitHubPages || alreadyBundled) return;
+      const target = new URL('./play/', location.href);
+      target.search = location.search;
+      target.hash = location.hash;
+      location.replace(target.href);
+    })();
+  </script>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./src/design-system/tokens.css" />
   <link rel="stylesheet" href="./styles.css?v=32" />
