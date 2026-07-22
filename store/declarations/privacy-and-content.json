@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "status": "draft-for-console-entry",
+  "privacy": {
+    "accounts": false,
+    "ads": false,
+    "inAppPurchases": false,
+    "tracking": false,
+    "networkAnalytics": false,
+    "personalDataTransmittedOffDevice": false,
+    "localResearchLogging": {
+      "enabledByDefault": false,
+      "storage": "on-device only",
+      "rawTouchCoordinates": false,
+      "personalIdentifiers": false,
+      "export": "user-initiated only"
+    },
+    "googleDataSafetyDraft": {
+      "dataCollected": false,
+      "dataShared": false,
+      "dataEncryptedInTransit": "not_applicable_no_off_device_collection",
+      "deletionRequest": "not_applicable_no_accounts_or_server_data"
+    },
+    "appleAppPrivacyDraft": {
+      "dataUsedToTrackYou": false,
+      "dataLinkedToYou": false,
+      "dataNotLinkedToYou": false
+    }
+  },
+  "content": {
+    "realisticViolence": false,
+    "fantasyOrCartoonViolence": "infrequent_or_mild",
+    "graphicGore": false,
+    "grossOutCartoonImagery": true,
+    "profanity": false,
+    "sexualContent": false,
+    "gambling": false,
+    "lootBoxes": false,
+    "userGeneratedContent": false,
+    "unrestrictedWebAccess": false,
+    "multiplayer": false,
+    "chat": false,
+    "recommendedAudience": "9+",
+    "finalRating": "complete_the_current_Apple_and_Google_questionnaires"
+  },
+  "permissions": {
+    "android": [
+      {
+        "permission": "android.permission.INTERNET",
+        "reason": "Capacitor WebView compatibility and optional user-initiated external links; launch gameplay is fully bundled and works offline."
+      }
+    ],
+    "iosUsageDescriptionKeys": []
+  }
+}

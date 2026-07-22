@@ -25,16 +25,46 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Prepare centralized version and content integrity
-        run: npm run prepare:build
+      - name: Synchronize canonical versions
+        id: sync_versions
+        shell: bash
+        run: |
+          mkdir -p quality-logs
+          set +e
+          node scripts/sync-app-version.mjs > quality-logs/sync-app-version.log 2>&1
+          status=$?
+          cat quality-logs/sync-app-version.log
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
 
-      - name: Validate runtime, saves, versions and levels
+      - name: Upload version synchronization diagnostics
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: toxic-teddies-version-sync-log
+          path: quality-logs/sync-app-version.log
+          if-no-files-found: error
+
+      - name: Fail when version synchronization failed
+        if: steps.sync_versions.outputs.status != '0'
+        run: exit 1
+
+      - name: Bundle iOS privacy manifest
+        run: node scripts/ensure-ios-privacy-manifest.mjs
+
+      - name: Compile deterministic Toxic Toby levels
+        run: node scripts/extract-dense-levels.mjs
+
+      - name: Generate content integrity manifest
+        run: node scripts/generate-content-integrity.mjs
+
+      - name: Validate runtime, saves, store metadata, versions and levels
         run: npm run check
 
       - name: Build and verify offline bundle
         run: npm run build
 
-      - name: Upload integrity and compiler reports
+      - name: Upload integrity, compiler and store reports
         uses: actions/upload-artifact@v5
         with:
           name: toxic-teddies-quality-reports
@@ -42,4 +72,5 @@ jobs:
             src/generated/build-info.json
             src/generated/content-integrity.json
             compiler/reports
+            store/reports/store-readiness.json
           if-no-files-found: error

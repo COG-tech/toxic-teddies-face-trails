@@ -56,6 +56,17 @@ async function replaceText(file, transform) {
 
 const changed = [];
 if (await replaceJson('package.json', value => ({...value, version: config.appVersion}))) changed.push('package.json');
+if (await replaceJson('package-lock.json', value => ({
+  ...value,
+  version: config.appVersion,
+  packages: {
+    ...value.packages,
+    '': {
+      ...value.packages?.[''],
+      version: config.appVersion,
+    },
+  },
+}))) changed.push('package-lock.json');
 if (await replaceJson('src/content/level-manifest.json', value => ({...value, content_version: config.contentVersion}))) changed.push('src/content/level-manifest.json');
 
 const generatedPath = path.join(root, 'src', 'generated', 'build-info.json');
