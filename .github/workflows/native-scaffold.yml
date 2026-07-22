@@ -6,12 +6,20 @@ on:
     branches:
       - mobile/phases-1-10
       - mobile/phase-11-native-quality
+      - mobile/phase-12-analytics-research
+      - mobile/phase-18-store-release
     paths:
       - app-version.json
       - package.json
+      - package-lock.json
       - capacitor.config.ts
       - vite.config.js
       - index.html
+      - privacy.html
+      - support.html
+      - store/**
+      - ios/**
+      - android/**
       - src/**
       - scripts/**
       - assets/**
@@ -21,6 +29,7 @@ on:
       - compiled-level-source.js
       - interaction-fix.js
       - mobile-enhancements.js
+      - analytics-enhancements.js
       - .github/workflows/native-scaffold.yml
   pull_request:
     branches:
@@ -28,9 +37,15 @@ on:
     paths:
       - app-version.json
       - package.json
+      - package-lock.json
       - capacitor.config.ts
       - vite.config.js
       - index.html
+      - privacy.html
+      - support.html
+      - store/**
+      - ios/**
+      - android/**
       - src/**
       - scripts/**
       - assets/**
@@ -40,6 +55,7 @@ on:
       - compiled-level-source.js
       - interaction-fix.js
       - mobile-enhancements.js
+      - analytics-enhancements.js
       - .github/workflows/native-scaffold.yml
 
 permissions:
@@ -75,10 +91,10 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Prepare centralized version and integrity data
+      - name: Prepare centralized version, privacy and integrity data
         run: npm run prepare:build
 
-      - name: Validate versions, runtime, saves and levels
+      - name: Validate versions, runtime, saves, store metadata and levels
         run: npm run check
 
       - name: Build verified offline application
@@ -168,10 +184,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json ios android src/generated src/content/level-manifest.json levels/tt01/level-*.json levels/tt01/compiled-manifest.json compiler/reports
+          git add package.json package-lock.json ios android src/generated src/content/level-manifest.json levels/tt01/level-*.json levels/tt01/compiled-manifest.json compiler/reports store/reports
           if git diff --cached --quiet; then
             echo "Native projects and generated files are already current."
           else
-            git commit -m "Synchronize versioned native offline build"
+            git commit -m "Synchronize versioned native store build"
             git push origin HEAD:${GITHUB_REF_NAME}
           fi
