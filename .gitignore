@@ -5,3 +5,24 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Android signing
+*.jks
+*.keystore
+keystore.properties
+android/key.properties
+android/app/google-services.json
+
+# Apple signing and App Store Connect credentials
+*.p12
+*.cer
+*.mobileprovision
+AuthKey_*.p8
+ExportOptions.plist
+
+# Generated store artifacts
+*.aab
+*.apk
+*.ipa
+*.xcarchive/
+store-artifacts/
