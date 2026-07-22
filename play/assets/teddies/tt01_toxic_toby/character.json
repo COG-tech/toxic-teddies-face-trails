@@ -1,0 +1,16 @@
+{
+  "id": "tt01",
+  "primaryName": "Toxic Toby",
+  "alternateName": "Radioactive Ricky",
+  "slug": "toxic_toby",
+  "series": "Series 1 — Founding Teddies",
+  "difficulty": "easy",
+  "lives": 3,
+  "mapFile": "./assets/teddies/tt01_toxic_toby/face_map.svg",
+  "mapDataFile": "./assets/teddies/tt01_toxic_toby/face_map.json",
+  "revealFile": "./assets/teddies/tt01_toxic_toby/completed_reveal.svg",
+  "tagline": "GLOWING SINCE BEDTIME",
+  "lore": "Toby slept beside a leaking science kit and woke up convinced the moon was following him. Now his seams glow whenever somebody tells a lie.",
+  "rewardType": "character_unlock",
+  "nextLevelId": "tt02"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Toxic Teddies: Arrow Escape",
+  "short_name": "Toxic Teddies",
+  "description": "A calm sequential arrow-clearing puzzle where every board forms a Toxic Teddy face.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5edda",
+  "theme_color": "#f2ead6",
+  "orientation": "portrait-primary"
+}

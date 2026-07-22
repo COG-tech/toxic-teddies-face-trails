@@ -1,0 +1,68 @@
+<svg id="dumpsterDannyMap" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" role="img" aria-labelledby="mapTitle mapDesc">
+  <title id="mapTitle">Dumpster Danny face tracing map</title>
+  <desc id="mapDesc">Eight ordered trails form Danny's ears, bottle-cap eye, broken-glass eye, crushed-can nose, garbage-bag grin, lid dent and leaking trash.</desc>
+  <defs>
+    <filter id="paperNoise" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="2" seed="23" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="gray"/>
+      <feComponentTransfer in="gray" result="faded"><feFuncA type="table" tableValues="0 0.075"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="faded" mode="multiply"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#413822"/>
+    </marker>
+  </defs>
+
+  <g filter="url(#paperNoise)">
+    <path d="M247 207 C179 162 112 198 103 274 C97 327 126 356 171 370 C128 426 113 517 133 610 C156 719 249 790 395 798 C539 806 641 746 674 638 C704 540 693 439 642 369 C688 351 713 307 699 255 C681 183 613 163 551 207 C510 164 459 143 398 143 C338 143 286 165 247 207 Z" fill="#bba66f" opacity="0.3" stroke="#625438" stroke-width="7"/>
+    <path d="M180 342 C263 315 537 314 619 344 L609 384 C519 360 280 360 191 384 Z" fill="#7a725f" opacity="0.28" stroke="#625438" stroke-width="5"/>
+    <path d="M201 389 C180 474 179 573 211 651 C251 744 326 773 401 774 C484 775 560 739 600 649 C633 574 633 476 604 390" fill="none" stroke="#756444" stroke-width="4" stroke-dasharray="9 12" opacity="0.52"/>
+    <g fill="#7f9639" opacity="0.3">
+      <circle cx="235" cy="318" r="14"/><circle cx="271" cy="289" r="9"/><circle cx="560" cy="312" r="16"/>
+      <circle cx="521" cy="627" r="17"/><circle cx="284" cy="650" r="12"/><circle cx="405" cy="742" r="11"/>
+    </g>
+    <g fill="#514735" opacity="0.23">
+      <circle cx="278" cy="427" r="53"/><path d="M474 390 L565 409 L548 473 L462 452 Z"/>
+      <path d="M335 503 L402 468 L468 510 L431 570 L358 565 Z"/>
+    </g>
+    <path d="M270 612 C329 674 473 681 538 607" fill="none" stroke="#4c4030" stroke-width="28" opacity="0.14" stroke-linecap="round"/>
+    <path d="M205 539 L171 522 L185 570 L148 579 L183 610" fill="none" stroke="#736346" stroke-width="9" opacity="0.34"/>
+  </g>
+
+  <g class="trace-base" fill="none" stroke="#413822" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path data-segment-id="left-ear" d="M250 236 C211 190 160 191 133 232 C107 271 124 321 171 339 C204 351 235 335 248 304 C260 276 254 251 231 234"/>
+    <path data-segment-id="right-ear" d="M550 236 C590 192 644 197 668 240 C690 280 670 324 628 340 C594 352 567 335 555 305 C545 278 551 252 574 237"/>
+    <path data-segment-id="left-eye" d="M223 420 C246 382 302 371 341 402 C355 438 325 472 284 474 C245 475 217 452 223 420 C229 394 259 384 285 396 C309 407 318 433 303 451 C288 469 258 464 249 444 C241 426 254 407 273 405"/>
+    <path data-segment-id="right-eye" d="M462 405 L507 382 L555 399 L579 435 L548 470 L501 462 L464 439 L480 418 L518 405 L548 426 L533 447 L500 441"/>
+    <path data-segment-id="nose" d="M400 475 L463 514 L438 566 L365 568 L337 517 L400 475 L423 505 L408 541 L378 524 L400 502"/>
+    <path data-segment-id="mouth" d="M270 607 C313 650 354 666 405 665 C458 665 501 647 538 607 L520 650 L489 645 L466 680 L430 668 L402 699 L371 668 L334 681 L313 648 L284 652 L270 607"/>
+    <path data-segment-id="lid-dent" d="M223 345 C283 327 352 325 401 332 L425 306 L447 339 C494 337 548 338 604 354 L566 375 L487 365 L448 387 L402 362 L354 387 L309 363 L252 376 L223 345"/>
+    <path data-segment-id="trash-leak" d="M421 698 C426 726 459 739 451 770 C444 799 423 813 407 795 C393 779 403 757 389 741 C376 726 352 724 344 705 C333 679 349 663 367 674"/>
+  </g>
+
+  <g class="direction-arrows" fill="none" stroke="#413822" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.8" pointer-events="none">
+    <path d="M144 246 C131 273 141 303 166 316"/>
+    <path d="M658 250 C671 276 661 304 638 316"/>
+    <path d="M238 404 C260 384 291 385 312 401"/>
+    <path d="M479 403 L516 387 L547 403"/>
+    <path d="M363 506 L401 484 L435 505"/>
+    <path d="M304 625 C337 651 373 661 408 660"/>
+    <path d="M255 345 C302 333 352 333 394 337"/>
+    <path d="M411 719 C428 738 431 755 421 775"/>
+  </g>
+
+  <g class="start-markers" pointer-events="none">
+    <circle data-start-for="left-ear" cx="250" cy="236" r="15" fill="#d8ff5b" stroke="#2f3811" stroke-width="5" filter="url(#glow)"/>
+    <circle data-start-for="right-ear" cx="550" cy="236" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="left-eye" cx="223" cy="420" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="right-eye" cx="462" cy="405" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="nose" cx="400" cy="475" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="mouth" cx="270" cy="607" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="lid-dent" cx="223" cy="345" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="trash-leak" cx="421" cy="698" r="11" fill="#b6c77e" opacity="0.65"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "viewBox": "0 0 800 900",
+  "sampleCount": 420,
+  "startRadius": 42,
+  "backtrackAllowance": 8,
+  "segments": [
+    { "id": "left-ear", "label": "Left reactor ear", "direction": "forward", "order": 1, "tolerance": 29, "continuous": true },
+    { "id": "right-ear", "label": "Right split ear", "direction": "forward", "order": 2, "tolerance": 29, "continuous": true },
+    { "id": "left-eye", "label": "Glowing left eye", "direction": "forward", "order": 3, "tolerance": 25, "continuous": true },
+    { "id": "right-eye", "label": "Cracked right eye", "direction": "forward", "order": 4, "tolerance": 25, "continuous": true },
+    { "id": "nose", "label": "Radiation nose", "direction": "forward", "order": 5, "tolerance": 24, "continuous": true },
+    { "id": "mouth", "label": "Toxic grin", "direction": "forward", "order": 6, "tolerance": 25, "continuous": true },
+    { "id": "forehead-crack", "label": "Forehead fracture", "direction": "forward", "order": 7, "tolerance": 24, "continuous": true },
+    { "id": "chin-leak", "label": "Radioactive chin leak", "direction": "forward", "order": 8, "tolerance": 25, "continuous": true }
+  ]
+}

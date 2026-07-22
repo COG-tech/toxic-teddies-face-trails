@@ -1,0 +1,16 @@
+{
+  "id": "tt03",
+  "primaryName": "Dumpster Danny",
+  "alternateName": "Trashcan Travis",
+  "slug": "dumpster_danny",
+  "series": "Series 1 — Founding Teddies",
+  "difficulty": "medium",
+  "lives": 3,
+  "mapFile": "./assets/teddies/tt03_dumpster_danny/face_map.svg",
+  "mapDataFile": "./assets/teddies/tt03_dumpster_danny/face_map.json",
+  "revealFile": "./assets/teddies/tt03_dumpster_danny/completed_reveal.svg",
+  "tagline": "ONE BEAR'S TRASH IS DANNY'S DINNER",
+  "lore": "Danny was tossed out with a broken lunchbox and three mystery leftovers. He built a throne from dented cans and now guards every alley snack like buried treasure.",
+  "rewardType": "character_unlock",
+  "nextLevelId": null
+}
