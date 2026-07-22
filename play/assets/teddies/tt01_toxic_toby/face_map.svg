@@ -1,0 +1,64 @@
+<svg id="toxicTobyMap" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" role="img" aria-labelledby="mapTitle mapDesc">
+  <title id="mapTitle">Toxic Toby face tracing map</title>
+  <desc id="mapDesc">Eight ordered trails form Toby's ears, eyes, radiation nose, grin, forehead fracture and chin leak.</desc>
+  <defs>
+    <filter id="paperNoise" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="gray"/>
+      <feComponentTransfer in="gray" result="faded"><feFuncA type="table" tableValues="0 0.07"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="faded" mode="multiply"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#413822"/>
+    </marker>
+  </defs>
+
+  <g filter="url(#paperNoise)">
+    <path d="M247 208 C178 165 114 199 104 273 C97 326 127 357 172 368 C124 432 112 530 139 627 C166 725 258 790 394 797 C536 804 636 746 672 642 C706 543 693 440 640 368 C688 350 712 308 699 256 C681 185 613 164 551 206 C512 165 460 143 398 143 C337 143 285 165 247 208 Z" fill="#c9b17a" opacity="0.28" stroke="#66583a" stroke-width="7"/>
+    <path d="M196 352 C169 448 176 555 205 628 C244 726 323 764 400 765 C487 766 566 727 607 627 C637 553 640 447 605 351" fill="none" stroke="#766746" stroke-width="4" stroke-dasharray="8 12" opacity="0.5"/>
+    <g fill="#8cac2f" opacity="0.28">
+      <path d="M394 214 L422 264 L477 264 L450 310 L477 358 L422 358 L394 406 L366 358 L311 358 L338 310 L311 264 L366 264 Z"/>
+      <circle cx="236" cy="313" r="16"/><circle cx="568" cy="334" r="13"/><circle cx="523" cy="620" r="18"/>
+    </g>
+    <path d="M219 410 C255 371 313 375 346 410 C325 453 266 459 228 437 Z" fill="#3f3a29" opacity="0.22"/>
+    <path d="M454 410 C486 372 545 375 581 412 C558 454 495 461 462 437 Z" fill="#3f3a29" opacity="0.22"/>
+    <path d="M287 612 C333 654 465 660 520 607" fill="none" stroke="#5c4c32" stroke-width="25" opacity="0.12" stroke-linecap="round"/>
+  </g>
+
+  <g class="trace-base" fill="none" stroke="#413822" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path data-segment-id="left-ear" d="M250 235 C210 191 161 194 135 234 C111 272 126 320 171 338 C205 351 235 334 248 302"/>
+    <path data-segment-id="right-ear" d="M550 235 C592 193 643 198 667 241 C688 280 670 323 629 339 C595 352 568 335 556 304"/>
+    <path data-segment-id="left-eye" d="M219 410 C253 372 312 375 346 410 C325 453 266 459 228 437 C214 429 211 418 219 410 C244 393 282 397 299 421 C309 436 301 451 282 459"/>
+    <path data-segment-id="right-eye" d="M454 410 C486 372 545 375 581 412 C558 454 495 461 462 437 C448 427 447 418 454 410 C480 394 518 399 535 422 C546 439 537 454 518 461"/>
+    <path data-segment-id="nose" d="M400 476 L447 525 L400 574 L353 525 L381 500 L419 512 L400 548 L381 532"/>
+    <path data-segment-id="mouth" d="M287 612 C333 654 465 660 520 607 C491 675 447 699 399 699 C361 699 329 681 307 654"/>
+    <path data-segment-id="forehead-crack" d="M401 205 L378 251 L413 280 L382 323 L420 355 L395 397"/>
+    <path data-segment-id="chin-leak" d="M417 699 C422 735 452 747 444 779 C437 807 414 820 400 796 C389 777 401 758 388 739 C377 723 358 717 349 703"/>
+  </g>
+
+  <g class="direction-arrows" fill="none" stroke="#413822" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.78" pointer-events="none">
+    <path d="M144 246 C131 273 141 302 166 316"/>
+    <path d="M658 250 C670 276 661 303 638 315"/>
+    <path d="M240 397 C267 382 298 387 318 405"/>
+    <path d="M476 397 C504 383 533 389 552 408"/>
+    <path d="M376 501 L400 526 L421 505"/>
+    <path d="M320 628 C349 648 379 656 410 656"/>
+    <path d="M394 224 L384 248 L400 266"/>
+    <path d="M407 724 C422 742 423 757 415 774"/>
+  </g>
+
+  <g class="start-markers" pointer-events="none">
+    <circle data-start-for="left-ear" cx="250" cy="235" r="15" fill="#d8ff5b" stroke="#2f3811" stroke-width="5" filter="url(#glow)"/>
+    <circle data-start-for="right-ear" cx="550" cy="235" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="left-eye" cx="219" cy="410" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="right-eye" cx="454" cy="410" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="nose" cx="400" cy="476" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="mouth" cx="287" cy="612" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="forehead-crack" cx="401" cy="205" r="11" fill="#b6c77e" opacity="0.65"/>
+    <circle data-start-for="chin-leak" cx="417" cy="699" r="11" fill="#b6c77e" opacity="0.65"/>
+  </g>
+</svg>

@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" role="img" aria-labelledby="title desc">
+  <title id="title">Dumpster Danny full-color reveal</title>
+  <desc id="desc">A filthy teddy bear fused with a dented green dumpster, bottle-cap eye, broken-glass eye, crushed-can nose and leaking garbage.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#18170f"/>
+      <stop offset="0.55" stop-color="#37331c"/>
+      <stop offset="1" stop-color="#0c0d09"/>
+    </linearGradient>
+    <radialGradient id="fur" cx="42%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#aa8b57"/>
+      <stop offset="0.58" stop-color="#715238"/>
+      <stop offset="1" stop-color="#3d2e23"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#697354"/>
+      <stop offset="0.42" stop-color="#3f5038"/>
+      <stop offset="1" stop-color="#202c22"/>
+    </linearGradient>
+    <linearGradient id="slime" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9ff54"/>
+      <stop offset="1" stop-color="#5f8f20"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity="0.65"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="13" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="scratches" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M4 35 L20 19 M25 9 L39 2 M30 40 L42 28" stroke="#d7c79b" stroke-opacity="0.08" stroke-width="3"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="900" rx="34" fill="url(#bg)"/>
+  <circle cx="116" cy="116" r="64" fill="#a9e92d" opacity="0.08"/>
+  <circle cx="690" cy="210" r="92" fill="#b85f2c" opacity="0.08"/>
+  <path d="M0 760 C145 700 270 802 418 749 C572 694 660 738 800 686 V900 H0 Z" fill="#070906" opacity="0.72"/>
+
+  <g filter="url(#shadow)">
+    <path d="M244 214 C184 166 111 199 102 279 C97 329 125 357 170 373 C128 431 112 521 135 616 C162 726 255 792 397 800 C539 807 642 746 673 639 C702 540 691 440 641 372 C688 351 711 308 698 255 C680 184 611 164 552 207 C511 166 460 144 398 144 C336 144 284 166 244 214 Z" fill="url(#fur)" stroke="#1f1a14" stroke-width="13"/>
+
+    <path d="M177 341 C260 308 545 309 625 346 L610 397 C527 369 277 368 190 397 Z" fill="url(#metal)" stroke="#1c241d" stroke-width="10"/>
+    <path d="M196 387 C172 471 176 576 209 655 C249 750 326 780 401 781 C487 783 563 742 603 650 C635 575 634 474 605 388" fill="none" stroke="#29342a" stroke-width="12" opacity="0.9"/>
+    <path d="M176 341 C260 313 546 313 625 346" fill="none" stroke="#9ca17b" stroke-width="8" opacity="0.42"/>
+
+    <path d="M250 239 C211 192 159 192 132 234 C105 274 124 322 171 341 C205 354 236 335 248 303 C260 275 253 250 230 234" fill="#715238" stroke="#1f1a14" stroke-width="12"/>
+    <path d="M550 239 C590 194 644 198 668 241 C689 281 670 325 628 341 C594 354 566 336 555 305 C545 278 551 252 575 237" fill="#64503a" stroke="#1f1a14" stroke-width="12"/>
+    <path d="M132 263 C148 226 190 219 218 247 C203 279 170 292 132 263 Z" fill="#25231b"/>
+    <path d="M590 232 C624 211 657 233 663 269 C638 286 609 279 590 253 Z" fill="#65715a" stroke="#272e27" stroke-width="6"/>
+
+    <circle cx="281" cy="425" r="61" fill="#30362c" stroke="#181c17" stroke-width="12"/>
+    <circle cx="281" cy="425" r="43" fill="#b7b692" stroke="#4e503f" stroke-width="8"/>
+    <circle cx="281" cy="425" r="24" fill="#151714"/>
+    <circle cx="269" cy="413" r="8" fill="#d9ff54" filter="url(#glow)"/>
+    <g fill="none" stroke="#626650" stroke-width="5" opacity="0.8">
+      <path d="M281 365 V382 M281 468 V486 M221 425 H240 M322 425 H341 M239 383 L251 395 M311 455 L323 467 M323 383 L311 395 M251 455 L239 467"/>
+    </g>
+
+    <path d="M462 398 L507 377 L557 396 L585 435 L550 476 L500 466 L458 440 Z" fill="#252a24" stroke="#171a16" stroke-width="11"/>
+    <path d="M480 416 L517 395 L551 413 L564 438 L536 458 L499 451 L475 434 Z" fill="#8da58c" opacity="0.8"/>
+    <path d="M500 402 L517 433 L495 452 M548 410 L526 433 L550 462 M479 430 L517 433 L536 458" fill="none" stroke="#d9ead7" stroke-width="5"/>
+    <circle cx="518" cy="432" r="11" fill="#d9ff54" filter="url(#glow)"/>
+
+    <path d="M399 474 L467 516 L438 572 L363 572 L333 518 Z" fill="#7f8578" stroke="#242722" stroke-width="11"/>
+    <path d="M399 493 L438 517 L423 548 L378 550 L360 521 Z" fill="#bec0ab" opacity="0.8"/>
+    <path d="M383 503 L416 543 M425 501 L386 548" stroke="#62665c" stroke-width="6"/>
+
+    <path d="M267 605 C312 655 352 672 405 672 C459 672 503 650 541 604 C520 681 463 718 402 718 C338 718 288 682 267 605 Z" fill="#171512" stroke="#211d18" stroke-width="12"/>
+    <path d="M293 629 L321 651 L343 641 L367 674 L402 653 L430 681 L462 647 L489 655 L519 626" fill="none" stroke="#dfd1a1" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M315 655 L332 681 M372 671 L378 699 M433 675 L428 704 M482 654 L468 684" stroke="#6b6b5c" stroke-width="5"/>
+
+    <path d="M224 346 C282 326 349 324 401 333 L425 305 L448 339 C496 336 551 339 606 355 L565 378 L489 365 L448 390 L402 364 L353 390 L308 365 L251 378 Z" fill="none" stroke="#96a287" stroke-width="13" stroke-linejoin="round"/>
+    <path d="M364 334 L388 310 M449 339 L470 319 M515 344 L535 325" stroke="#c0c6a6" stroke-width="6" opacity="0.7"/>
+
+    <path d="M420 700 C427 728 458 739 451 771 C445 802 423 815 407 797 C392 779 403 758 389 742 C376 728 353 724 344 705 C334 682 347 665 367 676" fill="none" stroke="url(#slime)" stroke-width="22" stroke-linecap="round" filter="url(#glow)"/>
+    <circle cx="445" cy="782" r="13" fill="#bde83c"/>
+
+    <g fill="#d4e65c" opacity="0.95">
+      <circle cx="216" cy="311" r="15"/><circle cx="246" cy="292" r="8"/><circle cx="560" cy="319" r="12"/>
+      <circle cx="527" cy="625" r="15"/><circle cx="289" cy="651" r="10"/>
+    </g>
+    <g fill="#2e241c" opacity="0.7">
+      <circle cx="203" cy="534" r="7"/><circle cx="170" cy="558" r="9"/><circle cx="598" cy="528" r="6"/>
+    </g>
+    <path d="M203 536 L170 522 L183 568 L149 579 L185 608" fill="none" stroke="#d7c69a" stroke-width="8"/>
+    <path d="M585 545 C612 529 632 535 648 554" fill="none" stroke="#4a3d2d" stroke-width="7"/>
+
+    <path d="M134 454 C104 432 77 443 63 470 C90 473 104 487 112 510 C131 497 145 478 134 454 Z" fill="#6b8d2b"/>
+    <path d="M659 486 C681 460 711 463 727 486 C699 493 685 507 677 529 C658 518 649 504 659 486 Z" fill="#7f9639"/>
+    <g fill="#ded4aa">
+      <path d="M103 482 l-18 -13 l6 20 z"/><path d="M693 492 l18 -12 l-5 20 z"/>
+    </g>
+
+    <path d="M113 228 C96 201 73 194 55 207 M687 215 C705 191 730 190 744 204" fill="none" stroke="#83735b" stroke-width="7" stroke-linecap="round"/>
+    <g fill="#191a15">
+      <ellipse cx="54" cy="206" rx="9" ry="6"/><ellipse cx="744" cy="204" rx="9" ry="6"/>
+    </g>
+
+    <path d="M244 214 C184 166 111 199 102 279 C97 329 125 357 170 373 C128 431 112 521 135 616 C162 726 255 792 397 800 C539 807 642 746 673 639 C702 540 691 440 641 372 C688 351 711 308 698 255 C680 184 611 164 552 207 C511 166 460 144 398 144 C336 144 284 166 244 214 Z" fill="url(#scratches)" opacity="0.65"/>
+  </g>
+
+  <g transform="translate(400 842)" text-anchor="middle">
+    <text y="0" fill="#d8ff5b" font-family="Arial Black, sans-serif" font-size="42" letter-spacing="1">DUMPSTER DANNY</text>
+    <text y="31" fill="#b8ac8b" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="4">TRASHCAN TRAVIS</text>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "viewBox": "0 0 800 900",
+  "sampleCount": 460,
+  "startRadius": 46,
+  "backtrackAllowance": 9,
+  "segments": [
+    { "id": "left-ear", "label": "Crumpled left ear", "direction": "forward", "order": 1, "tolerance": 31, "continuous": true },
+    { "id": "right-ear", "label": "Trash-lid right ear", "direction": "forward", "order": 2, "tolerance": 31, "continuous": true },
+    { "id": "left-eye", "label": "Bottle-cap eye", "direction": "forward", "order": 3, "tolerance": 27, "continuous": true },
+    { "id": "right-eye", "label": "Broken-glass eye", "direction": "forward", "order": 4, "tolerance": 27, "continuous": true },
+    { "id": "nose", "label": "Crushed-can nose", "direction": "forward", "order": 5, "tolerance": 26, "continuous": true },
+    { "id": "mouth", "label": "Garbage-bag grin", "direction": "forward", "order": 6, "tolerance": 28, "continuous": true },
+    { "id": "lid-dent", "label": "Forehead lid dent", "direction": "forward", "order": 7, "tolerance": 26, "continuous": true },
+    { "id": "trash-leak", "label": "Rotten trash leak", "direction": "forward", "order": 8, "tolerance": 28, "continuous": true }
+  ]
+}

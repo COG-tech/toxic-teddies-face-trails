@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "teddy": "tt01",
+  "levels": [
+    {
+      "level": 1,
+      "expression": "neutral",
+      "gridSize": 57,
+      "pieceCount": 122,
+      "file": "level-1.json",
+      "compilerVersion": "toxic-toby-deterministic-v1",
+      "levelVersion": 1
+    },
+    {
+      "level": 2,
+      "expression": "evil_grin",
+      "gridSize": 59,
+      "pieceCount": 124,
+      "file": "level-2.json",
+      "compilerVersion": "toxic-toby-deterministic-v1",
+      "levelVersion": 1
+    },
+    {
+      "level": 3,
+      "expression": "gross",
+      "gridSize": 61,
+      "pieceCount": 130,
+      "file": "level-3.json",
+      "compilerVersion": "toxic-toby-deterministic-v1",
+      "levelVersion": 1
+    },
+    {
+      "level": 4,
+      "expression": "angry",
+      "gridSize": 63,
+      "pieceCount": 152,
+      "file": "level-4.json",
+      "compilerVersion": "toxic-toby-deterministic-v1",
+      "levelVersion": 1
+    },
+    {
+      "level": 5,
+      "expression": "maniacal_laugh",
+      "gridSize": 65,
+      "pieceCount": 150,
+      "file": "level-5.json",
+      "compilerVersion": "toxic-toby-deterministic-v1",
+      "levelVersion": 1
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+name: Build playable browser demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/playable-browser-demo
+    paths-ignore:
+      - 'play/**'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'play/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: playable-browser-demo-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-commit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out browser-fix branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build and verify the bundled browser game
+        run: npm run build
+
+      - name: Publish built files under /play
+        shell: bash
+        run: |
+          rm -rf play
+          mkdir -p play
+          cp -R dist/. play/
+          printf '%s\n' "Built from ${GITHUB_SHA}" > play/BUILD.txt
+
+      - name: Commit playable browser bundle
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f play
+          if git diff --cached --quiet; then
+            echo "Playable browser bundle is already current."
+          else
+            git commit -m "Publish playable browser demo bundle"
+            git push origin "HEAD:${TARGET_BRANCH}"
+          fi

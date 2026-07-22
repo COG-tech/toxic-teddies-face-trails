@@ -1,0 +1,16 @@
+{
+  "id": "tt02",
+  "primaryName": "Moldy Molly",
+  "alternateName": "Fungus Faye",
+  "slug": "moldy_molly",
+  "series": "Series 1 — Founding Teddies",
+  "difficulty": "easy",
+  "lives": 3,
+  "mapFile": "./assets/teddies/tt02_moldy_molly/face_map.svg",
+  "mapDataFile": "./assets/teddies/tt02_moldy_molly/face_map.json",
+  "revealFile": "./assets/teddies/tt02_moldy_molly/completed_reveal.svg",
+  "tagline": "EXPIRED BUT STILL SMILING",
+  "lore": "Abandoned in a lunchbox after one very long summer, Molly grew a family of mushrooms and decided she preferred them to children.",
+  "rewardType": "character_unlock",
+  "nextLevelId": "tt03"
+}
