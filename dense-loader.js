@@ -1,18 +1,19 @@
 window.__toxicBootPromise = (async () => {
   try {
     const responses = await Promise.all([
-      fetch('./compiled-app.js?v=32', {cache: 'no-store'}),
-      fetch('./hard-mode-v3.js?v=32', {cache: 'no-store'}),
-      fetch('./compiled-level-source.js?v=32', {cache: 'no-store'}),
-      fetch('./interaction-fix.js?v=32', {cache: 'no-store'}),
-      fetch('./mobile-enhancements.js?v=32', {cache: 'no-store'}),
+      fetch('./compiled-app.js?v=33', {cache: 'no-store'}),
+      fetch('./hard-mode-v3.js?v=33', {cache: 'no-store'}),
+      fetch('./compiled-level-source.js?v=33', {cache: 'no-store'}),
+      fetch('./interaction-fix.js?v=33', {cache: 'no-store'}),
+      fetch('./mobile-enhancements.js?v=33', {cache: 'no-store'}),
+      fetch('./analytics-enhancements.js?v=33', {cache: 'no-store'}),
     ]);
 
     if (responses.some(response => !response.ok)) {
       throw new Error('Toxic Toby runtime files failed to load');
     }
 
-    const [baseSource, denseSource, levelSource, interactionSource, mobileSource] = await Promise.all(
+    const [baseSource, denseSource, levelSource, interactionSource, mobileSource, analyticsSource] = await Promise.all(
       responses.map(response => response.text()),
     );
 
@@ -23,6 +24,7 @@ window.__toxicBootPromise = (async () => {
       levelSource,
       interactionSource,
       mobileSource,
+      analyticsSource,
       'boot();',
     ].join('\n'));
   } catch (error) {
