@@ -3,7 +3,9 @@ import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = process.cwd();
-const verifyNativeCopies = process.argv.includes('--native');
+const verifyBothNativeCopies = process.argv.includes('--native');
+const verifyAndroidCopy = verifyBothNativeCopies || process.argv.includes('--android');
+const verifyIosCopy = verifyBothNativeCopies || process.argv.includes('--ios');
 const buildInfo = JSON.parse(await readFile(path.join(root, 'src/generated/build-info.json'), 'utf8'));
 const integrity = JSON.parse(await readFile(path.join(root, 'src/generated/content-integrity.json'), 'utf8'));
 const capacitorConfig = await readFile(path.join(root, 'capacitor.config.ts'), 'utf8');
@@ -37,9 +39,14 @@ async function verifyDirectory(directory, label) {
 
 await verifyDirectory(path.join(root, 'dist'), 'dist');
 
-if (verifyNativeCopies) {
+const verified = ['dist'];
+if (verifyAndroidCopy) {
   await verifyDirectory(path.join(root, 'android/app/src/main/assets/public'), 'android');
+  verified.push('android');
+}
+if (verifyIosCopy) {
   await verifyDirectory(path.join(root, 'ios/App/App/public'), 'ios');
+  verified.push('ios');
 }
 
-console.log(`Offline bundle verified: ${integrity.files.length} files, build ${buildInfo.buildId}${verifyNativeCopies ? ', native copies included' : ''}.`);
+console.log(`Offline bundle verified: ${integrity.files.length} files, build ${buildInfo.buildId}, copies: ${verified.join(', ')}.`);
