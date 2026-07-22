@@ -9,6 +9,57 @@ function asBoolean(value, fallback = false) {
   return value === true || value === 'true';
 }
 
+async function installResearchControls(settingsModal) {
+  const analytics = window.ToxicAnalytics;
+  if (!analytics || !settingsModal) return;
+
+  const card = settingsModal.querySelector('.modal-card');
+  const closeButton = document.getElementById('closeSettingsButton');
+  if (!card || !closeButton) return;
+
+  const section = document.createElement('section');
+  section.className = 'research-controls';
+  section.setAttribute('aria-labelledby', 'researchControlsTitle');
+  section.innerHTML = `
+    <h4 id="researchControlsTitle">Research tools</h4>
+    <label class="setting-row">
+      <span><strong>Research build</strong><small>Stores approved local study events. No raw touch coordinates or personal identity.</small></span>
+      <input id="researchBuildToggle" type="checkbox" />
+    </label>
+    <button id="exportResearchButton" class="secondary-button full" type="button">Copy research data</button>
+    <button id="clearResearchButton" class="secondary-button full" type="button">Clear research data</button>
+    <p id="researchExportStatus" class="build-info" role="status"></p>
+  `;
+  card.insertBefore(section, closeButton);
+
+  const toggle = document.getElementById('researchBuildToggle');
+  const status = document.getElementById('researchExportStatus');
+  toggle.checked = analytics.isResearchBuild();
+  toggle.addEventListener('change', async () => {
+    await analytics.setResearchBuild(toggle.checked);
+    status.textContent = toggle.checked
+      ? 'Research event logging enabled on this device.'
+      : 'Research event logging remains local but this session is not marked as a study build.';
+  });
+
+  document.getElementById('exportResearchButton')?.addEventListener('click', async () => {
+    const payload = await analytics.exportResearchData();
+    const serialized = JSON.stringify(payload, null, 2);
+    window.__TOXIC_RESEARCH_EXPORT__ = serialized;
+    try {
+      await navigator.clipboard.writeText(serialized);
+      status.textContent = `Copied ${payload.event_count} local events. Paste them into the participant JSON file.`;
+    } catch {
+      status.textContent = `Prepared ${payload.event_count} events in window.__TOXIC_RESEARCH_EXPORT__.`;
+    }
+  });
+
+  document.getElementById('clearResearchButton')?.addEventListener('click', async () => {
+    await analytics.clear();
+    status.textContent = 'Local research events cleared.';
+  });
+}
+
 export async function installMobileShell(bridge) {
   const root = document.documentElement;
   const settingsModal = document.getElementById('settingsModal');
@@ -47,6 +98,7 @@ export async function installMobileShell(bridge) {
   if (buildElement && build) {
     buildElement.textContent = `Version ${build.version || build.appVersion} (${build.build || build.iosBuildNumber}) · Content ${build.contentVersion} · ${build.integrity?.fileCount || 0} files verified`;
   }
+  await installResearchControls(settingsModal);
 
   function openModal(modal, trigger) {
     if (!modal) return;
