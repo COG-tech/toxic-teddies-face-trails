@@ -25,8 +25,17 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Prepare centralized version, privacy and content integrity
-        run: npm run prepare:build
+      - name: Synchronize canonical versions
+        run: node scripts/sync-app-version.mjs
+
+      - name: Bundle iOS privacy manifest
+        run: node scripts/ensure-ios-privacy-manifest.mjs
+
+      - name: Compile deterministic Toxic Toby levels
+        run: node scripts/extract-dense-levels.mjs
+
+      - name: Generate content integrity manifest
+        run: node scripts/generate-content-integrity.mjs
 
       - name: Validate runtime, saves, store metadata, versions and levels
         run: npm run check
