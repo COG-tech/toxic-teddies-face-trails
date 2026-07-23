@@ -41,6 +41,29 @@ test('analytics records only approved properties and no coordinates', async () =
   assert.equal('email' in event.properties, false);
 });
 
+test('analytics records approved private feed progression without personal data', async () => {
+  globalThis.location = {search: ''};
+  const analytics = createAnalytics({bridge: bridge(), buildInfo, now: () => 1500});
+  await analytics.initialize();
+  await analytics.track('feed_unlock', {
+    teddy_id: 'tt01',
+    completed_expressions: 5,
+    unlock_source: 'five_expressions',
+  });
+  await analytics.track('feed_post_view', {
+    teddy_id: 'tt01',
+    post_id: 'tt01-post-001',
+    account_id: 'not-allowed',
+  });
+
+  const [unlock, view] = analytics.getEvents().slice(-2);
+  assert.equal(unlock.event_name, 'feed_unlock');
+  assert.equal(unlock.properties.completed_expressions, 5);
+  assert.equal(view.event_name, 'feed_post_view');
+  assert.equal(view.properties.post_id, 'tt01-post-001');
+  assert.equal('account_id' in view.properties, false);
+});
+
 test('analytics rejects unapproved event names', async () => {
   globalThis.location = {search: ''};
   const analytics = createAnalytics({bridge: bridge(), buildInfo});
