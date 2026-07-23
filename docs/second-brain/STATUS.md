@@ -13,6 +13,7 @@ Last verified product baseline: `8c908fb91b3ca2a2c6507029585d6fe1046bc40c`
 - Android versionCode: `3`
 - Architecture: Vite + JavaScript/SVG + Capacitor 8
 - Browser demo: `https://cog-tech.github.io/toxic-teddies-face-trails/play/`
+- Visual design system: `1.0.0`, July 2026
 
 ## What is implemented
 
@@ -26,6 +27,21 @@ Last verified product baseline: `8c908fb91b3ca2a2c6507029585d6fe1046bc40c`
 - Completion reveal screen with five manifest-driven placeholder artwork slots.
 - Toxic Toby 5/5 completion state and locked private Toxic Feed.
 - Feed unlock, viewed/unread post persistence, and direct-route protection.
+- Canonical second-brain records for status, next action, locked decisions, failures, testing, design system, visual level reference and change control.
+- Automated second-brain validation included in the full repository quality check.
+
+## Canonical design-system memory
+
+The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md`, including:
+
+- brand identity and five design principles;
+- primary, secondary and neutral color tokens;
+- approved gradients;
+- Toxic Head and Inter typography roles and type scale;
+- four-pixel spacing scale, twelve-column grid and breakpoints;
+- buttons, forms, cards, navigation, alerts, badges and completion-modal patterns;
+- responsive behavior and accessibility requirements;
+- explicit boundaries separating design concepts from implemented gameplay logic.
 
 ## What is not complete
 
@@ -36,6 +52,7 @@ Last verified product baseline: `8c908fb91b3ca2a2c6507029585d6fe1046bc40c`
 - The 12-person Toxic Toby UX study has not occurred.
 - Signed TestFlight and Google Play internal-test uploads remain pending.
 - Moldy Molly and the remaining Founding 12 are not playable.
+- Design-board concepts such as star ratings, completion times, achievements and difficulty selectors must not be described as implemented unless separately developed and verified.
 
 ## Playable content
 
