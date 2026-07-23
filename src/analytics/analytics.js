@@ -19,6 +19,9 @@ const APPROVED_EVENTS = new Set([
   'progress_restored',
   'level_complete',
   'next_expression',
+  'feed_unlock',
+  'feed_open',
+  'feed_post_view',
   'result_shared',
   'settings_changed',
   'research_export',
@@ -30,6 +33,7 @@ const APPROVED_PROPERTIES = new Set([
   'remaining_paths', 'total_paths', 'removed_paths', 'blocker_count', 'region',
   'input_type', 'response_ms', 'elapsed_ms', 'restored_paths', 'restore_source',
   'reason', 'setting', 'enabled', 'research_build', 'integrity_status',
+  'completed_expressions', 'unlock_source', 'post_id',
 ]);
 
 function parseJson(value, fallback) {
