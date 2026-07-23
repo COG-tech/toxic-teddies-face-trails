@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-24",
+  "repository": "COG-tech/toxic-teddies-face-trails",
+  "baselineCommit": "8c908fb91b3ca2a2c6507029585d6fe1046bc40c",
+  "product": {
+    "name": "Toxic Teddies: Arrow Escape",
+    "nativeName": "Toxic Teddies",
+    "bundleId": "com.cogtech.toxicteddies",
+    "brandPromise": "The face is the puzzle.",
+    "architecture": "Vite JavaScript SVG bundled through Capacitor 8",
+    "browserDemo": "https://cog-tech.github.io/toxic-teddies-face-trails/play/"
+  },
+  "playable": {
+    "teddyIds": ["tt01"],
+    "expressionsPerTeddy": 5,
+    "expressionOrder": [
+      "neutral",
+      "evil_grin",
+      "gross",
+      "angry",
+      "maniacal_laugh"
+    ],
+    "foundingTeddyCount": 12,
+    "targetLevelCount": 60
+  },
+  "activeNextAction": {
+    "id": "verify-toxic-toby-completion-flow",
+    "status": "human_playtest_required",
+    "summary": "Verify expressions 1 through 5, completion reveals, final feed unlock, persistence, and locked-route protection in the published browser build.",
+    "blockNewTeddyProduction": true
+  },
+  "artwork": {
+    "finalRevealImagesApproved": false,
+    "expectedFiles": [
+      "assets/reveals/tt01/neutral.webp",
+      "assets/reveals/tt01/evil-grin.webp",
+      "assets/reveals/tt01/gross.webp",
+      "assets/reveals/tt01/angry.webp",
+      "assets/reveals/tt01/maniacal-laugh.webp"
+    ],
+    "placeholderPolicy": "Use clearly non-final placeholders only. Do not generate or substitute final character art without owner approval."
+  },
+  "visualReference": {
+    "source": "Owner-supplied portrait mobile arrow-puzzle screenshot on 2026-07-24",
+    "purpose": "Composition and readability only",
+    "requirements": [
+      "The face puzzle is the dominant screen object",
+      "The Teddy silhouette is immediately recognizable",
+      "The puzzle occupies approximately 68 to 82 percent of usable portrait width",
+      "Controls stay outside important face regions and exit lanes",
+      "Arrowheads remain readable at normal phone size",
+      "The background remains secondary",
+      "Trail removal reveals the expression beneath the same face area"
+    ],
+    "forbiddenCopies": [
+      "blue plastic 3D tile style",
+      "exact green background",
+      "exact HUD and currency controls",
+      "exact fonts, icons, shadows, panels, branding, or commercial assets"
+    ]
+  },
+  "lockedSystems": [
+    "deterministic precompiled levels",
+    "screen-space pointer selection",
+    "blocker detection and feedback",
+    "head-first trail removal",
+    "exact save restoration",
+    "expression progression",
+    "feed unlock protection",
+    "browser Vite publication under play",
+    "native offline bundling",
+    "content integrity verification"
+  ],
+  "humanGatesPending": [
+    "owner browser completion-flow evidence",
+    "five approved Toxic Toby reveal images",
+    "physical Android validation",
+    "physical iPhone validation",
+    "TalkBack validation",
+    "VoiceOver validation",
+    "12-person UX study",
+    "signed TestFlight upload",
+    "signed Google Play internal-test upload"
+  ],
+  "canonicalDocuments": [
+    "SECOND_BRAIN.md",
+    "docs/second-brain/STATUS.md",
+    "docs/second-brain/NEXT_ACTION.md",
+    "docs/second-brain/LOCKED_DECISIONS.md",
+    "docs/second-brain/FAILURE_LEDGER.md",
+    "docs/second-brain/TEST_MATRIX.md",
+    "docs/second-brain/VISUAL_REFERENCE.md",
+    "docs/second-brain/CHANGE_PROTOCOL.md",
+    "docs/second-brain/project-memory.json"
+  ]
+}
