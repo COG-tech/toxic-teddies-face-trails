@@ -55,3 +55,9 @@ Toxic Teddies remains unified hand-illustrated 2D grotesque cartoon art. Do not 
 ## D-012 — Canonical production control
 
 Use one controlled production pipeline and one canonical status record. Do not create competing trackers, duplicate manifests, duplicate character files, or alternate sources of truth.
+
+## D-013 — Canonical app design system
+
+The owner-supplied **Toxic Teddies Design System 1.0.0, July 2026** is the canonical visual and component standard. Its recorded colors, typography, spacing scale, responsive grid, buttons, forms, cards, navigation, alerts, badges, completion-modal direction and accessibility requirements may not be silently replaced by a different design system.
+
+The design board defines visual and component concepts. It does not by itself prove that star ratings, completion times, achievements, difficulty selectors, profile forms, collection screens or other shown concepts are implemented. Those require separate approval, development and testing.
