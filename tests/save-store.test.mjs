@@ -118,3 +118,40 @@ test('markCompleted clears active session', async () => {
   assert.equal(written.completed['tt01-l1'], true);
   assert.equal(written.activeSession, null);
 });
+
+test('feed unlocks and viewed posts survive save normalization', async () => {
+  installLocalStorage();
+  let written = null;
+  const bridge = {
+    async readProgress() {
+      return {
+        schemaVersion: 2,
+        contentVersion: buildInfo.contentVersion,
+        completed: {
+          'tt01-l1': true,
+          'tt01-l2': true,
+          'tt01-l3': true,
+          'tt01-l4': true,
+          'tt01-l5': true,
+        },
+        teddyCompletion: {tt01: true},
+        feedUnlocks: {tt01: true},
+        viewedFeedPosts: {tt01: ['tt01-post-001', 'tt01-post-001']},
+      };
+    },
+    async writeProgress(value) {
+      written = value;
+    },
+  };
+
+  const store = await createSaveStore(bridge, content, buildInfo);
+  assert.equal(store.getSnapshot().feedUnlocks.tt01, true);
+  assert.deepEqual(store.getSnapshot().viewedFeedPosts.tt01, ['tt01-post-001']);
+
+  await store.markFeedPostViewed('tt01', 'tt01-post-002');
+  await store.flush();
+
+  assert.equal(written.teddyCompletion.tt01, true);
+  assert.equal(written.feedUnlocks.tt01, true);
+  assert.deepEqual(written.viewedFeedPosts.tt01, ['tt01-post-001', 'tt01-post-002']);
+});
