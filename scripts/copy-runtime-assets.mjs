@@ -29,5 +29,14 @@ for (const file of files) {
 
 await cp(path.join(root, 'levels'), path.join(dist, 'levels'), {recursive: true, force: true});
 await cp(path.join(root, 'assets'), path.join(dist, 'assets'), {recursive: true, force: true});
+await mkdir(path.join(dist, 'content'), {recursive: true});
+await copyFile(
+  path.join(root, 'src', 'content', 'reveal-manifest.json'),
+  path.join(dist, 'content', 'reveal-manifest.json'),
+);
+await copyFile(
+  path.join(root, 'src', 'content', 'feed-manifest.json'),
+  path.join(dist, 'content', 'feed-manifest.json'),
+);
 
-console.log('Copied precompiled game runtime and bundled content into dist/.');
+console.log('Copied precompiled game runtime, bundled content, reveals and private feeds into dist/.');

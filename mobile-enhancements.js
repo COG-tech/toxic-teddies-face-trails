@@ -4,20 +4,43 @@
 (() => {
   const saveStore = window.ToxicSaveStore;
   const content = window.ToxicContent;
+  const progression = window.ToxicProgression;
+  const analytics = window.ToxicAnalytics;
   let loadingLevel = false;
 
+  if (!progression) throw new Error('Toxic Teddies progression rules are unavailable');
   if (saveStore) state.save = saveStore.getSnapshot();
   if (!state.save.completed) state.save.completed = {};
+  if (!state.save.teddyCompletion) state.save.teddyCompletion = {};
+  if (!state.save.feedUnlocks) state.save.feedUnlocks = {};
+  if (!state.save.viewedFeedPosts) state.save.viewedFeedPosts = {};
 
+  const baseBoot = boot;
+  const baseBindEvents = bindEvents;
   const baseRenderHome = renderHome;
   const baseLoadLevel = loadLevel;
   const baseUpdateProgress = updateProgress;
-  const baseCompleteLevel = completeLevel;
   const baseResetLevel = resetLevel;
   const baseShowHome = showHome;
   const baseSetStatus = setStatus;
   const basePersist = persist;
   const baseRemovePiece = removePiece;
+
+  const feedView = document.getElementById('feedView');
+  const feedButton = document.getElementById('feedButton');
+  const feedUnreadBadge = document.getElementById('feedUnreadBadge');
+  const feedUnreadSummary = document.getElementById('feedUnreadSummary');
+  const feedPosts = document.getElementById('feedPosts');
+  const feedTitle = document.getElementById('feedTitle');
+  const feedDisplayName = document.getElementById('feedDisplayName');
+  const feedHandle = document.getElementById('feedHandle');
+  const feedBio = document.getElementById('feedBio');
+  const feedProgress = document.getElementById('feedProgress');
+  const feedAvatar = document.getElementById('feedAvatar');
+  const completionArt = document.getElementById('completionArt');
+  const completionArtLabel = document.getElementById('completionArtLabel');
+  const completionEyebrow = document.getElementById('completionEyebrow');
+  const completionBackButton = document.getElementById('completionBackButton');
 
   function currentLevelEntry() {
     return content?.getLevel(teddy().id, state.level) || null;
@@ -27,12 +50,39 @@
     return levelKey(teddy().id, state.level);
   }
 
+  function expressionLabel(expressionId = state.data?.expression) {
+    return content?.getExpression(expressionId)?.label
+      || String(expressionId || 'Expression').replaceAll('_', ' ');
+  }
+
   function removedPathIds() {
     return state.pieces.filter(piece => piece.removed || !state.active.has(piece.id)).map(piece => piece.id);
   }
 
+  function feedPostIds(teddyId) {
+    return content?.getFeed(teddyId)?.posts?.map(post => post.id) || [];
+  }
+
+  function feedUnreadCount(teddyId) {
+    return progression.unreadFeedPostCount(state.save, teddyId, feedPostIds(teddyId));
+  }
+
+  function canOpenFeed(teddyId) {
+    return progression.canOpenFeed(state.save, teddyId, LEVELS_PER_TEDDY);
+  }
+
+  function saveSnapshot(nextSave = state.save) {
+    state.save = nextSave;
+    saveStore?.replace(state.save);
+  }
+
   async function persistCurrentSession() {
     if (!saveStore || loadingLevel || !state.data) return;
+    if (!state.active.size || completed(teddy().id, state.level)) {
+      state.save.activeSession = null;
+      await saveStore.replace(state.save);
+      return;
+    }
     state.save.activeSession = {
       levelKey: currentSessionKey(),
       teddyId: teddy().id,
@@ -88,8 +138,129 @@
     els.boardBackdrop.style.setProperty('--backdrop-blur', `${backdrop.blur_px ?? 0}px`);
   }
 
+  function applyCompletionReveal() {
+    const expressionId = state.data?.expression;
+    const reveal = content?.getReveal(teddy().id, expressionId);
+    const label = expressionLabel(expressionId);
+    if (!completionArt) return;
+
+    completionArt.dataset.expression = expressionId || 'neutral';
+    completionArt.classList.toggle('completion-art-placeholder', !reveal?.image_src);
+    completionArt.style.backgroundImage = reveal?.image_src ? `url('${reveal.image_src}')` : 'none';
+    completionArt.setAttribute(
+      'aria-label',
+      reveal?.image_src ? `${teddy().primary} ${label} completed artwork` : `${teddy().primary} ${label} artwork placeholder`,
+    );
+    if (completionArtLabel) {
+      completionArtLabel.textContent = reveal?.image_src
+        ? `${teddy().primary} — ${label}`
+        : `${label} artwork slot ready for your final image`;
+    }
+  }
+
   function updateAccessibleMoves() {
     window.ToxicAccessibility?.update?.(state, {blockersAhead, attemptMove});
+  }
+
+  function updateFeedAccess() {
+    const teddyId = 'tt01';
+    const unlocked = canOpenFeed(teddyId);
+    feedButton?.classList.toggle('hidden', !unlocked);
+    if (!unlocked) return;
+    const unread = feedUnreadCount(teddyId);
+    if (feedUnreadBadge) {
+      feedUnreadBadge.hidden = unread === 0;
+      feedUnreadBadge.textContent = String(unread);
+    }
+  }
+
+  function hideAllPrimaryViews() {
+    els.homeView.classList.add('hidden');
+    els.gameView.classList.add('hidden');
+    feedView?.classList.add('hidden');
+  }
+
+  function updateFeedUnreadUi(teddyId) {
+    const unread = feedUnreadCount(teddyId);
+    if (feedUnreadSummary) feedUnreadSummary.textContent = unread ? `${unread} unread` : 'All posts viewed';
+    if (feedUnreadBadge) {
+      feedUnreadBadge.hidden = unread === 0;
+      feedUnreadBadge.textContent = String(unread);
+    }
+  }
+
+  function createFeedPost(teddyId, feed, post) {
+    const viewed = new Set(state.save.viewedFeedPosts?.[teddyId] || []).has(post.id);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `feed-post${viewed ? ' viewed' : ''}`;
+    button.dataset.postId = post.id;
+    button.setAttribute('aria-expanded', 'false');
+    button.innerHTML = `
+      <span class="feed-post-header">
+        <span><strong>${feed.display_name}</strong> <span class="feed-post-handle">${feed.handle}</span></span>
+        <span>${post.posted_label}</span>
+      </span>
+      <span class="feed-post-body">${post.text}</span>
+      <span class="feed-post-footer"><span>${post.reaction}</span><span>Tap to reveal reply</span></span>
+      <span class="feed-post-reply">
+        <strong>${post.reply?.author || ''}</strong>
+        <span class="feed-post-handle">${post.reply?.handle || ''}</span><br />
+        ${post.reply?.text || ''}
+      </span>
+    `;
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!expanded));
+      button.classList.toggle('expanded', !expanded);
+      if (expanded) return;
+      state.save = progression.markFeedPostViewed(state.save, teddyId, post.id);
+      button.classList.add('viewed');
+      saveStore?.replace(state.save);
+      updateFeedUnreadUi(teddyId);
+      analytics?.track('feed_post_view', {
+        teddy_id: teddyId,
+        post_id: post.id,
+      }).catch(console.error);
+    });
+    return button;
+  }
+
+  async function openFeed(teddyId = 'tt01') {
+    if (!canOpenFeed(teddyId)) {
+      showHome();
+      window.ToxicAccessibility?.announce?.('Complete all five Toxic Toby expressions to unlock the private feed.');
+      return false;
+    }
+    const feed = content?.getFeed(teddyId);
+    const character = content?.getCharacter(teddyId);
+    if (!feed || !character) return false;
+
+    hideModals();
+    hideAllPrimaryViews();
+    feedView?.classList.remove('hidden');
+    feedTitle.textContent = character.primary;
+    feedDisplayName.textContent = feed.display_name;
+    feedHandle.textContent = feed.handle;
+    feedBio.textContent = feed.bio;
+    feedProgress.textContent = `${progression.completedExpressionCount(state.save, teddyId)} / ${LEVELS_PER_TEDDY} expressions cleared`;
+    feedAvatar?.classList.add('feed-avatar-placeholder');
+    if (feedPosts) {
+      feedPosts.innerHTML = '';
+      for (const post of feed.posts) feedPosts.append(createFeedPost(teddyId, feed, post));
+    }
+    updateFeedUnreadUi(teddyId);
+
+    const url = new URL(location.href);
+    url.search = '';
+    url.searchParams.set('feed', teddyId);
+    history.replaceState({}, '', url);
+    window.ToxicAccessibility?.announce?.(`${character.primary} private feed opened.`);
+    await analytics?.track('feed_open', {
+      teddy_id: teddyId,
+      completed_expressions: progression.completedExpressionCount(state.save, teddyId),
+    }).catch(console.error);
+    return true;
   }
 
   persist = function nativePersist() {
@@ -111,28 +282,30 @@
         if (strong) strong.textContent = 'COMING SOON';
       }
     });
+    updateFeedAccess();
   };
 
   updateCollectionCounter = function honestCollectionCounter() {
     const playable = content?.playableCount() || 5;
-    const completedCount = Object.keys(state.save.completed || {})
-      .filter(key => key.startsWith('tt01-l'))
-      .length;
+    const completedCount = progression.completedExpressionCount(state.save, 'tt01', LEVELS_PER_TEDDY);
     els.collectionCounter.textContent = `${completedCount} / ${playable}`;
     els.collectionCounter.title = `${playable} playable now · 60-level Founding 12 roadmap`;
   };
 
-  openGame = async function manifestOpenGame(index, level) {
+  openGame = async function manifestOpenGame(index, requestedLevel) {
     const item = TEDDIES[index];
+    const level = unlocked(item?.id, requestedLevel) ? requestedLevel : latestUnlocked(item);
     if (!item || !content?.isPlayable(item.id, level)) {
       window.ToxicAccessibility?.announce?.(`${item?.primary || 'This Teddy'} is coming soon.`);
       return;
     }
     state.teddyIndex = index;
     state.level = level;
+    feedView?.classList.add('hidden');
     els.homeView.classList.add('hidden');
     els.gameView.classList.remove('hidden');
     const url = new URL(location.href);
+    url.search = '';
     url.searchParams.set('teddy', teddy().id);
     url.searchParams.set('level', String(level));
     history.replaceState({}, '', url);
@@ -163,21 +336,68 @@
   };
 
   showHome = function nativeShowHome() {
-    persistCurrentSession();
+    if (!els.gameView.classList.contains('hidden')) persistCurrentSession();
+    feedView?.classList.add('hidden');
     return baseShowHome();
   };
 
   completeLevel = function nativeCompleteLevel() {
-    state.save.activeSession = null;
-    const expression = String(state.data?.expression || '').replaceAll('_', ' ');
+    const teddyId = teddy().id;
+    const currentLevel = state.level;
+    const wasFeedUnlocked = canOpenFeed(teddyId);
+    state.save = progression.completeExpression(state.save, teddyId, currentLevel, LEVELS_PER_TEDDY);
+    persist();
+    renderLevelButtons();
+
+    const label = expressionLabel();
+    const completedCount = progression.completedExpressionCount(state.save, teddyId, LEVELS_PER_TEDDY);
+    const finalExpression = currentLevel === LEVELS_PER_TEDDY;
+    applyCompletionReveal();
+
     window.__toxicCurrentLevelSummary = {
       title: 'Toxic Teddies: Arrow Escape',
-      text: `I cleared Toxic Toby's ${expression} face. The face is the puzzle.`,
+      text: finalExpression
+        ? `I completed all five ${teddy().primary} expressions and unlocked the private Toxic Feed.`
+        : `I cleared ${teddy().primary}'s ${label} face. The face is the puzzle.`,
     };
     window.ToxicNative?.hapticComplete?.();
-    window.ToxicAccessibility?.announce?.(`${expression} expression cleared.`);
-    baseCompleteLevel();
-    saveStore?.replace(state.save);
+
+    if (completionEyebrow) completionEyebrow.textContent = finalExpression ? 'TEDDY COMPLETED' : 'EXPRESSION CLEARED';
+    els.completionTitle.textContent = finalExpression
+      ? `${teddy().primary.toUpperCase()} COMPLETED`
+      : `${teddy().primary} — ${label}`;
+    els.completionCopy.textContent = finalExpression
+      ? `${completedCount} / ${LEVELS_PER_TEDDY} expressions cleared. Private feed unlocked.`
+      : `${label} cleared. Expression ${currentLevel + 1} is now unlocked.`;
+    els.nextButton.textContent = finalExpression ? `Enter ${teddy().primary}'s Feed` : 'Next Expression';
+    els.nextButton.disabled = false;
+    completionBackButton?.classList.toggle('hidden', !finalExpression);
+    els.completionModal.classList.remove('hidden');
+    setTimeout(() => els.nextButton.focus(), 0);
+
+    window.ToxicAccessibility?.announce?.(
+      finalExpression
+        ? `${teddy().primary} completed. Private feed unlocked.`
+        : `${label} expression cleared. The next expression is unlocked.`,
+    );
+
+    if (finalExpression && !wasFeedUnlocked) {
+      analytics?.track('feed_unlock', {
+        teddy_id: teddyId,
+        completed_expressions: completedCount,
+        unlock_source: 'five_expressions',
+      }).catch(console.error);
+    }
+  };
+
+  goNext = async function completionGoNext() {
+    const destination = progression.nextCompletionDestination(state.level, LEVELS_PER_TEDDY);
+    hideModals();
+    if (destination.type === 'expression') {
+      await openGame(state.teddyIndex, destination.level);
+      return;
+    }
+    await openFeed(teddy().id);
   };
 
   setStatus = function accessibleStatus(text) {
@@ -212,5 +432,26 @@
     });
   };
 
+  bindEvents = function completionBindEvents() {
+    baseBindEvents();
+    completionBackButton?.addEventListener('click', showHome);
+    document.getElementById('feedBackButton')?.addEventListener('click', showHome);
+    feedButton?.addEventListener('click', () => openFeed('tt01'));
+  };
+
+  boot = function completionBoot() {
+    baseBoot();
+    const feedId = new URLSearchParams(location.search).get('feed');
+    if (feedId) queueMicrotask(() => openFeed(feedId));
+  };
+
   window.__toxicPersistCurrentSession = persistCurrentSession;
+  window.__toxicOpenFeed = openFeed;
+  window.__toxicCompletionTest = () => ({
+    teddyId: teddy().id,
+    level: state.level,
+    completedExpressions: progression.completedExpressionCount(state.save, teddy().id, LEVELS_PER_TEDDY),
+    feedUnlocked: canOpenFeed(teddy().id),
+    next: progression.nextCompletionDestination(state.level, LEVELS_PER_TEDDY),
+  });
 })();

@@ -8,6 +8,19 @@ function clone(value) {
     : JSON.parse(JSON.stringify(value));
 }
 
+function objectOrEmpty(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function normalizeViewedFeedPosts(value) {
+  const normalized = {};
+  for (const [teddyId, postIds] of Object.entries(objectOrEmpty(value))) {
+    if (!Array.isArray(postIds)) continue;
+    normalized[teddyId] = [...new Set(postIds.filter(postId => typeof postId === 'string'))];
+  }
+  return normalized;
+}
+
 function emptyState(buildInfo, content) {
   return {
     schemaVersion: buildInfo.saveSchemaVersion,
@@ -16,6 +29,9 @@ function emptyState(buildInfo, content) {
     contentVersion: buildInfo.contentVersion,
     compilerVersion: content.compilerVersion,
     completed: {},
+    teddyCompletion: {},
+    feedUnlocks: {},
+    viewedFeedPosts: {},
     activeSession: null,
     migrationHistory: [],
     lastSuccessfulLaunch: null,
@@ -34,7 +50,10 @@ function normalize(input, buildInfo, content) {
     appBuild: buildInfo.iosBuildNumber,
     contentVersion: buildInfo.contentVersion,
     compilerVersion: content.compilerVersion,
-    completed: input.completed && typeof input.completed === 'object' ? input.completed : {},
+    completed: objectOrEmpty(input.completed),
+    teddyCompletion: objectOrEmpty(input.teddyCompletion),
+    feedUnlocks: objectOrEmpty(input.feedUnlocks),
+    viewedFeedPosts: normalizeViewedFeedPosts(input.viewedFeedPosts),
     activeSession: input.activeSession && typeof input.activeSession === 'object' ? input.activeSession : null,
     migrationHistory: Array.isArray(input.migrationHistory) ? input.migrationHistory : [],
   };
@@ -101,6 +120,20 @@ export async function createSaveStore(bridge, content, buildInfo) {
     markCompleted(levelKey) {
       state.completed[levelKey] = true;
       state.activeSession = null;
+      return queueWrite();
+    },
+    setTeddyCompleted(teddyId) {
+      state.teddyCompletion[teddyId] = true;
+      return queueWrite();
+    },
+    unlockFeed(teddyId) {
+      state.feedUnlocks[teddyId] = true;
+      return queueWrite();
+    },
+    markFeedPostViewed(teddyId, postId) {
+      const viewed = new Set(state.viewedFeedPosts[teddyId] || []);
+      viewed.add(postId);
+      state.viewedFeedPosts[teddyId] = [...viewed];
       return queueWrite();
     },
     markSuccessfulLaunch() {

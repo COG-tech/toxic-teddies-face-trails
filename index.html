@@ -20,10 +20,11 @@
   </script>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./src/design-system/tokens.css" />
-  <link rel="stylesheet" href="./styles.css?v=32" />
-  <link rel="stylesheet" href="./compiled-patterns.css?v=32" />
-  <link rel="stylesheet" href="./hard-mode-v3.css?v=32" />
+  <link rel="stylesheet" href="./styles.css?v=34" />
+  <link rel="stylesheet" href="./compiled-patterns.css?v=34" />
+  <link rel="stylesheet" href="./hard-mode-v3.css?v=34" />
   <link rel="stylesheet" href="./src/design-system/accessibility.css" />
+  <link rel="stylesheet" href="./src/design-system/completion-feed.css" />
 </head>
 <body>
   <div id="appStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -40,6 +41,9 @@
       </header>
       <div id="teddyGrid" class="teddy-grid"></div>
       <nav class="home-utilities" aria-label="Game information and settings">
+        <button id="feedButton" class="secondary-button feed-home-button hidden" type="button">
+          Toxic Toby's Feed <span id="feedUnreadBadge" class="feed-unread-badge" hidden>0</span>
+        </button>
         <button id="howToButton" class="secondary-button" type="button">How to play</button>
         <button id="settingsButton" class="secondary-button" type="button">Settings</button>
       </nav>
@@ -81,17 +85,55 @@
         <div id="levelButtons" class="level-buttons" aria-label="Toxic Toby expressions"></div>
       </footer>
     </section>
+
+    <section id="feedView" class="feed-view hidden" aria-labelledby="feedTitle">
+      <header class="feed-topbar">
+        <button id="feedBackButton" class="top-icon" type="button" aria-label="Back to Teddies">←</button>
+        <div>
+          <p class="eyebrow">PRIVATE FEED</p>
+          <h2 id="feedTitle">Toxic Toby</h2>
+        </div>
+        <span class="feed-lock-state" aria-label="Unlocked private feed">UNLOCKED</span>
+      </header>
+
+      <main class="feed-shell">
+        <section class="feed-profile" aria-label="Toxic Toby profile">
+          <div id="feedAvatar" class="feed-avatar feed-avatar-placeholder" aria-label="Toxic Toby profile artwork placeholder">☣</div>
+          <div>
+            <h3 id="feedDisplayName">Toxic Toby</h3>
+            <p id="feedHandle">@ToxicToby</p>
+            <p id="feedBio">Radioactive since Tuesday.</p>
+            <strong id="feedProgress">5 / 5 expressions cleared</strong>
+          </div>
+        </section>
+
+        <section aria-labelledby="feedPostsTitle">
+          <div class="feed-section-heading">
+            <h3 id="feedPostsTitle">Private posts</h3>
+            <span id="feedUnreadSummary">3 unread</span>
+          </div>
+          <div id="feedPosts" class="feed-posts"></div>
+        </section>
+      </main>
+    </section>
   </div>
 
   <div id="completionModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
-    <section class="modal-card">
-      <p class="eyebrow">FACE CLEARED</p>
-      <h3 id="completionTitle">Toxic Toby · Level 1</h3>
-      <p id="completionCopy"></p>
-      <div class="modal-actions three-actions">
-        <button id="replayButton" class="secondary-button" type="button">Replay</button>
-        <button id="shareButton" class="secondary-button" type="button">Share</button>
-        <button id="nextButton" class="primary-button" type="button">Next expression</button>
+    <section class="modal-card completion-card">
+      <div id="completionArt" class="completion-art completion-art-placeholder" aria-label="Expression artwork placeholder">
+        <span class="completion-art-symbol" aria-hidden="true">☣</span>
+        <span id="completionArtLabel">Final expression artwork will appear here</span>
+      </div>
+      <div class="completion-content">
+        <p id="completionEyebrow" class="eyebrow">EXPRESSION CLEARED</p>
+        <h3 id="completionTitle">Toxic Toby — Neutral</h3>
+        <p id="completionCopy"></p>
+        <div class="modal-actions completion-actions">
+          <button id="replayButton" class="secondary-button" type="button">Replay</button>
+          <button id="shareButton" class="secondary-button" type="button">Share</button>
+          <button id="nextButton" class="primary-button" type="button">Next expression</button>
+          <button id="completionBackButton" class="secondary-button completion-back-button hidden" type="button">Back to Teddies</button>
+        </div>
       </div>
     </section>
   </div>

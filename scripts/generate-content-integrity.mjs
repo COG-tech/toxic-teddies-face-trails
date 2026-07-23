@@ -23,13 +23,17 @@ const requiredFiles = [
   'assets/backdrops/tt01/gross.svg',
   'assets/backdrops/tt01/angry.svg',
   'assets/backdrops/tt01/maniacal-laugh.svg',
+  {source: 'src/content/reveal-manifest.json', output: 'content/reveal-manifest.json'},
+  {source: 'src/content/feed-manifest.json', output: 'content/feed-manifest.json'},
 ];
 
 const files = [];
-for (const relativePath of requiredFiles) {
-  const bytes = await readFile(path.join(root, relativePath));
+for (const entry of requiredFiles) {
+  const source = typeof entry === 'string' ? entry : entry.source;
+  const output = typeof entry === 'string' ? entry : entry.output;
+  const bytes = await readFile(path.join(root, source));
   files.push({
-    path: `./${relativePath.replaceAll(path.sep, '/')}`,
+    path: `./${output.replaceAll(path.sep, '/')}`,
     bytes: bytes.byteLength,
     sha256: createHash('sha256').update(bytes).digest('hex'),
   });

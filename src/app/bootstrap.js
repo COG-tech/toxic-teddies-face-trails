@@ -3,6 +3,7 @@ import { createAnalytics } from '../analytics/analytics.js';
 import { createContentRegistry } from '../content/content-registry.js';
 import buildInfo from '../generated/build-info.json';
 import { createInputController } from '../game/input-controller.js';
+import * as progression from '../game/progression.js';
 import { createSaveStore } from '../storage/save-store.js';
 import { verifyBundledContent } from './content-integrity.js';
 import { createNativeBridge } from './native-bridge.js';
@@ -44,6 +45,7 @@ async function bootstrap() {
   window.ToxicNative = bridge;
   window.ToxicContent = content;
   window.ToxicSaveStore = saveStore;
+  window.ToxicProgression = progression;
   window.ToxicInputControllerFactory = createInputController;
   window.ToxicAccessibility = accessibility;
   window.ToxicBuildInfo = runtimeBuildInfo;
@@ -77,7 +79,7 @@ async function bootstrap() {
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=32').catch(error => {
+    navigator.serviceWorker.register('./sw.js?v=34').catch(error => {
       console.warn('Browser prototype service worker registration failed', error);
     });
   }

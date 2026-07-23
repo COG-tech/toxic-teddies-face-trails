@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "reveals": [
+    {
+      "id": "tt01_neutral",
+      "teddy_id": "tt01",
+      "expression_id": "neutral",
+      "status": "placeholder",
+      "image_src": null,
+      "expected_src": "./assets/reveals/tt01/neutral.webp",
+      "theme": "toxic-green"
+    },
+    {
+      "id": "tt01_evil_grin",
+      "teddy_id": "tt01",
+      "expression_id": "evil_grin",
+      "status": "placeholder",
+      "image_src": null,
+      "expected_src": "./assets/reveals/tt01/evil-grin.webp",
+      "theme": "warning-yellow"
+    },
+    {
+      "id": "tt01_gross",
+      "teddy_id": "tt01",
+      "expression_id": "gross",
+      "status": "placeholder",
+      "image_src": null,
+      "expected_src": "./assets/reveals/tt01/gross.webp",
+      "theme": "sludge-green"
+    },
+    {
+      "id": "tt01_angry",
+      "teddy_id": "tt01",
+      "expression_id": "angry",
+      "status": "placeholder",
+      "image_src": null,
+      "expected_src": "./assets/reveals/tt01/angry.webp",
+      "theme": "hazard-red"
+    },
+    {
+      "id": "tt01_maniacal_laugh",
+      "teddy_id": "tt01",
+      "expression_id": "maniacal_laugh",
+      "status": "placeholder",
+      "image_src": null,
+      "expected_src": "./assets/reveals/tt01/maniacal-laugh.webp",
+      "theme": "radioactive-lime"
+    }
+  ]
+}

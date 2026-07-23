@@ -133,7 +133,9 @@ export async function installMobileShell(bridge) {
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
     if (closeModal(settingsModal)) return;
-    closeModal(howToModal);
+    if (closeModal(howToModal)) return;
+    const feed = document.getElementById('feedView');
+    if (feed && !feed.classList.contains('hidden')) document.getElementById('feedBackButton')?.click();
   });
 
   bridge.onBack(() => {
@@ -141,6 +143,11 @@ export async function installMobileShell(bridge) {
     const accessibleModal = document.getElementById('accessibleMovesModal');
     if (accessibleModal && !accessibleModal.classList.contains('hidden')) {
       window.ToxicAccessibility?.closeMoves();
+      return true;
+    }
+    const feed = document.getElementById('feedView');
+    if (feed && !feed.classList.contains('hidden')) {
+      document.getElementById('feedBackButton')?.click();
       return true;
     }
     const game = document.getElementById('gameView');
