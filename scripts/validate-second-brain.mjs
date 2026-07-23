@@ -9,6 +9,7 @@ const requiredDocuments = [
   'docs/second-brain/LOCKED_DECISIONS.md',
   'docs/second-brain/FAILURE_LEDGER.md',
   'docs/second-brain/TEST_MATRIX.md',
+  'docs/second-brain/DESIGN_SYSTEM.md',
   'docs/second-brain/VISUAL_REFERENCE.md',
   'docs/second-brain/CHANGE_PROTOCOL.md',
   'docs/second-brain/project-memory.json',
@@ -29,6 +30,15 @@ assert(memory.schemaVersion === 1, 'Second-brain schemaVersion must be 1');
 assert(memory.repository === 'COG-tech/toxic-teddies-face-trails', 'Second-brain repository is incorrect');
 assert(memory.product?.brandPromise === 'The face is the puzzle.', 'Brand promise is missing or changed');
 assert(memory.product?.bundleId === 'com.cogtech.toxicteddies', 'Bundle ID is missing or changed');
+assert(memory.designSystem?.version === '1.0.0', 'Design-system version must be recorded as 1.0.0');
+assert(memory.designSystem?.primaryColors?.toxicGreen === '#8DBB13', 'Canonical Toxic Green is missing or changed');
+assert(memory.designSystem?.primaryColors?.slimeGreen === '#B7E24B', 'Canonical Slime Green is missing or changed');
+assert(memory.designSystem?.neutralColors?.grime900 === '#0F0C08', 'Canonical Grime 900 is missing or changed');
+assert(memory.designSystem?.typography?.display === 'Toxic Head custom', 'Canonical display typography is missing or changed');
+assert(memory.designSystem?.typography?.body === 'Inter system', 'Canonical body typography is missing or changed');
+assert(JSON.stringify(memory.designSystem?.spacingScale) === JSON.stringify([4, 8, 12, 16, 24, 32, 64]), 'Canonical spacing scale changed');
+assert(memory.designSystem?.gridColumns === 12, 'Canonical grid must remain twelve columns');
+assert(Array.isArray(memory.designSystem?.accessibilityStandards) && memory.designSystem.accessibilityStandards.includes('WCAG 2.1 AA'), 'Design-system accessibility standard is missing');
 assert(memory.playable?.teddyIds?.length === 1 && memory.playable.teddyIds[0] === 'tt01', 'Playable Teddy truth must remain tt01 only until content is approved');
 assert(memory.playable?.expressionsPerTeddy === 5, 'Every Teddy must retain five expressions');
 assert(memory.playable?.targetLevelCount === 60, 'Founding 12 target must remain 60 levels');
@@ -53,6 +63,13 @@ assert((decisions.match(/^## D-\d{3}/gm) || []).length >= 12, 'Locked decision r
 const failures = await readFile(path.join(root, 'docs/second-brain/FAILURE_LEDGER.md'), 'utf8');
 assert((failures.match(/^## F-\d{3}/gm) || []).length >= 8, 'Failure ledger is incomplete');
 
+const designSystem = await readFile(path.join(root, 'docs/second-brain/DESIGN_SYSTEM.md'), 'utf8');
+assert(designSystem.includes('Version 1.0.0'), 'Human-readable design-system version is missing');
+assert(designSystem.includes('#8DBB13'), 'Human-readable Toxic Green token is missing');
+assert(designSystem.includes('Toxic Head — custom'), 'Human-readable display typography is missing');
+assert(designSystem.includes('WCAG 2.1 AA'), 'Human-readable accessibility standard is missing');
+assert(designSystem.includes('What this design system does not define'), 'Design-system scope boundary is missing');
+
 const visual = await readFile(path.join(root, 'docs/second-brain/VISUAL_REFERENCE.md'), 'utf8');
 assert(visual.includes('composition and readability'), 'Visual reference purpose is missing');
 assert(visual.includes('Do not copy from the reference'), 'Visual anti-copy guardrail is missing');
@@ -60,7 +77,8 @@ assert(visual.includes('The puzzle is the dominant object'), 'Visual hierarchy r
 
 const protocol = await readFile(path.join(root, 'docs/second-brain/CHANGE_PROTOCOL.md'), 'utf8');
 assert(protocol.includes('FAILURE_LEDGER.md'), 'Change protocol must require failure-ledger review');
+assert(protocol.includes('DESIGN_SYSTEM.md'), 'Change protocol must require design-system review');
 assert(protocol.includes('VISUAL_REFERENCE.md'), 'Change protocol must require visual-reference review');
 assert(protocol.includes('npm run validate:second-brain'), 'Change protocol must require second-brain validation');
 
-console.log(`Second brain verified: ${requiredDocuments.length} canonical files, one active action, locked decisions, failure history, visual reference, and human-gate truth.`);
+console.log(`Second brain verified: ${requiredDocuments.length} canonical files, one active action, locked decisions, failure history, design-system memory, visual reference, and human-gate truth.`);
