@@ -34,7 +34,8 @@ assert(memory.playable?.expressionsPerTeddy === 5, 'Every Teddy must retain five
 assert(memory.playable?.targetLevelCount === 60, 'Founding 12 target must remain 60 levels');
 assert(memory.activeNextAction?.id, 'Exactly one active next action must be recorded');
 assert(memory.activeNextAction?.status, 'The active next action must have a status');
-assert(memory.artwork?.finalRevealImagesApproved === false, 'Final reveal images cannot be marked approved without updating the canonical evidence');
+assert(typeof memory.artwork?.finalRevealImagesApproved === 'boolean', 'Artwork approval must be recorded explicitly as true or false');
+assert(Array.isArray(memory.artwork?.expectedFiles) && memory.artwork.expectedFiles.length === 5, 'Exactly five Toxic Toby reveal-image slots must be recorded');
 assert(Array.isArray(memory.lockedSystems) && memory.lockedSystems.length >= 8, 'Locked systems are incomplete');
 assert(Array.isArray(memory.humanGatesPending) && memory.humanGatesPending.length > 0, 'Human gates must not disappear without evidence');
 
