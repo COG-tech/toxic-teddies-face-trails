@@ -53,7 +53,7 @@
   };
 
   document.getElementById('nextButton')?.addEventListener('click', () => {
-    analytics.track('next_expression', context());
+    if (state.level < LEVELS_PER_TEDDY) analytics.track('next_expression', context());
   }, true);
 
   document.getElementById('howToButton')?.addEventListener('click', () => {
