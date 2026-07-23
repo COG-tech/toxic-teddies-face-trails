@@ -11,6 +11,115 @@
     "architecture": "Vite JavaScript SVG bundled through Capacitor 8",
     "browserDemo": "https://cog-tech.github.io/toxic-teddies-face-trails/play/"
   },
+  "designSystem": {
+    "version": "1.0.0",
+    "date": "July 2026",
+    "source": "Owner-supplied Toxic Teddies Design System board",
+    "principles": [
+      "Playful & Nostalgic",
+      "Gross but Approachable",
+      "Clarity First",
+      "Consistent & Scalable",
+      "Inclusive & Accessible"
+    ],
+    "primaryColors": {
+      "toxicGreen": "#8DBB13",
+      "slimeGreen": "#B7E24B",
+      "rustOrange": "#A84F18",
+      "moldOlive": "#6F762C",
+      "patchPurple": "#8F456D"
+    },
+    "secondaryColors": {
+      "acidYellow": "#E7D32D",
+      "sewerTeal": "#3E7C7B",
+      "warningAmber": "#D8A72D",
+      "bloodRed": "#8C1D1D",
+      "stitchPink": "#C97CA3"
+    },
+    "neutralColors": {
+      "parchment100": "#F3E4BD",
+      "parchment300": "#D8BF8A",
+      "brown700": "#382D1F",
+      "ink900": "#1D160F",
+      "grime900": "#0F0C08"
+    },
+    "gradients": {
+      "toxicGlow": ["#B7E24B", "#7AA10F"],
+      "rustFade": ["#A84F18", "#6E341D"],
+      "sewerFade": ["#3E7C7B", "#1F4F4F"]
+    },
+    "typography": {
+      "display": "Toxic Head custom",
+      "body": "Inter system",
+      "scale": {
+        "h1": "48px/56px bold",
+        "h2": "32px/40px bold",
+        "h3": "24px/32px bold",
+        "h4": "18px/24px semibold",
+        "bodyLarge": "16px/24px regular",
+        "body": "14px/20px regular",
+        "small": "12px/16px regular",
+        "micro": "11px/14px regular"
+      }
+    },
+    "spacingScale": [4, 8, 12, 16, 24, 32, 64],
+    "gridColumns": 12,
+    "breakpoints": {
+      "mobile": "0-479px",
+      "tablet": "480-767px",
+      "desktop": "768-1099px",
+      "wide": "1100px+"
+    },
+    "componentFamilies": [
+      "primary buttons",
+      "secondary buttons",
+      "icon buttons",
+      "text inputs",
+      "dropdowns",
+      "checkboxes",
+      "toggles",
+      "radio buttons",
+      "Teddy collection cards",
+      "expression and level cards",
+      "locked and coming-soon cards",
+      "top navigation",
+      "mobile bottom navigation",
+      "success warning error and information alerts",
+      "achievement badges",
+      "level-complete modal"
+    ],
+    "achievementConcepts": [
+      "First Clear",
+      "Perfect",
+      "Speed Demon",
+      "Collector",
+      "Survivor",
+      "Toxic Master"
+    ],
+    "accessibilityStandards": [
+      "WCAG 2.1 AA",
+      "keyboard navigation",
+      "screen-reader-friendly controls",
+      "high-contrast support",
+      "reduced-motion support",
+      "visible focus states",
+      "clear disabled states",
+      "large touch targets",
+      "no information by color alone"
+    ],
+    "notDefinedByDesignSystem": [
+      "puzzle-path geometry",
+      "blocker calculations",
+      "save and exact restoration logic",
+      "level compiler and solver rules",
+      "Toxic Feed post content",
+      "analytics implementation",
+      "store signing",
+      "final artwork for every Teddy",
+      "exact arrow counts for future levels",
+      "implementation status of stars times difficulty selectors or achievements"
+    ]
+  },
   "playable": {
     "teddyIds": ["tt01"],
     "expressionsPerTeddy": 5,
@@ -57,7 +166,7 @@
       "blue plastic 3D tile style",
       "exact green background",
       "exact HUD and currency controls",
-      "exact fonts, icons, shadows, panels, branding, or commercial assets"
+      "exact fonts icons shadows panels branding or commercial assets"
     ]
   },
   "lockedSystems": [
@@ -90,6 +199,7 @@
     "docs/second-brain/LOCKED_DECISIONS.md",
     "docs/second-brain/FAILURE_LEDGER.md",
     "docs/second-brain/TEST_MATRIX.md",
+    "docs/second-brain/DESIGN_SYSTEM.md",
     "docs/second-brain/VISUAL_REFERENCE.md",
     "docs/second-brain/CHANGE_PROTOCOL.md",
     "docs/second-brain/project-memory.json"
