@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-24",
+  "repository": "COG-tech/toxic-teddies-face-trails",
+  "baselineCommit": "8c908fb91b3ca2a2c6507029585d6fe1046bc40c",
+  "product": {
+    "name": "Toxic Teddies: Arrow Escape",
+    "nativeName": "Toxic Teddies",
+    "bundleId": "com.cogtech.toxicteddies",
+    "brandPromise": "The face is the puzzle.",
+    "architecture": "Vite JavaScript SVG bundled through Capacitor 8",
+    "browserDemo": "https://cog-tech.github.io/toxic-teddies-face-trails/play/"
+  },
+  "designSystem": {
+    "version": "1.0.0",
+    "date": "July 2026",
+    "source": "Owner-supplied Toxic Teddies Design System board",
+    "principles": [
+      "Playful & Nostalgic",
+      "Gross but Approachable",
+      "Clarity First",
+      "Consistent & Scalable",
+      "Inclusive & Accessible"
+    ],
+    "primaryColors": {
+      "toxicGreen": "#8DBB13",
+      "slimeGreen": "#B7E24B",
+      "rustOrange": "#A84F18",
+      "moldOlive": "#6F762C",
+      "patchPurple": "#8F456D"
+    },
+    "secondaryColors": {
+      "acidYellow": "#E7D32D",
+      "sewerTeal": "#3E7C7B",
+      "warningAmber": "#D8A72D",
+      "bloodRed": "#8C1D1D",
+      "stitchPink": "#C97CA3"
+    },
+    "neutralColors": {
+      "parchment100": "#F3E4BD",
+      "parchment300": "#D8BF8A",
+      "brown700": "#382D1F",
+      "ink900": "#1D160F",
+      "grime900": "#0F0C08"
+    },
+    "gradients": {
+      "toxicGlow": ["#B7E24B", "#7AA10F"],
+      "rustFade": ["#A84F18", "#6E341D"],
+      "sewerFade": ["#3E7C7B", "#1F4F4F"]
+    },
+    "typography": {
+      "display": "Toxic Head custom",
+      "body": "Inter system",
+      "scale": {
+        "h1": "48px/56px bold",
+        "h2": "32px/40px bold",
+        "h3": "24px/32px bold",
+        "h4": "18px/24px semibold",
+        "bodyLarge": "16px/24px regular",
+        "body": "14px/20px regular",
+        "small": "12px/16px regular",
+        "micro": "11px/14px regular"
+      }
+    },
+    "spacingScale": [4, 8, 12, 16, 24, 32, 64],
+    "gridColumns": 12,
+    "breakpoints": {
+      "mobile": "0-479px",
+      "tablet": "480-767px",
+      "desktop": "768-1099px",
+      "wide": "1100px+"
+    },
+    "componentFamilies": [
+      "primary buttons",
+      "secondary buttons",
+      "icon buttons",
+      "text inputs",
+      "dropdowns",
+      "checkboxes",
+      "toggles",
+      "radio buttons",
+      "Teddy collection cards",
+      "expression and level cards",
+      "locked and coming-soon cards",
+      "top navigation",
+      "mobile bottom navigation",
+      "success warning error and information alerts",
+      "achievement badges",
+      "level-complete modal"
+    ],
+    "achievementConcepts": [
+      "First Clear",
+      "Perfect",
+      "Speed Demon",
+      "Collector",
+      "Survivor",
+      "Toxic Master"
+    ],
+    "accessibilityStandards": [
+      "WCAG 2.1 AA",
+      "keyboard navigation",
+      "screen-reader-friendly controls",
+      "high-contrast support",
+      "reduced-motion support",
+      "visible focus states",
+      "clear disabled states",
+      "large touch targets",
+      "no information by color alone"
+    ],
+    "notDefinedByDesignSystem": [
+      "puzzle-path geometry",
+      "blocker calculations",
+      "save and exact restoration logic",
+      "level compiler and solver rules",
+      "Toxic Feed post content",
+      "analytics implementation",
+      "store signing",
+      "final artwork for every Teddy",
+      "exact arrow counts for future levels",
+      "implementation status of stars times difficulty selectors or achievements"
+    ]
+  },
+  "playable": {
+    "teddyIds": ["tt01"],
+    "expressionsPerTeddy": 5,
+    "expressionOrder": [
+      "neutral",
+      "evil_grin",
+      "gross",
+      "angry",
+      "maniacal_laugh"
+    ],
+    "foundingTeddyCount": 12,
+    "targetLevelCount": 60
+  },
+  "activeNextAction": {
+    "id": "verify-toxic-toby-completion-flow",
+    "status": "human_playtest_required",
+    "summary": "Verify expressions 1 through 5, completion reveals, final feed unlock, persistence, and locked-route protection in the published browser build.",
+    "blockNewTeddyProduction": true
+  },
+  "artwork": {
+    "finalRevealImagesApproved": false,
+    "expectedFiles": [
+      "assets/reveals/tt01/neutral.webp",
+      "assets/reveals/tt01/evil-grin.webp",
+      "assets/reveals/tt01/gross.webp",
+      "assets/reveals/tt01/angry.webp",
+      "assets/reveals/tt01/maniacal-laugh.webp"
+    ],
+    "placeholderPolicy": "Use clearly non-final placeholders only. Do not generate or substitute final character art without owner approval."
+  },
+  "visualReference": {
+    "source": "Owner-supplied portrait mobile arrow-puzzle screenshot on 2026-07-24",
+    "purpose": "Composition and readability only",
+    "requirements": [
+      "The face puzzle is the dominant screen object",
+      "The Teddy silhouette is immediately recognizable",
+      "The puzzle occupies approximately 68 to 82 percent of usable portrait width",
+      "Controls stay outside important face regions and exit lanes",
+      "Arrowheads remain readable at normal phone size",
+      "The background remains secondary",
+      "Trail removal reveals the expression beneath the same face area"
+    ],
+    "forbiddenCopies": [
+      "blue plastic 3D tile style",
+      "exact green background",
+      "exact HUD and currency controls",
+      "exact fonts icons shadows panels branding or commercial assets"
+    ]
+  },
+  "lockedSystems": [
+    "deterministic precompiled levels",
+    "screen-space pointer selection",
+    "blocker detection and feedback",
+    "head-first trail removal",
+    "exact save restoration",
+    "expression progression",
+    "feed unlock protection",
+    "browser Vite publication under play",
+    "native offline bundling",
+    "content integrity verification"
+  ],
+  "humanGatesPending": [
+    "owner browser completion-flow evidence",
+    "five approved Toxic Toby reveal images",
+    "physical Android validation",
+    "physical iPhone validation",
+    "TalkBack validation",
+    "VoiceOver validation",
+    "12-person UX study",
+    "signed TestFlight upload",
+    "signed Google Play internal-test upload"
+  ],
+  "canonicalDocuments": [
+    "SECOND_BRAIN.md",
+    "docs/second-brain/STATUS.md",
+    "docs/second-brain/NEXT_ACTION.md",
+    "docs/second-brain/LOCKED_DECISIONS.md",
+    "docs/second-brain/FAILURE_LEDGER.md",
+    "docs/second-brain/TEST_MATRIX.md",
+    "docs/second-brain/DESIGN_SYSTEM.md",
+    "docs/second-brain/VISUAL_REFERENCE.md",
+    "docs/second-brain/CHANGE_PROTOCOL.md",
+    "docs/second-brain/project-memory.json"
+  ]
+}
