@@ -17,6 +17,8 @@ Updated: 2026-07-24
 | Direct locked feed route rejected | Unit tests | PASS |
 | Feed viewed/unread persistence | Unit tests | PASS |
 | Analytics allow-list and privacy | Unit tests | PASS |
+| Second-brain canonical records | Automated validator | PASS when branch checks pass |
+| Design-system tokens and scope boundaries | Automated second-brain validator | PASS when branch checks pass |
 | Vite production build | GitHub Actions | PASS |
 | Offline bundle integrity | SHA-256 verification | PASS |
 | Browser `/play/` bundle generation | GitHub Actions | PASS |
@@ -32,6 +34,7 @@ Updated: 2026-07-24
 | Browser completion flow | Screen recording: complete level, next expression opens, level 5 opens feed | PENDING |
 | Five reveal images | Owner approval of all five clean expression images | PENDING |
 | Completion-art placement | Screenshots on target phone sizes | PENDING |
+| Design-system implementation audit | Screen-by-screen comparison against `DESIGN_SYSTEM.md` | PENDING |
 | Physical Android playthrough | Install, five levels, airplane mode, force close, resume | PENDING |
 | Physical iPhone playthrough | Install, five levels, airplane mode, force close, resume | PENDING |
 | Android Back and safe areas | Device recording | PENDING |
@@ -42,6 +45,22 @@ Updated: 2026-07-24
 | Signed TestFlight build | App Store Connect evidence | PENDING |
 | Signed Play internal build | Play Console evidence | PENDING |
 | 12-person UX study | Participant exports, notes, metrics, report | PENDING |
+
+## Design-system acceptance gates
+
+Every new or changed app screen must demonstrate:
+
+- canonical color tokens rather than unrelated one-off colors;
+- Toxic Head only for display use and Inter/system typography for readable interface copy;
+- spacing from the `4, 8, 12, 16, 24, 32, 64` scale;
+- responsive behavior across mobile, tablet, desktop and wide breakpoints;
+- correct primary, secondary, icon and disabled button hierarchy;
+- visible focused, selected, disabled, success, warning, error, information and locked states where applicable;
+- cards that clearly separate playable, completed, locked and coming-soon content;
+- navigation that does not outrank the active face puzzle;
+- completion screens that use parchment readability and toxic/slime accents without obscuring the character;
+- no claim that stars, times, badges, difficulty selectors or collection systems are implemented merely because they appear in the design board;
+- WCAG 2.1 AA intent, keyboard navigation, screen-reader labels, high contrast, reduced motion, visible focus and large touch targets.
 
 ## Visual-level acceptance gates
 
@@ -60,4 +79,4 @@ Every new or changed level must pass all of the following before approval:
 
 ## Regression rule
 
-Any change touching `compiled-app.js`, `mobile-enhancements.js`, input geometry, progression, save state, manifests, service-worker behavior, build publication, or native bundling must run the complete automated suite and update this matrix when the evidence changes.
+Any change touching `compiled-app.js`, `mobile-enhancements.js`, input geometry, progression, save state, manifests, design tokens, shared components, service-worker behavior, build publication, or native bundling must run the complete automated suite and update this matrix when the evidence changes.
