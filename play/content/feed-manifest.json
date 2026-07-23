@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "feeds": [
+    {
+      "teddy_id": "tt01",
+      "handle": "@ToxicToby",
+      "display_name": "Toxic Toby",
+      "bio": "Radioactive since Tuesday.",
+      "unlock_requirement": {
+        "completed_expressions": 5
+      },
+      "posts": [
+        {
+          "id": "tt01-post-001",
+          "posted_label": "2m",
+          "text": "Someone left the reactor door open again. Not naming names, Barry.",
+          "reaction": "☣️ 1.2K",
+          "reply": {
+            "author": "Battery Barry",
+            "handle": "@BatteryBarry",
+            "text": "Prove it."
+          }
+        },
+        {
+          "id": "tt01-post-002",
+          "posted_label": "19m",
+          "text": "The green glow is natural. The warning label is decorative.",
+          "reaction": "🤢 846",
+          "reply": {
+            "author": "Moldy Molly",
+            "handle": "@MoldyMolly",
+            "text": "That is what the mold said too."
+          }
+        },
+        {
+          "id": "tt01-post-003",
+          "posted_label": "1h",
+          "text": "Five faces cleared. One private feed unlocked. Try not to touch anything glowing.",
+          "reaction": "🧸 2.4K",
+          "reply": {
+            "author": "Dumpster Danny",
+            "handle": "@DumpsterDanny",
+            "text": "Too late."
+          }
+        }
+      ]
+    }
+  ]
+}
