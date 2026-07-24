@@ -21,21 +21,25 @@ Updated: 2026-07-24
 | Restart cannot unlock content | Unit test | PASS |
 | Direct locked feed route rejected | Unit test | PASS |
 | Feed viewed/unread persistence | Unit test | PASS |
+| Approved loading artwork decodes as WebP | Unit test | PASS |
+| Loading screen markup and lifecycle hooks | Unit test | PASS |
 | Analytics allow-list and privacy | Unit tests | PASS |
 | Second-brain canonical records | Automated validator | PASS |
 | Design-system tokens and scope boundaries | Automated second-brain validator | PASS |
-| Vite production build | GitHub Actions | PASS |
-| Offline bundle integrity | SHA-256 verification | PASS |
-| Browser `/play/` bundle generation | GitHub Actions | PASS |
-| Android debug compilation | GitHub Actions | PASS |
-| iOS simulator compilation | GitHub Actions | PASS |
-| Android release AAB packaging | GitHub Actions | PASS, unsigned without secrets |
-| iOS Release archive packaging | GitHub Actions | PASS, unsigned |
+| Vite production build | GitHub Actions | PASS when branch checks pass |
+| Offline bundle integrity | SHA-256 verification | PASS when branch checks pass |
+| Browser `/play/` bundle generation | GitHub Actions | PASS when branch checks pass |
+| Android debug compilation | GitHub Actions | PASS when branch checks pass |
+| iOS simulator compilation | GitHub Actions | PASS when branch checks pass |
+| Android release AAB packaging | GitHub Actions | PASS when branch checks pass |
+| iOS Release archive packaging | GitHub Actions | PASS when branch checks pass |
 
 ## Human/device gates — still pending
 
 | Gate | Required evidence | Status |
 |---|---|---|
+| Animated startup screen | Owner confirms image, crop, loading animation and handoff on phone | PENDING |
+| Reduced-motion startup | Owner or device evidence that animation is suppressed | PENDING |
 | Repaired browser transition 1→2 | Owner recording or screenshots | PENDING |
 | Repaired browser transition 2→3 | Owner confirms Gross opens after Evil Grin | PENDING — PRIOR FAILURE POINT |
 | Repaired browser transition 3→4 | Owner recording or screenshots | PENDING |
@@ -57,6 +61,18 @@ Updated: 2026-07-24
 | Signed TestFlight build | App Store Connect evidence | PENDING |
 | Signed Play internal build | Play Console evidence | PENDING |
 | 12-person UX study | Participant exports, notes, metrics, report | PENDING |
+
+## Loading-screen acceptance gates
+
+- The approved radioactive-laboratory artwork fills the portrait startup frame without stretching.
+- The loading scan, bubbles and fill remain aligned with the illustrated loading bar.
+- Startup copy is not duplicated over the image.
+- The app shell is hidden and inert until initialization completes.
+- Progress updates correspond to actual startup stages.
+- The splash stays visible for at least 700 ms but does not create an unnecessary long delay.
+- Reduced-motion settings stop decorative animation.
+- Startup errors remove the splash and show the actionable failure screen.
+- The loading artwork remains fully offline in browser and native bundles.
 
 ## Design-system acceptance gates
 
@@ -91,4 +107,4 @@ Every new or changed level must pass all of the following before approval:
 
 ## Regression rule
 
-Any change touching `compiled-app.js`, `mobile-enhancements.js`, input geometry, progression, save state, manifests, design tokens, shared components, service-worker behavior, build publication, or native bundling must run the complete automated suite and update this matrix when the evidence changes.
+Any change touching `compiled-app.js`, `mobile-enhancements.js`, input geometry, progression, save state, manifests, design tokens, shared components, startup/loading behavior, service-worker behavior, build publication, or native bundling must run the complete automated suite and update this matrix when the evidence changes.
