@@ -104,15 +104,33 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Expected:** The approved bundled WebP must fill the portrait loading card before the home screen appears.
 
-**Root cause:** `src/app/loading-screen.js` contains an ES-module `import`, but `index.html` loaded it with a classic `<script>` tag. The browser rejected the file before it could assign the bundled artwork to `#bootSplashImage`.
+**Root cause:** `src/app/loading-screen.js` contained an ES-module `import`, but `index.html` initially loaded it with a classic `<script>` tag. The browser rejected the file before it could assign the bundled artwork to `#bootSplashImage`.
 
-**Resolution:** The loading script is now declared with `type="module"`, the browser and service-worker cache version is advanced to `v38`, and the loading-screen regression test requires the exact module markup and artwork assignment.
+**First repair:** The loader was changed to a module and cache version `v38` was published.
 
-**Regression evidence:** `tests/loading-screen.test.mjs` now fails if the artwork loader is loaded as a classic script, if the data-URI assignment disappears, or if the browser cache registration does not use `v38`.
+**Why that was insufficient:** The artwork still depended on JavaScript execution and a large base64 data URI before the first visual could appear. The owner still saw the broken-image fallback in the published build.
 
-**Never repeat:** Any JavaScript file containing `import` or `export` must be loaded as an ES module. Loading-screen tests must validate executable markup, not only the filename.
+**Never repeat:** The essential opening artwork must not depend on a JavaScript module successfully executing.
 
-**Status:** Fixed in code; published phone confirmation pending.
+**Status:** Superseded by F-011.
+
+## F-011 — Essential brand artwork was embedded in JavaScript instead of shipped as a real image
+
+**Observed:** The approved loading artwork still did not render after the module-tag repair, and the home title used a generic heavy system font rather than the approved Toxic Teddies logo treatment.
+
+**Environment/build:** Published GitHub Pages build shown by the owner on desktop after PR #35.
+
+**Expected:** The browser should request and display a normal WebP file immediately from HTML. The home header should use the approved illustrated Toxic Teddies logo, not an imitation font.
+
+**Root cause:** The full image existed only as a base64 string inside a generated JavaScript module. This made the first visual dependent on module loading and execution, produced an oversized JavaScript entry, and left the home header substituting typography because the custom display font asset was not present.
+
+**Resolution:** Build preparation now decodes the approved source payload into `public/assets/branding/loading/toxic-teddies-loading.webp`. Vite copies that stable file into the browser and native bundles. `index.html` preloads it and assigns it directly to the splash `<img>`, before JavaScript. The same approved artwork is cropped with CSS to provide the exact Toxic Teddies logo on the home screen while retaining a semantic hidden H1.
+
+**Regression evidence:** `tests/loading-screen.test.mjs` verifies byte-for-byte materialization, direct HTML image markup, preload, service-worker caching, the non-module loading controller and the approved home-logo crop. The service-worker cache advances to `v39`.
+
+**Never repeat:** Essential first-paint images must be real built assets referenced directly from HTML. Do not use base64 JavaScript modules as the runtime source of a splash screen. Do not simulate the official logo with an unrelated system font.
+
+**Status:** Fixed in code; published owner confirmation pending.
 
 ## Incident entry template
 

@@ -19,13 +19,23 @@
     })();
   </script>
   <link rel="manifest" href="./assets/manifest-DTLeep2E.webmanifest" />
-  <script type="module" crossorigin src="./assets/app-0cBmKwDB.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/app-DkUiV7p9.css">
+  <link rel="preload" as="image" type="image/webp" href="./assets/branding/loading/toxic-teddies-loading.webp" />
+  <script type="module" crossorigin src="./assets/app-mfCcJPZH.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/app-B9oDbthk.css">
 </head>
 <body class="boot-loading">
   <div id="bootSplash" class="boot-splash" role="status" aria-live="polite" aria-label="Toxic Teddies is loading">
     <div class="boot-splash-card">
-      <img id="bootSplashImage" class="boot-splash-image" alt="Toxic Teddies Arrow Escape loading artwork with Toxic Toby in a radioactive laboratory" />
+      <img
+        id="bootSplashImage"
+        class="boot-splash-image"
+        src="./assets/branding/loading/toxic-teddies-loading.webp"
+        width="941"
+        height="1672"
+        alt=""
+        aria-hidden="true"
+        fetchpriority="high"
+      />
       <div class="boot-splash-progress" aria-hidden="true">
         <span id="bootSplashFill" class="boot-splash-fill"></span>
       </div>
@@ -39,9 +49,18 @@
   <div class="app-shell" inert aria-hidden="true">
     <section id="homeView" class="home-view" aria-labelledby="homeTitle">
       <header class="home-header">
-        <div>
+        <div class="home-brand-copy">
           <p class="eyebrow">SERIES 1</p>
-          <h1 id="homeTitle">TOXIC TEDDIES</h1>
+          <h1 id="homeTitle" class="sr-only">Toxic Teddies</h1>
+          <div class="home-brand-logo" aria-hidden="true">
+            <img
+              src="./assets/branding/loading/toxic-teddies-loading.webp"
+              width="941"
+              height="1672"
+              alt=""
+              loading="eager"
+            />
+          </div>
           <p>The face is the puzzle. Find a clear arrowhead and pull the whole trail free.</p>
         </div>
         <div id="collectionCounter" class="collection-counter" aria-label="Playable expressions completed">0 / 5</div>
@@ -198,5 +217,6 @@
     </section>
   </div>
 
+  <script src="./src/app/loading-screen.js?v=39"></script>
 </body>
 </html>

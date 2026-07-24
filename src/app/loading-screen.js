@@ -1,5 +1,3 @@
-import loadingArtwork from '../generated/loading-image-part-a.js';
-
 const MINIMUM_VISIBLE_MS = 700;
 const startedAt = performance.now();
 const splash = document.getElementById('bootSplash');
@@ -8,7 +6,14 @@ const status = document.getElementById('bootSplashStatus');
 const fill = document.getElementById('bootSplashFill');
 const shell = document.querySelector('.app-shell');
 
-if (image) image.src = `data:image/webp;base64,${loadingArtwork}`;
+if (image) {
+  image.addEventListener('load', () => splash?.classList.add('boot-splash-art-ready'), {once: true});
+  image.addEventListener('error', () => {
+    splash?.classList.add('boot-splash-art-error');
+    if (status) status.textContent = 'Loading artwork unavailable. Preparing the game…';
+  }, {once: true});
+  if (image.complete && image.naturalWidth > 0) splash?.classList.add('boot-splash-art-ready');
+}
 
 function setStage(message, progress = 0) {
   if (status && message) status.textContent = message;
