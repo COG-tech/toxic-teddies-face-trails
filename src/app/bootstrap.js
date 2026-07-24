@@ -11,8 +11,13 @@ import { installMobileShell } from './mobile-shell.js';
 
 let startupPlatform = 'web';
 
+function setLoadingStage(message, progress) {
+  window.ToxicLoadingScreen?.setStage?.(message, progress);
+}
+
 function showStartupFailure(error, platform) {
   console.error(error);
+  window.ToxicLoadingScreen?.fail?.();
   document.body.innerHTML = '';
   const main = document.createElement('main');
   main.className = 'startup-failure';
@@ -30,13 +35,17 @@ function showStartupFailure(error, platform) {
 }
 
 async function bootstrap() {
+  setLoadingStage('Preparing the contamination…', 0.12);
   const bridge = createNativeBridge(buildInfo);
   startupPlatform = bridge.platform;
   const content = createContentRegistry();
   const accessibility = createAccessibilityController();
 
+  setLoadingStage('Checking the containment seals…', 0.24);
   await bridge.disableLegacyBrowserCaches();
   const integrity = await verifyBundledContent(buildInfo);
+
+  setLoadingStage('Restoring your Teddy progress…', 0.46);
   const appInfo = await bridge.getAppInfo();
   const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});
   const saveStore = await createSaveStore(bridge, content, buildInfo);
@@ -52,6 +61,7 @@ async function bootstrap() {
   window.ToxicAnalytics = analytics;
   window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;
 
+  setLoadingStage('Waking Toxic Toby…', 0.62);
   await bridge.initialize();
   await analytics.initialize();
 
@@ -79,14 +89,16 @@ async function bootstrap() {
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=35').catch(error => {
+    navigator.serviceWorker.register('./sw.js?v=36').catch(error => {
       console.warn('Browser prototype service worker registration failed', error);
     });
   }
 
+  setLoadingStage('Loading the face puzzles…', 0.78);
   await import('../../dense-loader.js');
   await window.__toxicBootPromise;
 
+  setLoadingStage('Finishing the contamination…', 0.92);
   accessibility.install();
   await installMobileShell(bridge);
   await saveStore.markSuccessfulLaunch();
@@ -94,6 +106,9 @@ async function bootstrap() {
   document.documentElement.dataset.platform = bridge.platform;
   document.documentElement.dataset.build = buildInfo.buildId;
   document.documentElement.classList.toggle('native-app', bridge.native);
+
+  setLoadingStage('Ready', 1);
+  await window.ToxicLoadingScreen?.hide?.();
 }
 
 bootstrap().catch(error => showStartupFailure(error, startupPlatform));
