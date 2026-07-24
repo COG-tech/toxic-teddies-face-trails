@@ -41,19 +41,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Synchronize canonical versions
-        run: node scripts/sync-app-version.mjs
-
-      - name: Capture complete quality-check diagnostics
-        shell: bash
-        run: |
-          mkdir -p diagnostics
-          set +e
-          npm run check > diagnostics/check.log 2>&1
-          status=$?
-          echo "exit_status=$status" >> diagnostics/check.log
-          exit 0
-
       - name: Build and verify the bundled browser game
         run: npm run build
 
@@ -63,21 +50,19 @@ jobs:
           rm -rf play
           mkdir -p play
           cp -R dist/. play/
-          cp diagnostics/check.log play/diagnostic-check.log
           printf '%s\n' "Built from ${GITHUB_SHA}" > play/BUILD.txt
 
-      - name: Commit synchronized lock and playable browser bundle
+      - name: Commit playable browser bundle
         shell: bash
         env:
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
           git add -f play
           if git diff --cached --quiet; then
             echo "Playable browser bundle is already current."
           else
-            git commit -m "Synchronize versions and publish browser demo"
+            git commit -m "Publish playable browser demo bundle"
             git push origin "HEAD:${TARGET_BRANCH}"
           fi
