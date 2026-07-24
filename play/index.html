@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#c49a5a" />
+  <meta name="theme-color" content="#0F0C08" />
   <meta name="description" content="Toxic Teddies Arrow Escape — the face is the puzzle." />
   <meta name="toxic-teddies-build" content="0.5.0+3.tt01-launch-2026.07.22.1" />
   <title>Toxic Teddies: Arrow Escape</title>
@@ -19,13 +19,24 @@
     })();
   </script>
   <link rel="manifest" href="./assets/manifest-DTLeep2E.webmanifest" />
-  <script type="module" crossorigin src="./assets/app-Dg3Mudou.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/app-DXIrQXy4.css">
+  <script type="module" crossorigin src="./assets/app-CoNmwYqu.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/app-bIbkOAml.css">
 </head>
-<body>
+<body class="boot-loading">
+  <div id="bootSplash" class="boot-splash" role="status" aria-live="polite" aria-label="Toxic Teddies is loading">
+    <div class="boot-splash-card">
+      <img id="bootSplashImage" class="boot-splash-image" alt="Toxic Teddies Arrow Escape loading artwork with Toxic Toby in a radioactive laboratory" />
+      <div class="boot-splash-progress" aria-hidden="true">
+        <span id="bootSplashFill" class="boot-splash-fill"></span>
+      </div>
+      <span class="boot-splash-bubbles" aria-hidden="true"></span>
+      <span id="bootSplashStatus" class="sr-only">Preparing the contamination…</span>
+    </div>
+  </div>
+
   <div id="appStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <div class="app-shell">
+  <div class="app-shell" inert aria-hidden="true">
     <section id="homeView" class="home-view" aria-labelledby="homeTitle">
       <header class="home-header">
         <div>
