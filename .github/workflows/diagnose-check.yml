@@ -1,0 +1,46 @@
+name: Diagnose branch check
+
+on:
+  push:
+    branches:
+      - fix/design-system-color-alignment
+    paths-ignore:
+      - 'diagnostics/**'
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/design-system-color-alignment
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Capture complete check output
+        shell: bash
+        run: |
+          mkdir -p diagnostics
+          set +e
+          npm run check > diagnostics/check.log 2>&1
+          status=$?
+          echo "exit_status=$status" >> diagnostics/check.log
+          exit 0
+      - name: Commit diagnostics
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add diagnostics/check.log
+          if git diff --cached --quiet; then
+            echo "No diagnostic change"
+          else
+            git commit -m "Capture branch check diagnostics"
+            git push origin HEAD:fix/design-system-color-alignment
+          fi
