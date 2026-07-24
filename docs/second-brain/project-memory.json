@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedAt": "2026-07-24",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "2553750675b2e5930aad49868d7c5287c660eb97",
+  "baselineCommit": "42cd7158b26e0ccfa5e128754400d315bf24f691",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -133,10 +133,35 @@
     "foundingTeddyCount": 12,
     "targetLevelCount": 60
   },
+  "loadingScreen": {
+    "approved": true,
+    "artwork": "Owner-approved Toxic Teddies Arrow Escape artwork with Toxic Toby in a radioactive laboratory",
+    "delivery": "Bundled local WebP data module",
+    "offlineCapable": true,
+    "minimumVisibleMs": 700,
+    "browserCacheVersion": 36,
+    "realStartupStages": [
+      "prepare contamination",
+      "disable legacy browser caches",
+      "verify bundled content integrity",
+      "restore save progress",
+      "initialize native bridge and analytics",
+      "load deterministic face puzzles",
+      "install accessibility and mobile shell",
+      "mark successful launch"
+    ],
+    "animation": [
+      "toxic loading fill",
+      "scanning highlight",
+      "rising bubbles"
+    ],
+    "reducedMotionSupported": true,
+    "humanReviewPending": true
+  },
   "activeNextAction": {
-    "id": "verify-repaired-toxic-toby-completion-chain",
+    "id": "verify-loading-screen-and-repaired-completion-chain",
     "status": "owner_browser_retest_required",
-    "summary": "Verify 1 to 2, 2 to 3, 3 to 4, 4 to 5, and 5 to private feed in the published browser build, including persistence and duplicate-tap protection.",
+    "summary": "Verify the approved animated loading screen, then verify 1 to 2, 2 to 3, 3 to 4, 4 to 5, and 5 to private feed in the published browser build, including persistence and duplicate-tap protection.",
     "blockNewTeddyProduction": true
   },
   "knownDefects": [
@@ -185,11 +210,13 @@
     "exact save restoration",
     "manifest-validated expression progression",
     "feed unlock protection",
+    "canonical startup loading screen",
     "browser Vite publication under play",
     "native offline bundling",
     "content integrity verification"
   ],
   "humanGatesPending": [
+    "owner verifies loading-screen crop animation and handoff",
     "owner verifies all five completion transitions and final feed",
     "five approved Toxic Toby reveal images",
     "physical Android validation",
