@@ -29,7 +29,7 @@ test('runtime tokens use the canonical Toxic Teddies palette', () => {
 
 test('the app shell uses the dark grime system instead of the retired cream theme', () => {
   assert.match(styles, /html\s*\{[^}]*background:\s*#0F0C08/i);
-  assert.match(styles, /\.teddy-card\s*\{[\s\S]*linear-gradient\(160deg,[\s\S]*#0F0C08/i);
+  assert.match(styles, /\.teddy-card\s*\{[\s\S]*linear-gradient\(160deg,[\s\S]*rgba\(15,12,8,\.98\)/i);
   assert.match(styles, /\.home-header h1\s*\{[\s\S]*--tt-slime-green/i);
   assert.doesNotMatch(styles, /linear-gradient\(180deg,#faf6ef,#efe6d7\)/i);
 });
