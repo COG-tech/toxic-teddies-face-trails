@@ -21,8 +21,13 @@
   const baseLoadLevel = loadLevel;
   loadLevel = async function analyticsLoadLevel() {
     const started = performance.now();
-    await baseLoadLevel();
-    await analytics.track('level_load', context({elapsed_ms: Math.round(performance.now() - started)}));
+    const loaded = await baseLoadLevel();
+    await analytics.track('level_load', context({
+      elapsed_ms: Math.round(performance.now() - started),
+      load_succeeded: loaded !== false,
+    }));
+    if (loaded === false) return false;
+
     const restored = state.save?.activeSession?.levelKey === levelKey(teddy().id, state.level)
       ? Number(state.save.activeSession.removedPathIds?.length || 0)
       : 0;
@@ -32,6 +37,7 @@
         restore_source: 'native_save',
       }));
     }
+    return loaded;
   };
 
   const baseCompleteLevel = completeLevel;
