@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedAt": "2026-07-24",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "42cd7158b26e0ccfa5e128754400d315bf24f691",
+  "baselineCommit": "44f30bc874bf7d519963eb8bd2f7fef232b39119",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -120,6 +120,27 @@
       "implementation status of stars times difficulty selectors or achievements"
     ]
   },
+  "runtimeDesignImplementation": {
+    "status": "implemented_in_code_pending_owner_visual_review",
+    "appShell": "Grime 900 and Ink 900 dark distressed surfaces",
+    "activeStates": "Toxic Green and Slime Green",
+    "secondaryActions": "Patch Purple",
+    "supportingFrames": "Mold Olive and Brown 700",
+    "readabilitySurfaces": "Parchment 100 and Parchment 300",
+    "boardPolicy": "Parchment board retained for arrow and path readability inside dark game chrome",
+    "modalPolicy": "Parchment modal cards with dark text and toxic primary actions",
+    "retiredTheme": "Cream page background with translucent white cards",
+    "browserCacheVersion": 37,
+    "runtimeFiles": [
+      "src/design-system/tokens.css",
+      "styles.css",
+      "src/design-system/dark-theme-overrides.css"
+    ],
+    "regressionTests": [
+      "tests/design-system-runtime.test.mjs",
+      "scripts/validate-second-brain.mjs"
+    ]
+  },
   "playable": {
     "teddyIds": ["tt01"],
     "expressionsPerTeddy": 5,
@@ -139,7 +160,7 @@
     "delivery": "Bundled local WebP data module",
     "offlineCapable": true,
     "minimumVisibleMs": 700,
-    "browserCacheVersion": 36,
+    "browserCacheVersion": 37,
     "realStartupStages": [
       "prepare contamination",
       "disable legacy browser caches",
@@ -159,9 +180,9 @@
     "humanReviewPending": true
   },
   "activeNextAction": {
-    "id": "verify-loading-screen-and-repaired-completion-chain",
-    "status": "owner_browser_retest_required",
-    "summary": "Verify the approved animated loading screen, then verify 1 to 2, 2 to 3, 3 to 4, 4 to 5, and 5 to private feed in the published browser build, including persistence and duplicate-tap protection.",
+    "id": "verify-dark-runtime-loading-and-completion-chain",
+    "status": "owner_browser_visual_and_progression_retest_required",
+    "summary": "Verify the canonical dark home, game and Toxic Feed surfaces, the approved animated loading screen, and all five expression transitions through the private feed in the published browser build.",
     "blockNewTeddyProduction": true
   },
   "knownDefects": [
@@ -170,6 +191,12 @@
       "title": "Completion progression stopped after Evil Grin",
       "status": "fixed_in_code_pending_owner_retest",
       "requiredEvidence": "Owner confirms the complete 1 to 5 to feed sequence on the published browser build."
+    },
+    {
+      "ledger": "F-009",
+      "title": "Runtime interface drifted away from the locked design system",
+      "status": "fixed_in_code_pending_owner_visual_review",
+      "requiredEvidence": "Owner confirms the published home, game and feed screens use the canonical dark Toxic Teddies palette and remain readable."
     }
   ],
   "artwork": {
@@ -211,11 +238,13 @@
     "manifest-validated expression progression",
     "feed unlock protection",
     "canonical startup loading screen",
+    "canonical runtime design-system palette",
     "browser Vite publication under play",
     "native offline bundling",
     "content integrity verification"
   ],
   "humanGatesPending": [
+    "owner verifies dark home game and feed palette alignment",
     "owner verifies loading-screen crop animation and handoff",
     "owner verifies all five completion transitions and final feed",
     "five approved Toxic Toby reveal images",

@@ -1,0 +1,148 @@
+/* Final runtime overrides for the canonical Toxic Teddies dark/grime app shell. */
+
+.home-utilities {
+  padding-top: var(--tt-space-2, 8px);
+  border-top: 1px solid rgba(183,226,75,.12);
+}
+
+.home-utilities .secondary-button,
+.accessible-moves-trigger {
+  border: 1px solid rgba(143,69,109,.58);
+  background: linear-gradient(180deg, rgba(33,30,21,.98), rgba(15,12,8,.98));
+  color: var(--tt-parchment-100, #F3E4BD);
+  box-shadow: inset 0 0 0 1px rgba(243,228,189,.025), 0 8px 20px rgba(0,0,0,.22);
+}
+
+.accessible-moves-trigger {
+  border-color: rgba(62,124,123,.62);
+}
+
+.setting-row {
+  border-bottom-color: rgba(56,45,31,.16);
+}
+
+.setting-row small,
+.build-info {
+  color: var(--tt-brown-700, #382D1F);
+}
+
+.accessible-move-button {
+  border-color: rgba(111,118,44,.44);
+  background: rgba(243,228,189,.72);
+  color: var(--tt-ink-900, #1D160F);
+}
+
+.feed-home-button {
+  border-color: rgba(183,226,75,.48);
+  background:
+    linear-gradient(135deg, rgba(141,187,19,.24), rgba(143,69,109,.14)),
+    linear-gradient(180deg, rgba(33,30,21,.98), rgba(15,12,8,.98));
+  color: var(--tt-parchment-100, #F3E4BD);
+}
+
+.feed-unread-badge {
+  background: var(--tt-toxic-gradient, linear-gradient(135deg,#B7E24B,#7AA10F));
+  color: var(--tt-ink-900, #1D160F);
+}
+
+.feed-view {
+  color: var(--tt-parchment-100, #F3E4BD);
+}
+
+.feed-topbar {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(183,226,75,.18);
+}
+
+.feed-topbar h2 {
+  color: var(--tt-slime-green, #B7E24B);
+}
+
+.feed-lock-state {
+  border-color: rgba(183,226,75,.46);
+  background: rgba(111,118,44,.28);
+  color: var(--tt-slime-green, #B7E24B);
+}
+
+.feed-profile,
+.feed-post {
+  border-color: rgba(183,226,75,.22);
+  background:
+    linear-gradient(145deg, rgba(111,118,44,.12), transparent 45%),
+    linear-gradient(180deg, rgba(33,30,21,.98), rgba(15,12,8,.98));
+  color: var(--tt-parchment-100, #F3E4BD);
+  box-shadow: 0 16px 36px rgba(0,0,0,.34);
+}
+
+.feed-profile h3,
+.feed-post-header strong {
+  color: var(--tt-slime-green, #B7E24B);
+}
+
+.feed-profile #feedHandle,
+.feed-post-header span,
+.feed-post-handle,
+.feed-post-footer,
+.feed-section-heading span {
+  color: var(--tt-parchment-300, #D8BF8A);
+}
+
+.feed-profile #feedBio,
+.feed-post-body,
+.feed-post-reply {
+  color: var(--tt-parchment-100, #F3E4BD);
+}
+
+.feed-profile #feedProgress {
+  color: var(--tt-slime-green, #B7E24B);
+}
+
+.feed-avatar {
+  border-color: rgba(183,226,75,.36);
+  color: var(--tt-slime-green, #B7E24B);
+}
+
+.feed-avatar-placeholder {
+  background:
+    radial-gradient(circle at 34% 30%, rgba(183,226,75,.5) 0 8%, transparent 9%),
+    radial-gradient(circle at 70% 72%, rgba(15,12,8,.5) 0 13%, transparent 14%),
+    linear-gradient(135deg, #6F762C, #382D1F 58%, #0F0C08);
+}
+
+.feed-post-reply {
+  border-top-color: rgba(183,226,75,.16);
+  background: rgba(111,118,44,.14);
+}
+
+.completion-card {
+  border-color: rgba(111,118,44,.68);
+}
+
+.completion-content {
+  background:
+    repeating-linear-gradient(35deg, rgba(56,45,31,.025) 0 1px, transparent 1px 12px),
+    var(--tt-parchment-100, #F3E4BD);
+  color: var(--tt-ink-900, #1D160F);
+}
+
+.completion-content .secondary-button {
+  border-color: rgba(143,69,109,.5);
+  background: rgba(143,69,109,.12);
+  color: var(--tt-brown-700, #382D1F);
+}
+
+.startup-failure {
+  border-color: rgba(140,29,29,.68);
+  background: var(--tt-parchment-100, #F3E4BD);
+  color: var(--tt-ink-900, #1D160F);
+}
+
+.startup-failure .eyebrow {
+  color: var(--tt-blood-red, #8C1D1D);
+}
+
+@media (max-width: 620px) {
+  .feed-view {
+    padding-inline: 12px;
+  }
+}

@@ -10,14 +10,12 @@ import { createNativeBridge } from './native-bridge.js';
 import { installMobileShell } from './mobile-shell.js';
 
 let startupPlatform = 'web';
-
-function setLoadingStage(message, progress) {
-  window.ToxicLoadingScreen?.setStage?.(message, progress);
-}
+const loadingScreen = window.ToxicLoadingScreen;
+const setLoadingStage = (message, progress) => loadingScreen?.setStage?.(message, progress);
 
 function showStartupFailure(error, platform) {
+  loadingScreen?.fail?.();
   console.error(error);
-  window.ToxicLoadingScreen?.fail?.();
   document.body.innerHTML = '';
   const main = document.createElement('main');
   main.className = 'startup-failure';
@@ -35,19 +33,18 @@ function showStartupFailure(error, platform) {
 }
 
 async function bootstrap() {
-  setLoadingStage('Preparing the contamination…', 0.12);
   const bridge = createNativeBridge(buildInfo);
   startupPlatform = bridge.platform;
   const content = createContentRegistry();
   const accessibility = createAccessibilityController();
 
-  setLoadingStage('Checking the containment seals…', 0.24);
+  setLoadingStage('Clearing old contamination…', 0.16);
   await bridge.disableLegacyBrowserCaches();
+  setLoadingStage('Checking the toxic cargo…', 0.3);
   const integrity = await verifyBundledContent(buildInfo);
-
-  setLoadingStage('Restoring your Teddy progress…', 0.46);
   const appInfo = await bridge.getAppInfo();
   const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});
+  setLoadingStage('Restoring your collection…', 0.46);
   const saveStore = await createSaveStore(bridge, content, buildInfo);
   const analytics = createAnalytics({bridge, buildInfo: runtimeBuildInfo});
 
@@ -61,7 +58,7 @@ async function bootstrap() {
   window.ToxicAnalytics = analytics;
   window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;
 
-  setLoadingStage('Waking Toxic Toby…', 0.62);
+  setLoadingStage('Waking the laboratory…', 0.6);
   await bridge.initialize();
   await analytics.initialize();
 
@@ -89,7 +86,7 @@ async function bootstrap() {
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=36').catch(error => {
+    navigator.serviceWorker.register('./sw.js?v=37').catch(error => {
       console.warn('Browser prototype service worker registration failed', error);
     });
   }
@@ -106,8 +103,6 @@ async function bootstrap() {
   document.documentElement.dataset.platform = bridge.platform;
   document.documentElement.dataset.build = buildInfo.buildId;
   document.documentElement.classList.toggle('native-app', bridge.native);
-
-  setLoadingStage('Ready', 1);
   await window.ToxicLoadingScreen?.hide?.();
 }
 

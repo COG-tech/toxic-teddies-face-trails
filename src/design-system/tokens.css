@@ -1,21 +1,56 @@
 :root {
+  /* Canonical Toxic Teddies Design System 1.0.0 */
+  --tt-toxic-green: #8DBB13;
+  --tt-slime-green: #B7E24B;
+  --tt-rust-orange: #A84F18;
+  --tt-mold-olive: #6F762C;
+  --tt-patch-purple: #8F456D;
+
+  --tt-acid-yellow: #E7D32D;
+  --tt-sewer-teal: #3E7C7B;
+  --tt-warning-amber: #D8A72D;
+  --tt-blood-red: #8C1D1D;
+  --tt-stitch-pink: #C97CA3;
+
+  --tt-parchment-100: #F3E4BD;
+  --tt-parchment-300: #D8BF8A;
+  --tt-brown-700: #382D1F;
+  --tt-ink-900: #1D160F;
+  --tt-grime-900: #0F0C08;
+
+  --tt-toxic-gradient: linear-gradient(135deg, #B7E24B, #7AA10F);
+  --tt-rust-gradient: linear-gradient(135deg, #A84F18, #6E341D);
+  --tt-sewer-gradient: linear-gradient(135deg, #3E7C7B, #1F4F4F);
+
   --tt-space-1: 4px;
   --tt-space-2: 8px;
   --tt-space-3: 12px;
   --tt-space-4: 16px;
   --tt-space-6: 24px;
   --tt-space-8: 32px;
+  --tt-space-16: 64px;
+
   --tt-radius-sm: 8px;
   --tt-radius-md: 14px;
   --tt-radius-lg: 22px;
   --tt-control-min: 44px;
-  --tt-focus: #4d6412;
-  --tt-danger: #b94332;
-  --tt-success: #6f9529;
-  --tt-surface: #fbf6ed;
-  --tt-surface-muted: #f3ecdf;
-  --tt-text: #543f2b;
-  --tt-text-muted: #8a765e;
+
+  --tt-focus: var(--tt-slime-green);
+  --tt-danger: var(--tt-blood-red);
+  --tt-success: var(--tt-toxic-green);
+  --tt-warning: var(--tt-warning-amber);
+  --tt-info: var(--tt-sewer-teal);
+
+  --tt-surface: #18160F;
+  --tt-surface-raised: #211E15;
+  --tt-surface-muted: #2A271A;
+  --tt-surface-parchment: var(--tt-parchment-100);
+  --tt-text: var(--tt-parchment-100);
+  --tt-text-muted: var(--tt-parchment-300);
+  --tt-text-dark: var(--tt-ink-900);
+  --tt-border: rgba(183, 226, 75, .24);
+  --tt-shadow: 0 18px 55px rgba(0, 0, 0, .42);
+
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);

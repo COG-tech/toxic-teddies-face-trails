@@ -61,7 +61,7 @@ const decisions = await readFile(path.join(root, 'docs/second-brain/LOCKED_DECIS
 assert((decisions.match(/^## D-\d{3}/gm) || []).length >= 12, 'Locked decision register is incomplete');
 
 const failures = await readFile(path.join(root, 'docs/second-brain/FAILURE_LEDGER.md'), 'utf8');
-assert((failures.match(/^## F-\d{3}/gm) || []).length >= 8, 'Failure ledger is incomplete');
+assert((failures.match(/^## F-\d{3}/gm) || []).length >= 9, 'Failure ledger is incomplete');
 
 const designSystem = await readFile(path.join(root, 'docs/second-brain/DESIGN_SYSTEM.md'), 'utf8');
 assert(designSystem.includes('Version 1.0.0'), 'Human-readable design-system version is missing');
@@ -69,6 +69,26 @@ assert(designSystem.includes('#8DBB13'), 'Human-readable Toxic Green token is mi
 assert(designSystem.includes('Toxic Head — custom'), 'Human-readable display typography is missing');
 assert(designSystem.includes('WCAG 2.1 AA'), 'Human-readable accessibility standard is missing');
 assert(designSystem.includes('What this design system does not define'), 'Design-system scope boundary is missing');
+
+const runtimeTokens = await readFile(path.join(root, 'src/design-system/tokens.css'), 'utf8');
+for (const [token, value] of Object.entries({
+  '--tt-toxic-green': '#8DBB13',
+  '--tt-slime-green': '#B7E24B',
+  '--tt-rust-orange': '#A84F18',
+  '--tt-mold-olive': '#6F762C',
+  '--tt-patch-purple': '#8F456D',
+  '--tt-parchment-100': '#F3E4BD',
+  '--tt-parchment-300': '#D8BF8A',
+  '--tt-brown-700': '#382D1F',
+  '--tt-ink-900': '#1D160F',
+  '--tt-grime-900': '#0F0C08',
+})) {
+  assert(runtimeTokens.includes(`${token}: ${value}`), `Runtime token ${token} must remain ${value}`);
+}
+
+const runtimeIndex = await readFile(path.join(root, 'index.html'), 'utf8');
+assert(runtimeIndex.includes('dark-theme-overrides.css'), 'Final runtime dark-theme layer is missing');
+assert(runtimeIndex.indexOf('dark-theme-overrides.css') > runtimeIndex.indexOf('completion-feed.css'), 'Dark-theme overrides must load after component styles');
 
 const visual = await readFile(path.join(root, 'docs/second-brain/VISUAL_REFERENCE.md'), 'utf8');
 assert(visual.includes('composition and readability'), 'Visual reference purpose is missing');
@@ -81,4 +101,4 @@ assert(protocol.includes('DESIGN_SYSTEM.md'), 'Change protocol must require desi
 assert(protocol.includes('VISUAL_REFERENCE.md'), 'Change protocol must require visual-reference review');
 assert(protocol.includes('npm run validate:second-brain'), 'Change protocol must require second-brain validation');
 
-console.log(`Second brain verified: ${requiredDocuments.length} canonical files, one active action, locked decisions, failure history, design-system memory, visual reference, and human-gate truth.`);
+console.log(`Second brain verified: ${requiredDocuments.length} canonical files, one active action, locked decisions, failure history, design-system memory, runtime palette alignment, visual reference, and human-gate truth.`);

@@ -78,6 +78,24 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Never repeat:** Do not restart completed planning unless new evidence shows a defect.
 
+## F-009 — Runtime interface drifted away from the locked design system
+
+**Observed:** The published collection screen used a cream background, pale white cards, brown text and faint pastel accents even though the approved Toxic Teddies Design System defined a dark Grime 900 shell, toxic/slime greens, mold olive, patch purple, parchment text and distressed dark cards.
+
+**Environment/build:** Browser build shown by the owner after the animated loading-screen merge.
+
+**Expected:** The loading screen, home collection, gameplay chrome, feed and shared controls must feel like one Toxic Teddies product and use the canonical Design System 1.0.0 palette.
+
+**Root cause:** The second-brain design tokens were documented, but the original prototype CSS still contained independent legacy variables such as `#faf6ef`, `#efe6d7`, `#fbf6ed`, `#543f2b` and translucent white card surfaces. Documentation validation did not verify that runtime CSS used the same values.
+
+**Resolution:** Runtime tokens now contain the complete canonical palette. The app shell, collection cards, game chrome, feed and accessibility surfaces use the dark grime system, while parchment remains reserved for puzzle and modal readability. Automated tests now reject the retired cream page gradient and validate the exact runtime token values and final override order.
+
+**Regression evidence:** `tests/design-system-runtime.test.mjs` and the second-brain validator check the canonical hex values, dark home shell, dark cards and loaded override stylesheet. The full browser/native build remains required.
+
+**Never repeat:** Do not treat a design-system document as implementation. Runtime tokens, components and published screenshots must be audited together before claiming visual alignment.
+
+**Status:** Fixed in code; owner visual review pending.
+
 ## Incident entry template
 
 ```text
