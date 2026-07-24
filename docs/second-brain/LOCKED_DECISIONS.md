@@ -61,3 +61,17 @@ Use one controlled production pipeline and one canonical status record. Do not c
 The owner-supplied **Toxic Teddies Design System 1.0.0, July 2026** is the canonical visual and component standard. Its recorded colors, typography, spacing scale, responsive grid, buttons, forms, cards, navigation, alerts, badges, completion-modal direction and accessibility requirements may not be silently replaced by a different design system.
 
 The design board defines visual and component concepts. It does not by itself prove that star ratings, completion times, achievements, difficulty selectors, profile forms, collection screens or other shown concepts are implemented. Those require separate approval, development and testing.
+
+## D-014 — Canonical opening/loading screen
+
+The owner-approved Toxic Teddies Arrow Escape artwork with Toxic Toby in the radioactive laboratory is the canonical startup image. It must be used as the branded opening layer for browser and native bundles unless the owner explicitly approves a replacement.
+
+The opening layer must:
+
+- remain local and offline-capable;
+- cover the unfinished interface during startup;
+- animate the toxic loading bar without altering the approved artwork;
+- report real startup progress rather than a fake indefinite delay;
+- support reduced motion;
+- disappear only after the home/game shell is ready;
+- yield to the actionable startup-error screen when integrity or initialization fails.
