@@ -1,7 +1,7 @@
 # Canonical Project Status
 
 Updated: 2026-07-24
-Last verified product baseline: `42cd7158b26e0ccfa5e128754400d315bf24f691`
+Last verified product baseline: `44f30bc874bf7d519963eb8bd2f7fef232b39119`
 
 ## Product identity
 
@@ -29,19 +29,30 @@ Last verified product baseline: `42cd7158b26e0ccfa5e128754400d315bf24f691`
 - Manifest-validated completion destinations for `1 → 2 → 3 → 4 → 5 → feed`.
 - Exact next-level loading with duplicate-tap protection, loaded-level verification, preserved completion state, and visible retry behavior.
 - Owner-approved Toxic Teddies opening artwork installed as a full-screen startup layer.
-- Loading progress is tied to real startup stages: cache handling, integrity verification, save restoration, native initialization, puzzle loading, accessibility and shell setup.
-- Animated toxic scan, bubbles and progress fill with reduced-motion support.
-- Browser runtime/service-worker cache v36 for the loading-screen release.
+- Loading progress tied to real startup stages with animated toxic scan, bubbles and reduced-motion support.
+- Runtime design tokens now contain the exact Design System 1.0.0 palette.
+- Home collection, game chrome, feed and accessibility controls now use the dark Grime 900 / Ink 900 shell with Toxic Green, Slime Green, Mold Olive and Patch Purple accents.
+- Parchment is reserved for puzzle and modal readability instead of being used as the entire app background.
+- Browser runtime/service-worker cache v37 for the palette-alignment release.
+- Automated tests reject the retired cream page theme and verify canonical runtime color values and stylesheet order.
 - Canonical second-brain records for status, next action, locked decisions, failures, testing, design system, visual level reference and change control.
-- Automated second-brain validation included in the full repository quality check.
 
 ## Owner-reported defect state
+
+### Completion progression
 
 - The first published completion implementation advanced Neutral to Evil Grin.
 - Evil Grin completed, but **Next Expression** did not open Gross.
 - Issue #29 records this defect.
 - The all-level repair is implemented and automated checks validate the complete manifest chain.
 - The defect remains **pending owner verification** until the published browser build is played through all five expressions and the final feed.
+
+### Runtime visual mismatch
+
+- The owner reported that the collection screen still used a cream background, white cards and brown text that did not match the locked Toxic Teddies design system.
+- Failure F-009 records the mismatch.
+- The runtime palette and shared surfaces are aligned in code.
+- Final approval remains pending a published phone screenshot showing the revised home, game and feed screens.
 
 ## Canonical loading-screen state
 
@@ -52,22 +63,23 @@ Last verified product baseline: `42cd7158b26e0ccfa5e128754400d315bf24f691`
 - Startup failure removes the splash and shows the existing actionable error screen.
 - Visual placement and animation still require owner review on the published phone build.
 
-## Canonical design-system memory
+## Canonical design-system implementation
 
-The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md`, including:
+The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md` and now reflected in runtime CSS:
 
-- brand identity and five design principles;
-- primary, secondary and neutral color tokens;
+- exact primary, secondary and neutral color tokens;
 - approved gradients;
-- Toxic Head and Inter typography roles and type scale;
+- Toxic Head and Inter typography roles;
 - four-pixel spacing scale, twelve-column grid and breakpoints;
-- buttons, forms, cards, navigation, alerts, badges and completion-modal patterns;
-- responsive behavior and accessibility requirements;
-- explicit boundaries separating design concepts from implemented gameplay logic.
+- dark distressed app shell and cards;
+- toxic green active states and patch-purple secondary actions;
+- parchment puzzle/modal readability surfaces;
+- responsive and accessibility requirements.
 
 ## What is not complete
 
-- Owner verification of the animated loading screen on the published phone build remains pending.
+- Owner visual approval of the dark runtime palette on the published phone build remains pending.
+- Owner verification of the animated loading screen remains pending.
 - Owner verification of every repaired completion transition and final feed remains pending.
 - The five owner-produced clean Toxic Toby reveal images have not been inserted.
 - Physical iPhone testing has not been completed.
