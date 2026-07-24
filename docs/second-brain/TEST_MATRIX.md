@@ -27,10 +27,10 @@ Updated: 2026-07-24
 | Vite production build | GitHub Actions | PASS |
 | Offline bundle integrity | SHA-256 verification | PASS |
 | Browser `/play/` bundle generation | GitHub Actions | PASS |
-| Android debug compilation | GitHub Actions | PASS when final branch workflow completes |
-| iOS simulator compilation | GitHub Actions | PASS when final branch workflow completes |
-| Android release AAB packaging | GitHub Actions | PASS when final branch workflow completes; unsigned without secrets |
-| iOS Release archive packaging | GitHub Actions | PASS when final branch workflow completes; unsigned |
+| Android debug compilation | GitHub Actions | PASS |
+| iOS simulator compilation | GitHub Actions | PASS |
+| Android release AAB packaging | GitHub Actions | PASS, unsigned without secrets |
+| iOS Release archive packaging | GitHub Actions | PASS, unsigned |
 
 ## Human/device gates — still pending
 
