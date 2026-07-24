@@ -103,7 +103,7 @@ async function bootstrap() {
   document.documentElement.dataset.platform = bridge.platform;
   document.documentElement.dataset.build = buildInfo.buildId;
   document.documentElement.classList.toggle('native-app', bridge.native);
-  await loadingScreen?.hide?.();
+  await window.ToxicLoadingScreen?.hide?.();
 }
 
 bootstrap().catch(error => showStartupFailure(error, startupPlatform));
