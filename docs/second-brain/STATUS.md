@@ -1,7 +1,7 @@
 # Canonical Project Status
 
 Updated: 2026-07-24
-Last verified product baseline: `8c908fb91b3ca2a2c6507029585d6fe1046bc40c`
+Last verified product baseline: `2553750675b2e5930aad49868d7c5287c660eb97`
 
 ## Product identity
 
@@ -23,12 +23,22 @@ Last verified product baseline: `8c908fb91b3ca2a2c6507029585d6fe1046bc40c`
 - Native iOS and Android projects with offline bundled content.
 - Versioning, save migrations, content-integrity verification, local privacy-preserving research analytics, and store-release infrastructure.
 - Browser demo built through Vite and published under `/play/`.
-- Completion progression from expression 1 through 5.
 - Completion reveal screen with five manifest-driven placeholder artwork slots.
 - Toxic Toby 5/5 completion state and locked private Toxic Feed.
 - Feed unlock, viewed/unread post persistence, and direct-route protection.
+- Manifest-validated completion destinations for `1 → 2 → 3 → 4 → 5 → feed`.
+- Exact next-level loading with duplicate-tap protection, loaded-level verification, preserved completion state, and visible retry behavior.
+- Browser runtime/service-worker cache v35 for the progression repair.
 - Canonical second-brain records for status, next action, locked decisions, failures, testing, design system, visual level reference and change control.
 - Automated second-brain validation included in the full repository quality check.
+
+## Owner-reported defect state
+
+- The first published completion implementation advanced Neutral to Evil Grin.
+- Evil Grin completed, but **Next Expression** did not open Gross.
+- Issue #29 records this defect.
+- The all-level repair is implemented and automated checks validate the complete manifest chain.
+- The defect remains **pending owner verification** until the published browser build is played through all five expressions and the final feed.
 
 ## Canonical design-system memory
 
@@ -45,6 +55,7 @@ The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md`, includ
 
 ## What is not complete
 
+- Owner verification of every repaired completion transition and final feed remains pending.
 - The five owner-produced clean Toxic Toby reveal images have not been inserted.
 - Physical iPhone testing has not been completed.
 - Physical Android testing has not been completed.

@@ -12,15 +12,23 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Never repeat:** Do not serve raw `index.html` as the playable app and do not hand-edit generated `/play/` files.
 
-## F-002 — Completion did not advance to the next expression
+## F-002 — Completion progression stopped after Evil Grin
 
-**Symptom:** A finished puzzle showed completion but the player could not continue correctly.
+**Observed:** In the owner's browser playtest, Neutral completed and advanced to Evil Grin. Evil Grin also completed and displayed “Expression 3 is now unlocked,” but **Next Expression** did not open Gross.
 
-**Cause:** Completion routing was not protected by a dedicated progression rule and the final state returned home instead of opening the intended reward flow.
+**Environment/build:** Published GitHub Pages browser build after the first completion/feed implementation.
 
-**Resolution:** Central progression logic now routes levels 1–4 to the following expression and level 5 to the unlocked Toxic Feed.
+**Expected:** Every transition must work in order: `1 → 2 → 3 → 4 → 5 → private feed`.
 
-**Never repeat:** Do not add independent click handlers that bypass the canonical completion destination logic.
+**Implementation weakness:** Completion navigation derived its target from mutable runtime state at click time, did not capture a validated pending destination when completion occurred, did not require the exact requested level, and did not verify that the next level actually loaded. A failure could therefore stop or silently remain on the same expression without preserving a useful retry state. The exact device-side trigger for the Evil Grin failure was not observable without browser-console evidence, but these missing safeguards allowed the reported symptom.
+
+**Resolution:** Completion now captures a manifest-validated destination at completion time, requires exact unlock and playable-content matches, prevents duplicate taps, verifies the loaded Teddy and level, keeps the completion modal available after a failed load, and provides an explicit retry action. The browser runtime and service-worker cache version were also advanced so the repaired code cannot be confused with the prior cached runtime.
+
+**Regression evidence:** The progression test suite now validates every transition—`1 → 2`, `2 → 3`, `3 → 4`, `4 → 5`, and `5 → feed`—against the actual level and feed manifests. Missing expression or feed destinations fail before runtime navigation.
+
+**Never repeat:** Do not navigate from a completion modal using only mutable `state.level`, do not silently fall back to an earlier unlocked level, and do not hide the completion modal until the exact destination is confirmed loaded.
+
+**Status:** Fixed in code; owner browser retest pending.
 
 ## F-003 — Final artwork was discussed before it existed
 

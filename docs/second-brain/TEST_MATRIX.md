@@ -2,7 +2,7 @@
 
 Updated: 2026-07-24
 
-## Automated repository gates — passing at the last verified product baseline
+## Automated repository gates — passing at the current repair branch
 
 | Area | Evidence type | Status |
 |---|---|---|
@@ -11,14 +11,19 @@ Updated: 2026-07-24
 | Geometry and solver validation | Automated tests | PASS |
 | Pointer geometry and touch selection | Unit tests | PASS |
 | Save migration and exact path restoration | Unit tests | PASS |
-| Expression progression 1→2 and 4→5 | Unit tests | PASS |
-| Final expression → feed unlock | Unit tests | PASS |
-| Restart cannot unlock content | Unit tests | PASS |
-| Direct locked feed route rejected | Unit tests | PASS |
-| Feed viewed/unread persistence | Unit tests | PASS |
+| Expression progression 1→2 | Manifest-backed unit test | PASS |
+| Expression progression 2→3 | Manifest-backed unit test | PASS |
+| Expression progression 3→4 | Manifest-backed unit test | PASS |
+| Expression progression 4→5 | Manifest-backed unit test | PASS |
+| Final expression 5→feed | Manifest-backed unit test | PASS |
+| Missing playable next expression rejected | Unit test | PASS |
+| Missing final feed rejected | Unit test | PASS |
+| Restart cannot unlock content | Unit test | PASS |
+| Direct locked feed route rejected | Unit test | PASS |
+| Feed viewed/unread persistence | Unit test | PASS |
 | Analytics allow-list and privacy | Unit tests | PASS |
-| Second-brain canonical records | Automated validator | PASS when branch checks pass |
-| Design-system tokens and scope boundaries | Automated second-brain validator | PASS when branch checks pass |
+| Second-brain canonical records | Automated validator | PASS |
+| Design-system tokens and scope boundaries | Automated second-brain validator | PASS |
 | Vite production build | GitHub Actions | PASS |
 | Offline bundle integrity | SHA-256 verification | PASS |
 | Browser `/play/` bundle generation | GitHub Actions | PASS |
@@ -31,7 +36,14 @@ Updated: 2026-07-24
 
 | Gate | Required evidence | Status |
 |---|---|---|
-| Browser completion flow | Screen recording: complete level, next expression opens, level 5 opens feed | PENDING |
+| Repaired browser transition 1→2 | Owner recording or screenshots | PENDING |
+| Repaired browser transition 2→3 | Owner confirms Gross opens after Evil Grin | PENDING — PRIOR FAILURE POINT |
+| Repaired browser transition 3→4 | Owner recording or screenshots | PENDING |
+| Repaired browser transition 4→5 | Owner recording or screenshots | PENDING |
+| Repaired browser transition 5→feed | Owner confirms 5/5 state and feed opens | PENDING |
+| Completion persistence | Refresh after completion and confirm unlocks remain | PENDING |
+| Duplicate-tap protection | One tap advances once; rapid taps do not skip or duplicate | PENDING |
+| Failed-load retry state | Completion modal remains usable if a destination fails | PENDING when reproducible |
 | Five reveal images | Owner approval of all five clean expression images | PENDING |
 | Completion-art placement | Screenshots on target phone sizes | PENDING |
 | Design-system implementation audit | Screen-by-screen comparison against `DESIGN_SYSTEM.md` | PENDING |

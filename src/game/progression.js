@@ -57,6 +57,59 @@ export function nextCompletionDestination(level, total = DEFAULT_EXPRESSIONS_PER
     : {type: 'feed'};
 }
 
+export function completionDestinationForContent({
+  teddyId,
+  level,
+  total = DEFAULT_EXPRESSIONS_PER_TEDDY,
+  levels = [],
+  feedAvailable = false,
+} = {}) {
+  if (!teddyId) throw new Error('A Teddy ID is required');
+  const destination = nextCompletionDestination(level, total);
+
+  if (destination.type === 'expression') {
+    const entry = levels.find(candidate => (
+      candidate?.teddy_id === teddyId
+      && Number(candidate?.level) === destination.level
+      && candidate?.status === 'playable'
+    ));
+    if (!entry) {
+      throw new Error(`Playable expression ${destination.level} is missing for ${teddyId}`);
+    }
+    return Object.freeze({
+      type: 'expression',
+      teddyId,
+      sourceLevel: level,
+      level: destination.level,
+      levelId: entry.id,
+    });
+  }
+
+  if (!feedAvailable) {
+    throw new Error(`Completion feed is missing for ${teddyId}`);
+  }
+  return Object.freeze({
+    type: 'feed',
+    teddyId,
+    sourceLevel: level,
+  });
+}
+
+export function completionSequenceForContent({
+  teddyId,
+  total = DEFAULT_EXPRESSIONS_PER_TEDDY,
+  levels = [],
+  feedAvailable = false,
+} = {}) {
+  return Array.from({length: total}, (_, index) => completionDestinationForContent({
+    teddyId,
+    level: index + 1,
+    total,
+    levels,
+    feedAvailable,
+  }));
+}
+
 export function markFeedPostViewed(save, teddyId, postId) {
   if (!teddyId || !postId) return clone(save || {});
   const next = clone(save || {});
