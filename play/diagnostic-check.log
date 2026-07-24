@@ -20,448 +20,226 @@ TAP version 13
 # Subtest: analytics records only approved properties and no coordinates
 ok 1 - analytics records only approved properties and no coordinates
   ---
-  duration_ms: 3.976558
+  duration_ms: 6.133529
   type: 'test'
   ...
 # Subtest: analytics records approved private feed progression without personal data
 ok 2 - analytics records approved private feed progression without personal data
   ---
-  duration_ms: 0.474481
+  duration_ms: 0.80473
   type: 'test'
   ...
 # Subtest: analytics rejects unapproved event names
 ok 3 - analytics rejects unapproved event names
   ---
-  duration_ms: 0.623839
+  duration_ms: 1.056152
   type: 'test'
   ...
 # Subtest: research export states privacy limits
 ok 4 - research export states privacy limits
   ---
-  duration_ms: 0.574822
+  duration_ms: 0.776176
   type: 'test'
   ...
 # Subtest: runtime tokens use the canonical Toxic Teddies palette
 ok 5 - runtime tokens use the canonical Toxic Teddies palette
   ---
-  duration_ms: 0.545745
+  duration_ms: 0.893025
   type: 'test'
   ...
 # Subtest: the app shell uses the dark grime system instead of the retired cream theme
 ok 6 - the app shell uses the dark grime system instead of the retired cream theme
   ---
-  duration_ms: 0.092496
+  duration_ms: 0.14898
   type: 'test'
   ...
 # Subtest: feed and accessibility surfaces receive the final dark-theme layer
 ok 7 - feed and accessibility surfaces receive the final dark-theme layer
   ---
-  duration_ms: 0.077003
+  duration_ms: 0.139041
   type: 'test'
   ...
 # Subtest: native splash and status bar match the dark app shell
 ok 8 - native splash and status bar match the dark app shell
   ---
-  duration_ms: 0.063696
+  duration_ms: 0.164769
   type: 'test'
   ...
 # Subtest: distanceToSegment measures perpendicular distance
 ok 9 - distanceToSegment measures perpendicular distance
   ---
-  duration_ms: 0.76938
+  duration_ms: 1.448578
   type: 'test'
   ...
 # Subtest: distanceToSegment clamps before and after a segment
 ok 10 - distanceToSegment clamps before and after a segment
   ---
-  duration_ms: 0.145188
+  duration_ms: 0.251011
   type: 'test'
   ...
 # Subtest: distanceToPolyline uses the closest segment
 ok 11 - distanceToPolyline uses the closest segment
   ---
-  duration_ms: 0.140162
+  duration_ms: 0.266139
   type: 'test'
   ...
 # Subtest: chooseNearestPolyline selects the intended close path
 ok 12 - chooseNearestPolyline selects the intended close path
   ---
-  duration_ms: 0.170725
+  duration_ms: 0.328356
   type: 'test'
   ...
 # Subtest: chooseNearestPolyline rejects paths outside tolerance
 ok 13 - chooseNearestPolyline rejects paths outside tolerance
   ---
-  duration_ms: 1.16347
+  duration_ms: 1.016928
   type: 'test'
   ...
 # Subtest: approved Toxic Teddies loading artwork is a valid bundled WebP image
 ok 14 - approved Toxic Teddies loading artwork is a valid bundled WebP image
   ---
-  duration_ms: 0.832169
+  duration_ms: 1.450181
   type: 'test'
   ...
 # Subtest: startup markup and bootstrap retain the loading-screen lifecycle
-not ok 15 - startup markup and bootstrap retain the loading-screen lifecycle
+ok 15 - startup markup and bootstrap retain the loading-screen lifecycle
   ---
-  duration_ms: 5.889898
+  duration_ms: 7.975655
   type: 'test'
-  location: '/home/runner/work/toxic-teddies-face-trails/toxic-teddies-face-trails/tests/loading-screen.test.mjs:13:1'
-  failureType: 'testCodeFailure'
-  error: |-
-    The input did not match the regular expression /ToxicLoadingScreen\?\.hide/. Input:
-    
-    "import { createAccessibilityController } from '../accessibility/accessibility.js';\n" +
-      "import { createAnalytics } from '../analytics/analytics.js';\n" +
-      "import { createContentRegistry } from '../content/content-registry.js';\n" +
-      "import buildInfo from '../generated/build-info.json';\n" +
-      "import { createInputController } from '../game/input-controller.js';\n" +
-      "import * as progression from '../game/progression.js';\n" +
-      "import { createSaveStore } from '../storage/save-store.js';\n" +
-      "import { verifyBundledContent } from './content-integrity.js';\n" +
-      "import { createNativeBridge } from './native-bridge.js';\n" +
-      "import { installMobileShell } from './mobile-shell.js';\n" +
-      '\n' +
-      "let startupPlatform = 'web';\n" +
-      'const loadingScreen = window.ToxicLoadingScreen;\n' +
-      'const setLoadingStage = (message, progress) => loadingScreen?.setStage?.(message, progress);\n' +
-      '\n' +
-      'function showStartupFailure(error, platform) {\n' +
-      '  loadingScreen?.fail?.();\n' +
-      '  console.error(error);\n' +
-      "  document.body.innerHTML = '';\n" +
-      "  const main = document.createElement('main');\n" +
-      "  main.className = 'startup-failure';\n" +
-      "  main.setAttribute('role', 'alert');\n" +
-      "  const action = platform === 'web'\n" +
-      "    ? 'Refresh the page. Clear the site data if the problem remains.'\n" +
-      "    : 'Install the latest app update. Reinstall the app if the problem remains.';\n" +
-      '  main.innerHTML = `\n' +
-      '    <p class="eyebrow">STARTUP CHECK FAILED</p>\n' +
-      '    <h1>Toxic Teddies could not verify its game files.</h1>\n' +
-      '    <p>${action}</p>\n' +
-      '    <p class="build-diagnostic">Build ${buildInfo.buildId}</p>\n' +
-      '  `;\n' +
-      '  document.body.append(main);\n' +
-      '}\n' +
-      '\n' +
-      'async function bootstrap() {\n' +
-      '  const bridge = createNativeBridge(buildInfo);\n' +
-      '  startupPlatform = bridge.platform;\n' +
-      '  const content = createContentRegistry();\n' +
-      '  const accessibility = createAccessibilityController();\n' +
-      '\n' +
-      "  setLoadingStage('Clearing old contamination…', 0.16);\n" +
-      '  await bridge.disableLegacyBrowserCaches();\n' +
-      "  setLoadingStage('Checking the toxic cargo…', 0.3);\n" +
-      '  const integrity = await verifyBundledContent(buildInfo);\n' +
-      '  const appInfo = await bridge.getAppInfo();\n' +
-      '  const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});\n' +
-      "  setLoadingStage('Restoring your collection…', 0.46);\n" +
-      '  const saveStore = await createSaveStore(bridge, content, buildInfo);\n' +
-      '  const analytics = createAnalytics({bridge, buildInfo: runtimeBuildInfo});\n' +
-      '\n' +
-      '  window.ToxicNative = bridge;\n' +
-      '  window.ToxicContent = content;\n' +
-      '  window.ToxicSaveStore = saveStore;\n' +
-      '  window.ToxicProgression = progression;\n' +
-      '  window.ToxicInputControllerFactory = createInputController;\n' +
-      '  window.ToxicAccessibility = accessibility;\n' +
-      '  window.ToxicBuildInfo = runtimeBuildInfo;\n' +
-      '  window.ToxicAnalytics = analytics;\n' +
-      '  window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;\n' +
-      '\n' +
-      "  setLoadingStage('Waking the laboratory…', 0.6);\n" +
-      '  await bridge.initialize();\n' +
-      '  await analytics.initialize();\n' +
-      '\n' +
-      "  async function persistLifecycleState(reason = 'lifecycle') {\n" +
-      '    await window.__toxicPersistCurrentSession?.();\n' +
-      '    await saveStore.flush();\n' +
-      "    await analytics.track('progress_saved', {reason});\n" +
-      '  }\n' +
-      '\n' +
-      '  bridge.onPause(async () => {\n' +
-      "    await analytics.track('app_pause');\n" +
-      "    await persistLifecycleState('app_pause');\n" +
-      '  });\n' +
-      '  bridge.onResume(async () => {\n' +
-      '    window.__toxicInputController?.refresh?.();\n' +
-      "    window.dispatchEvent(new Event('resize'));\n" +
-      "    await analytics.track('app_resume');\n" +
-      '  });\n' +
-      '\n' +
-      "  document.addEventListener('visibilitychange', () => {\n" +
-      "    if (document.visibilityState === 'hidden') persistLifecycleState('visibility_hidden').catch(console.error);\n" +
-      '    else window.__toxicInputController?.refresh?.();\n' +
-      '  });\n' +
-      "  window.addEventListener('pagehide', () => persistLifecycleState('pagehide').catch(console.error));\n" +
-      "  window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());\n" +
-      '\n' +
-      "  if (!bridge.native && 'serviceWorker' in navigator) {\n" +
-      "    navigator.serviceWorker.register('./sw.js?v=37').catch(error => {\n" +
-      "      console.warn('Browser prototype service worker registration failed', error);\n" +
-      '    });\n' +
-      '  }\n' +
-      '\n' +
-      "  setLoadingStage('Loading the face puzzles…', 0.78);\n" +
-      "  await import('../../dense-loader.js');\n" +
-      '  await window.__toxicBootPromise;\n' +
-      '\n' +
-      "  setLoadingStage('Finishing the contamination…', 0.92);\n" +
-      '  accessibility.install();\n' +
-      '  await installMobileShell(bridge);\n' +
-      '  await saveStore.markSuccessfulLaunch();\n' +
-      '\n' +
-      '  document.documentElement.dataset.platform = bridge.platform;\n' +
-      '  document.documentElement.dataset.build = buildInfo.buildId;\n' +
-      "  document.documentElement.classList.toggle('native-app', bridge.native);\n" +
-      '  await loadingScreen?.hide?.();\n' +
-      '}\n' +
-      '\n' +
-      'bootstrap().catch(error => showStartupFailure(error, startupPlatform));\n'
-    
-  code: 'ERR_ASSERTION'
-  name: 'AssertionError'
-  expected:
-  actual: |-
-    import { createAccessibilityController } from '../accessibility/accessibility.js';
-    import { createAnalytics } from '../analytics/analytics.js';
-    import { createContentRegistry } from '../content/content-registry.js';
-    import buildInfo from '../generated/build-info.json';
-    import { createInputController } from '../game/input-controller.js';
-    import * as progression from '../game/progression.js';
-    import { createSaveStore } from '../storage/save-store.js';
-    import { verifyBundledContent } from './content-integrity.js';
-    import { createNativeBridge } from './native-bridge.js';
-    import { installMobileShell } from './mobile-shell.js';
-    
-    let startupPlatform = 'web';
-    const loadingScreen = window.ToxicLoadingScreen;
-    const setLoadingStage = (message, progress) => loadingScreen?.setStage?.(message, progress);
-    
-    function showStartupFailure(error, platform) {
-      loadingScreen?.fail?.();
-      console.error(error);
-      document.body.innerHTML = '';
-      const main = document.createElement('main');
-      main.className = 'startup-failure';
-      main.setAttribute('role', 'alert');
-      const action = platform === 'web'
-        ? 'Refresh the page. Clear the site data if the problem remains.'
-        : 'Install the latest app update. Reinstall the app if the problem remains.';
-      main.innerHTML = `
-        <p class="eyebrow">STARTUP CHECK FAILED</p>
-        <h1>Toxic Teddies could not verify its game files.</h1>
-        <p>${action}</p>
-        <p class="build-diagnostic">Build ${buildInfo.buildId}</p>
-      `;
-      document.body.append(main);
-    }
-    
-    async function bootstrap() {
-      const bridge = createNativeBridge(buildInfo);
-      startupPlatform = bridge.platform;
-      const content = createContentRegistry();
-      const accessibility = createAccessibilityController();
-    
-      setLoadingStage('Clearing old contamination…', 0.16);
-      await bridge.disableLegacyBrowserCaches();
-      setLoadingStage('Checking the toxic cargo…', 0.3);
-      const integrity = await verifyBundledContent(buildInfo);
-      const appInfo = await bridge.getAppInfo();
-      const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});
-      setLoadingStage('Restoring your collection…', 0.46);
-      const saveStore = await createSaveStore(bridge, content, buildInfo);
-      const analytics = createAnalytics({bridge, buildInfo: runtimeBuildInfo});
-    
-      window.ToxicNative = bridge;
-      window.ToxicContent = content;
-      window.ToxicSaveStore = saveStore;
-      window.ToxicProgression = progression;
-      window.ToxicInputControllerFactory = createInputController;
-      window.ToxicAccessibility = accessibility;
-      window.ToxicBuildInfo = runtimeBuildInfo;
-      window.ToxicAnalytics = analytics;
-      window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;
-    
-      setLoadingStage('Waking the laboratory…', 0.6);
-      await bridge.initialize();
-      await analytics.initialize();
-    
-      async function persistLifecycleState(reason = 'lifecycle') {
-        await window.__toxicPersistCurrentSession?.();
-        await saveStore.flush();
-        await analytics.track('progress_saved', {reason});
-      }
-    
-      bridge.onPause(async () => {
-        await analytics.track('app_pause');
-        await persistLifecycleState('app_pause');
-      });
-      bridge.onResume(async () => {
-        window.__toxicInputController?.refresh?.();
-        window.dispatchEvent(new Event('resize'));
-        await analytics.track('app_resume');
-      });
-    
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') persistLifecycleState('visibility_hidden').catch(console.error);
-        else window.__toxicInputController?.refresh?.();
-      });
-      window.addEventListener('pagehide', () => persistLifecycleState('pagehide').catch(console.error));
-      window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
-    
-      if (!bridge.native && 'serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=37').catch(error => {
-          console.warn('Browser prototype service worker registration failed', error);
-        });
-      }
-    
-      setLoadingStage('Loading the face puzzles…', 0.78);
-      await import('../../dense-loader.js');
-      await window.__toxicBootPromise;
-    
-      setLoadingStage('Finishing the contamination…', 0.92);
-      accessibility.install();
-      await installMobileShell(bridge);
-      await saveStore.markSuccessfulLaunch();
-    
-      document.documentElement.dataset.platform = bridge.platform;
-      document.documentElement.dataset.build = buildInfo.buildId;
-      document.documentElement.classList.toggle('native-app', bridge.native);
-      await loadingScreen?.hide?.();
-    }
-    
-    bootstrap().catch(error => showStartupFailure(error, startupPlatform));
-    
-  operator: 'match'
-  stack: |-
-    TestContext.<anonymous> (file:///home/runner/work/toxic-teddies-face-trails/toxic-teddies-face-trails/tests/loading-screen.test.mjs:20:10)
-    async Test.run (node:internal/test_runner/test:1054:7)
-    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
   ...
 # Subtest: every Toxic Toby expression has one validated completion destination
 ok 16 - every Toxic Toby expression has one validated completion destination
   ---
-  duration_ms: 1.471571
+  duration_ms: 1.970417
   type: 'test'
   ...
 # Subtest: finishing expressions advances through the complete 1 to 5 chain
 ok 17 - finishing expressions advances through the complete 1 to 5 chain
   ---
-  duration_ms: 0.395638
+  duration_ms: 0.776226
   type: 'test'
   ...
 # Subtest: finishing expression 1 advances to expression 2
 ok 18 - finishing expression 1 advances to expression 2
   ---
-  duration_ms: 0.10675
+  duration_ms: 0.246132
   type: 'test'
   ...
 # Subtest: finishing expression 2 advances to expression 3
 ok 19 - finishing expression 2 advances to expression 3
   ---
-  duration_ms: 0.122847
+  duration_ms: 0.238307
   type: 'test'
   ...
 # Subtest: finishing expression 3 advances to expression 4
 ok 20 - finishing expression 3 advances to expression 4
   ---
-  duration_ms: 0.079519
+  duration_ms: 0.247124
   type: 'test'
   ...
 # Subtest: finishing expression 4 advances to expression 5
 ok 21 - finishing expression 4 advances to expression 5
   ---
-  duration_ms: 0.066012
+  duration_ms: 0.223029
   type: 'test'
   ...
 # Subtest: a missing playable expression is rejected before navigation
 ok 22 - a missing playable expression is rejected before navigation
   ---
-  duration_ms: 0.25883
+  duration_ms: 0.450045
   type: 'test'
   ...
 # Subtest: a missing final feed is rejected before navigation
 ok 23 - a missing final feed is rejected before navigation
   ---
-  duration_ms: 0.087517
+  duration_ms: 0.211546
   type: 'test'
   ...
 # Subtest: finishing all five expressions unlocks the private feed
 ok 24 - finishing all five expressions unlocks the private feed
   ---
-  duration_ms: 0.371515
+  duration_ms: 0.459923
   type: 'test'
   ...
 # Subtest: replaying a completed expression does not erase completion or feed access
 ok 25 - replaying a completed expression does not erase completion or feed access
   ---
-  duration_ms: 0.446977
+  duration_ms: 0.513473
   type: 'test'
   ...
 # Subtest: restart state alone cannot unlock the private feed
 ok 26 - restart state alone cannot unlock the private feed
   ---
-  duration_ms: 0.174994
+  duration_ms: 0.195046
   type: 'test'
   ...
 # Subtest: a locked feed URL cannot bypass the completion requirement
 ok 27 - a locked feed URL cannot bypass the completion requirement
   ---
-  duration_ms: 0.137151
+  duration_ms: 0.148929
   type: 'test'
   ...
 # Subtest: viewed feed posts are unique and unread count survives repeated views
 ok 28 - viewed feed posts are unique and unread count survives repeated views
   ---
-  duration_ms: 0.218955
+  duration_ms: 0.248616
   type: 'test'
   ...
 # Subtest: migrateSave upgrades schema 1 and preserves progress
 ok 29 - migrateSave upgrades schema 1 and preserves progress
   ---
-  duration_ms: 1.690476
+  duration_ms: 1.987159
   type: 'test'
   ...
 # Subtest: migrateSave refuses a future schema without modifying it
 ok 30 - migrateSave refuses a future schema without modifying it
   ---
-  duration_ms: 0.343179
+  duration_ms: 0.453511
   type: 'test'
   ...
 # Subtest: save store migrates legacy completion and writes exact session state
 ok 31 - save store migrates legacy completion and writes exact session state
   ---
-  duration_ms: 1.26822
+  duration_ms: 2.096925
   type: 'test'
   ...
 # Subtest: schema 1 progress migrates to schema 2 without losing completion
 ok 32 - schema 1 progress migrates to schema 2 without losing completion
   ---
-  duration_ms: 0.859634
+  duration_ms: 1.315619
   type: 'test'
   ...
 # Subtest: markCompleted clears active session
 ok 33 - markCompleted clears active session
   ---
-  duration_ms: 0.281383
+  duration_ms: 0.397405
   type: 'test'
   ...
 # Subtest: feed unlocks and viewed posts survive save normalization
 ok 34 - feed unlocks and viewed posts survive save normalization
   ---
-  duration_ms: 0.23514
+  duration_ms: 0.454322
   type: 'test'
   ...
 1..34
 # tests 34
 # suites 0
-# pass 33
-# fail 1
+# pass 34
+# fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 128.433888
+# duration_ms 197.508819
+
+> toxic-teddies-arrow-escape@0.5.0 validate:levels
+> node scripts/extract-dense-levels.mjs && node scripts/validate-compiled-levels.mjs
+
+Compiled 5 deterministic Toxic Toby levels (678 paths).
+Validated 5 Toxic Toby production levels (678 paths).
+
+> toxic-teddies-arrow-escape@0.5.0 validate:store
+> node scripts/validate-store-readiness.mjs
+
+Store readiness failed with 1 error(s):
+- iOS privacy manifest is bundled: Run npm run prepare:build so the privacy manifest is added to the App target.
 exit_status=1
