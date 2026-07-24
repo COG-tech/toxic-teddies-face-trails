@@ -22,10 +22,7 @@
   loadLevel = async function analyticsLoadLevel() {
     const started = performance.now();
     const loaded = await baseLoadLevel();
-    await analytics.track('level_load', context({
-      elapsed_ms: Math.round(performance.now() - started),
-      load_succeeded: loaded !== false,
-    }));
+    await analytics.track('level_load', context({elapsed_ms: Math.round(performance.now() - started)}));
     if (loaded === false) return false;
 
     const restored = state.save?.activeSession?.levelKey === levelKey(teddy().id, state.level)
