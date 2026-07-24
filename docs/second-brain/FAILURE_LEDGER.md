@@ -130,6 +130,24 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Never repeat:** Essential first-paint images must be real built assets referenced directly from HTML. Do not use base64 JavaScript modules as the runtime source of a splash screen. Do not simulate the official logo with an unrelated system font.
 
+**Status:** Fixed in code; published owner confirmation received for image visibility.
+
+## F-012 — The illustrated loading bar looked permanently full and did not visibly progress
+
+**Observed:** The owner confirmed that the full loading artwork finally appeared, but the green contamination bar did not visibly load from left to right.
+
+**Environment/build:** Published GitHub Pages build after PR #36, shown on desktop on 2026-07-24.
+
+**Expected:** The illustrated bar must clearly begin near empty, move through the real startup-stage targets, visibly reach 100 percent, and only then hand off to the app.
+
+**Root cause:** The approved artwork already contains a fully illuminated green bar. The first runtime treatment only placed a translucent green glow on top, so the unfilled portion remained bright and looked complete. The 700 ms minimum also allowed multiple startup targets to occur too quickly to read as movement.
+
+**Resolution:** The progress lane now has a dark mask over the painted bar, and a bright runtime fill reveals it from left to right. A requestAnimationFrame controller advances monotonically toward each real startup-stage target, requires visible 100 percent completion before handoff, uses a 1,800 ms full-motion minimum, and retains a 700 ms reduced-motion path. Browser and service-worker caching advance to `v40`.
+
+**Regression evidence:** `tests/loading-screen.test.mjs` requires the dark lane mask, scale-based fill, animation-frame controller, monotonic target handling, visible 100 percent completion, duration rules and cache `v40`.
+
+**Never repeat:** Do not animate only brightness over artwork that already looks full. A progress indicator needs a visibly different unfilled state and enough painted time to show meaningful movement.
+
 **Status:** Fixed in code; published owner confirmation pending.
 
 ## Incident entry template
