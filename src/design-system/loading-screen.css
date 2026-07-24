@@ -45,20 +45,41 @@ body.boot-loading {
   width: 72.4%;
   height: 5.2%;
   overflow: hidden;
+  isolation: isolate;
   border-radius: 999px;
   pointer-events: none;
-  filter: drop-shadow(0 0 9px rgba(183,226,75,.78));
+  background: rgba(5,6,4,.76);
+  box-shadow:
+    inset 0 0 0 1px rgba(15,12,8,.78),
+    inset 0 0 16px rgba(0,0,0,.7),
+    0 0 12px rgba(183,226,75,.42);
+}
+
+.boot-splash-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.62)),
+    repeating-linear-gradient(90deg, rgba(243,228,189,.04) 0 1px, transparent 1px 12px);
 }
 
 .boot-splash-fill {
   position: absolute;
   inset: 0;
-  transform: scaleX(var(--boot-progress, .08));
+  z-index: 1;
+  transform: scaleX(var(--boot-progress, 0));
   transform-origin: left center;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgba(141,187,19,.12), rgba(183,226,75,.68), rgba(231,211,45,.92));
-  mix-blend-mode: screen;
-  transition: transform 220ms ease-out;
+  background:
+    linear-gradient(180deg, rgba(255,255,205,.52), transparent 30%),
+    linear-gradient(90deg, #7AA10F 0%, #B7E24B 58%, #E7D32D 100%);
+  box-shadow:
+    inset 0 0 10px rgba(255,255,220,.72),
+    0 0 16px rgba(183,226,75,.88);
+  opacity: .96;
+  will-change: transform;
 }
 
 .boot-splash-fill::after {

@@ -11,6 +11,7 @@ const requiredDocuments = [
   'docs/second-brain/TEST_MATRIX.md',
   'docs/second-brain/DESIGN_SYSTEM.md',
   'docs/second-brain/VISUAL_REFERENCE.md',
+  'docs/second-brain/BRAND_ASSET_PIPELINE.md',
   'docs/second-brain/CHANGE_PROTOCOL.md',
   'docs/second-brain/project-memory.json',
   '.github/pull_request_template.md',
@@ -95,10 +96,17 @@ assert(visual.includes('composition and readability'), 'Visual reference purpose
 assert(visual.includes('Do not copy from the reference'), 'Visual anti-copy guardrail is missing');
 assert(visual.includes('The puzzle is the dominant object'), 'Visual hierarchy requirement is missing');
 
+const brandAssets = await readFile(path.join(root, 'docs/second-brain/BRAND_ASSET_PIPELINE.md'), 'utf8');
+assert(brandAssets.includes('public/assets/branding/loading/toxic-teddies-loading.webp'), 'Canonical loading-artwork path is missing');
+assert(brandAssets.includes('must never wait for a JavaScript import'), 'Direct first-paint image rule is missing');
+assert(brandAssets.includes('64,450'), 'Approved loading-artwork byte length is missing');
+assert(brandAssets.includes('a0a6a06e34b538027b755427d0a24026b988d69705468dff1bf075e2286198ed'), 'Approved loading-artwork checksum is missing');
+assert(brandAssets.includes('minimum full-motion presentation of 1,800 ms'), 'Visible loading-bar duration rule is missing');
+
 const protocol = await readFile(path.join(root, 'docs/second-brain/CHANGE_PROTOCOL.md'), 'utf8');
 assert(protocol.includes('FAILURE_LEDGER.md'), 'Change protocol must require failure-ledger review');
 assert(protocol.includes('DESIGN_SYSTEM.md'), 'Change protocol must require design-system review');
 assert(protocol.includes('VISUAL_REFERENCE.md'), 'Change protocol must require visual-reference review');
 assert(protocol.includes('npm run validate:second-brain'), 'Change protocol must require second-brain validation');
 
-console.log(`Second brain verified: ${requiredDocuments.length} canonical files, one active action, locked decisions, failure history, design-system memory, runtime palette alignment, visual reference, and human-gate truth.`);
+console.log(`Second brain verified: ${requiredDocuments.length} canonical files, one active action, locked decisions, failure history, design-system memory, runtime palette alignment, visual reference, brand-asset pipeline, and human-gate truth.`);

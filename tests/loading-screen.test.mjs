@@ -40,14 +40,34 @@ test('startup markup loads the approved artwork without waiting for JavaScript',
   assert.match(index, /id="bootSplash"/);
   assert.match(index, new RegExp(`id="bootSplashImage"[\\s\\S]*src="${assetPath.replaceAll('.', '\\.') }"`));
   assert.match(index, /<link rel="preload" as="image" type="image\/webp" href="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp" \/>/);
-  assert.match(index, /<script src="\.\/src\/app\/loading-screen\.js\?v=39"><\/script>/);
+  assert.match(index, /<script src="\.\/src\/app\/loading-screen\.js\?v=40"><\/script>/);
   assert.doesNotMatch(loader, /loading-image-part-a|data:image\/webp;base64|import\s/);
   assert.match(index, /class="home-brand-logo"[\s\S]*toxic-teddies-loading\.webp/);
   assert.match(theme, /\.home-brand-logo/);
   assert.match(theme, /\.home-brand-logo img/);
   assert.match(bootstrap, /ToxicLoadingScreen\?\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=39/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v39/);
+  assert.match(bootstrap, /sw\.js\?v=40/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v40/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
+});
+
+test('illustrated loading bar visibly fills before the splash leaves', async () => {
+  const [loader, loadingStyles] = await Promise.all([
+    readFile(new URL('../src/app/loading-screen.js', import.meta.url), 'utf8'),
+    readFile(new URL('../src/design-system/loading-screen.css', import.meta.url), 'utf8'),
+  ]);
+
+  assert.match(loader, /FULL_MOTION_MINIMUM_VISIBLE_MS = 1800/);
+  assert.match(loader, /REDUCED_MOTION_MINIMUM_VISIBLE_MS = 700/);
+  assert.match(loader, /requestAnimationFrame/);
+  assert.match(loader, /targetProgress = Math\.max\(targetProgress, safeProgress\)/);
+  assert.match(loader, /displayedProgress >= 0\.995/);
+  assert.match(loader, /setStage\('Ready', 1\)/);
+  assert.match(loader, /fill\.dataset\.progress/);
+
+  assert.match(loadingStyles, /\.boot-splash-progress\s*\{[\s\S]*background: rgba\(5,6,4,\.76\)/);
+  assert.match(loadingStyles, /\.boot-splash-progress::before/);
+  assert.match(loadingStyles, /transform: scaleX\(var\(--boot-progress, 0\)\)/);
+  assert.match(loadingStyles, /will-change: transform/);
 });

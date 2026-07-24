@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedAt": "2026-07-24",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "44f30bc874bf7d519963eb8bd2f7fef232b39119",
+  "baselineCommit": "a0a3727a6a220652b224db29217159802196c931",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -51,6 +51,7 @@
     "typography": {
       "display": "Toxic Head custom",
       "body": "Inter system",
+      "runtimeDisplayPolicy": "Use the approved illustrated Toxic Teddies logo where exact branding is required because no custom Toxic Head font file is bundled.",
       "scale": {
         "h1": "48px/56px bold",
         "h2": "32px/40px bold",
@@ -130,7 +131,7 @@
     "boardPolicy": "Parchment board retained for arrow and path readability inside dark game chrome",
     "modalPolicy": "Parchment modal cards with dark text and toxic primary actions",
     "retiredTheme": "Cream page background with translucent white cards",
-    "browserCacheVersion": 37,
+    "browserCacheVersion": 40,
     "runtimeFiles": [
       "src/design-system/tokens.css",
       "styles.css",
@@ -157,10 +158,22 @@
   "loadingScreen": {
     "approved": true,
     "artwork": "Owner-approved Toxic Teddies Arrow Escape artwork with Toxic Toby in a radioactive laboratory",
-    "delivery": "Bundled local WebP data module",
+    "delivery": "Real preloaded WebP file materialized into public assets and copied unchanged by Vite",
+    "runtimePath": "assets/branding/loading/toxic-teddies-loading.webp",
+    "publicBuildPath": "public/assets/branding/loading/toxic-teddies-loading.webp",
+    "sourceParts": [
+      "src/generated/loading-image-approved-part-01.txt",
+      "src/generated/loading-image-approved-part-02.txt",
+      "src/generated/loading-image-approved-part-03.txt",
+      "src/generated/loading-image-approved-part-04.txt",
+      "src/generated/loading-image-approved-part-05.txt"
+    ],
+    "expectedByteLength": 64450,
+    "expectedSha256": "a0a6a06e34b538027b755427d0a24026b988d69705468dff1bf075e2286198ed",
     "offlineCapable": true,
-    "minimumVisibleMs": 700,
-    "browserCacheVersion": 37,
+    "minimumVisibleMs": 1800,
+    "reducedMotionMinimumVisibleMs": 700,
+    "browserCacheVersion": 40,
     "realStartupStages": [
       "prepare contamination",
       "disable legacy browser caches",
@@ -172,17 +185,37 @@
       "mark successful launch"
     ],
     "animation": [
-      "toxic loading fill",
+      "dark unfilled lane over the painted artwork bar",
+      "monotonic left-to-right toxic fill",
       "scanning highlight",
-      "rising bubbles"
+      "rising bubbles",
+      "visible 100 percent completion before handoff"
     ],
     "reducedMotionSupported": true,
-    "humanReviewPending": true
+    "ownerArtworkVisibilityConfirmed": true,
+    "ownerProgressAnimationReviewPending": true
+  },
+  "brandAssetPipeline": {
+    "canonicalDocument": "docs/second-brain/BRAND_ASSET_PIPELINE.md",
+    "materializer": "scripts/materialize-brand-assets.mjs",
+    "buildRule": "Essential first-paint artwork must be a real file referenced directly from HTML and must not depend on JavaScript execution.",
+    "viteRule": "Place exact-name static assets under public so Vite copies them unchanged into dist.",
+    "htmlRule": "Preload the WebP and assign it directly to the splash img src.",
+    "nativeRule": "Capacitor sync copies the same verified dist asset into Android and iOS.",
+    "offlineRule": "The service worker caches the same runtime path.",
+    "logoRule": "Use a CSS crop of the approved artwork for exact Toxic Teddies lettering while retaining a hidden semantic H1.",
+    "forbidden": [
+      "JavaScript image imports for first paint",
+      "Base64 data URI splash sources",
+      "hand-edited play build assets",
+      "generic font imitation of the approved logo",
+      "silent checksum filename crop or cache changes"
+    ]
   },
   "activeNextAction": {
     "id": "verify-dark-runtime-loading-and-completion-chain",
     "status": "owner_browser_visual_and_progression_retest_required",
-    "summary": "Verify the canonical dark home, game and Toxic Feed surfaces, the approved animated loading screen, and all five expression transitions through the private feed in the published browser build.",
+    "summary": "Verify the repaired visible loading bar, approved home logo, canonical dark home/game/feed surfaces, and all five expression transitions through the private feed in the published browser build.",
     "blockNewTeddyProduction": true
   },
   "knownDefects": [
@@ -197,6 +230,12 @@
       "title": "Runtime interface drifted away from the locked design system",
       "status": "fixed_in_code_pending_owner_visual_review",
       "requiredEvidence": "Owner confirms the published home, game and feed screens use the canonical dark Toxic Teddies palette and remain readable."
+    },
+    {
+      "ledger": "F-012",
+      "title": "Illustrated loading bar looked permanently full",
+      "status": "fixed_in_code_pending_owner_visual_review",
+      "requiredEvidence": "Owner confirms the published v40 bar visibly advances from near empty to 100 percent before the app opens."
     }
   ],
   "artwork": {
@@ -238,6 +277,7 @@
     "manifest-validated expression progression",
     "feed unlock protection",
     "canonical startup loading screen",
+    "real static brand-image delivery pipeline",
     "canonical runtime design-system palette",
     "browser Vite publication under play",
     "native offline bundling",
@@ -245,7 +285,7 @@
   ],
   "humanGatesPending": [
     "owner verifies dark home game and feed palette alignment",
-    "owner verifies loading-screen crop animation and handoff",
+    "owner verifies loading-bar progress home-logo crop and handoff",
     "owner verifies all five completion transitions and final feed",
     "five approved Toxic Toby reveal images",
     "physical Android validation",
@@ -265,6 +305,7 @@
     "docs/second-brain/TEST_MATRIX.md",
     "docs/second-brain/DESIGN_SYSTEM.md",
     "docs/second-brain/VISUAL_REFERENCE.md",
+    "docs/second-brain/BRAND_ASSET_PIPELINE.md",
     "docs/second-brain/CHANGE_PROTOCOL.md",
     "docs/second-brain/project-memory.json"
   ]
