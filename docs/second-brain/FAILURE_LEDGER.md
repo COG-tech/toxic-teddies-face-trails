@@ -96,6 +96,24 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Status:** Fixed in code; owner visual review pending.
 
+## F-010 — Loading artwork module was included as a classic script
+
+**Observed:** The phone loading screen showed a black portrait card, the image alt text, and only the decorative glow and bubble layers. The approved Toxic Toby radioactive-laboratory artwork did not appear.
+
+**Environment/build:** Published browser build after the dark design-system alignment.
+
+**Expected:** The approved bundled WebP must fill the portrait loading card before the home screen appears.
+
+**Root cause:** `src/app/loading-screen.js` contains an ES-module `import`, but `index.html` loaded it with a classic `<script>` tag. The browser rejected the file before it could assign the bundled artwork to `#bootSplashImage`.
+
+**Resolution:** The loading script is now declared with `type="module"`, the browser and service-worker cache version is advanced to `v38`, and the loading-screen regression test requires the exact module markup and artwork assignment.
+
+**Regression evidence:** `tests/loading-screen.test.mjs` now fails if the artwork loader is loaded as a classic script, if the data-URI assignment disappears, or if the browser cache registration does not use `v38`.
+
+**Never repeat:** Any JavaScript file containing `import` or `export` must be loaded as an ES module. Loading-screen tests must validate executable markup, not only the filename.
+
+**Status:** Fixed in code; published phone confirmation pending.
+
 ## Incident entry template
 
 ```text
