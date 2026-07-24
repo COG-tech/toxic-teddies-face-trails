@@ -23,26 +23,25 @@ const requiredTokens = {
 
 test('runtime tokens use the canonical Toxic Teddies palette', () => {
   for (const [name, value] of Object.entries(requiredTokens)) {
-    assert.match(tokens, new RegExp(`${name}:\\s*${value}`, 'i'), `${name} must remain ${value}`);
+    assert.ok(tokens.includes(`${name}: ${value};`), `${name} must remain ${value}`);
   }
 });
 
 test('the app shell uses the dark grime system instead of the retired cream theme', () => {
-  assert.match(styles, /html\s*\{[^}]*background:\s*#0F0C08/i);
-  assert.match(styles, /\.teddy-card\s*\{[\s\S]*linear-gradient\(160deg,[\s\S]*rgba\(15,12,8,\.98\)/i);
-  assert.match(styles, /\.home-header h1\s*\{[\s\S]*--tt-slime-green/i);
-  assert.doesNotMatch(styles, /linear-gradient\(180deg,#faf6ef,#efe6d7\)/i);
+  assert.ok(styles.includes('html { background: #0F0C08; }'));
+  assert.ok(styles.includes('linear-gradient(160deg, rgba(33,30,21,.98), rgba(15,12,8,.98));'));
+  assert.ok(styles.includes('color: var(--tt-slime-green, #B7E24B);'));
+  assert.ok(!styles.includes('linear-gradient(180deg,#faf6ef,#efe6d7)'));
 });
 
 test('feed and accessibility surfaces receive the final dark-theme layer', () => {
-  assert.match(overrides, /\.feed-profile,[\s\S]*\.feed-post/);
-  assert.match(overrides, /\.accessible-moves-trigger/);
-  assert.match(index, /dark-theme-overrides\.css/);
+  assert.ok(overrides.includes('.feed-profile,\n.feed-post'));
+  assert.ok(overrides.includes('.accessible-moves-trigger'));
+  assert.ok(index.includes('dark-theme-overrides.css'));
   assert.ok(index.indexOf('dark-theme-overrides.css') > index.indexOf('completion-feed.css'));
 });
 
 test('native splash and status bar match the dark app shell', () => {
-  assert.match(capacitor, /SplashScreen:[\s\S]*backgroundColor:\s*'#0F0C08'/);
-  assert.match(capacitor, /StatusBar:[\s\S]*style:\s*'LIGHT'/);
-  assert.match(capacitor, /StatusBar:[\s\S]*backgroundColor:\s*'#0F0C08'/);
+  assert.ok(capacitor.includes("SplashScreen: {\n      launchAutoHide: true,\n      launchShowDuration: 900,\n      backgroundColor: '#0F0C08'"));
+  assert.ok(capacitor.includes("StatusBar: {\n      style: 'LIGHT',\n      backgroundColor: '#0F0C08'"));
 });
