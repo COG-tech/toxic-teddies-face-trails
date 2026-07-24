@@ -20,630 +20,439 @@ TAP version 13
 # Subtest: analytics records only approved properties and no coordinates
 ok 1 - analytics records only approved properties and no coordinates
   ---
-  duration_ms: 4.546502
+  duration_ms: 3.976558
   type: 'test'
   ...
 # Subtest: analytics records approved private feed progression without personal data
 ok 2 - analytics records approved private feed progression without personal data
   ---
-  duration_ms: 0.52501
+  duration_ms: 0.474481
   type: 'test'
   ...
 # Subtest: analytics rejects unapproved event names
 ok 3 - analytics rejects unapproved event names
   ---
-  duration_ms: 0.8472
+  duration_ms: 0.623839
   type: 'test'
   ...
 # Subtest: research export states privacy limits
 ok 4 - research export states privacy limits
   ---
-  duration_ms: 0.627972
+  duration_ms: 0.574822
   type: 'test'
   ...
 # Subtest: runtime tokens use the canonical Toxic Teddies palette
 ok 5 - runtime tokens use the canonical Toxic Teddies palette
   ---
-  duration_ms: 1.416693
+  duration_ms: 0.545745
   type: 'test'
   ...
 # Subtest: the app shell uses the dark grime system instead of the retired cream theme
 ok 6 - the app shell uses the dark grime system instead of the retired cream theme
   ---
-  duration_ms: 0.217155
+  duration_ms: 0.092496
   type: 'test'
   ...
 # Subtest: feed and accessibility surfaces receive the final dark-theme layer
 ok 7 - feed and accessibility surfaces receive the final dark-theme layer
   ---
-  duration_ms: 0.256578
+  duration_ms: 0.077003
   type: 'test'
   ...
 # Subtest: native splash and status bar match the dark app shell
 ok 8 - native splash and status bar match the dark app shell
   ---
-  duration_ms: 0.213258
+  duration_ms: 0.063696
   type: 'test'
   ...
 # Subtest: distanceToSegment measures perpendicular distance
 ok 9 - distanceToSegment measures perpendicular distance
   ---
-  duration_ms: 1.358764
+  duration_ms: 0.76938
   type: 'test'
   ...
 # Subtest: distanceToSegment clamps before and after a segment
 ok 10 - distanceToSegment clamps before and after a segment
   ---
-  duration_ms: 0.242492
+  duration_ms: 0.145188
   type: 'test'
   ...
 # Subtest: distanceToPolyline uses the closest segment
 ok 11 - distanceToPolyline uses the closest segment
   ---
-  duration_ms: 0.259404
+  duration_ms: 0.140162
   type: 'test'
   ...
 # Subtest: chooseNearestPolyline selects the intended close path
 ok 12 - chooseNearestPolyline selects the intended close path
   ---
-  duration_ms: 0.339133
+  duration_ms: 0.170725
   type: 'test'
   ...
 # Subtest: chooseNearestPolyline rejects paths outside tolerance
 ok 13 - chooseNearestPolyline rejects paths outside tolerance
   ---
-  duration_ms: 1.828832
+  duration_ms: 1.16347
   type: 'test'
   ...
 # Subtest: approved Toxic Teddies loading artwork is a valid bundled WebP image
 ok 14 - approved Toxic Teddies loading artwork is a valid bundled WebP image
   ---
-  duration_ms: 1.40417
+  duration_ms: 0.832169
   type: 'test'
   ...
 # Subtest: startup markup and bootstrap retain the loading-screen lifecycle
 not ok 15 - startup markup and bootstrap retain the loading-screen lifecycle
   ---
-  duration_ms: 11.563742
+  duration_ms: 5.889898
   type: 'test'
   location: '/home/runner/work/toxic-teddies-face-trails/toxic-teddies-face-trails/tests/loading-screen.test.mjs:13:1'
   failureType: 'testCodeFailure'
   error: |-
-    The input did not match the regular expression /src="\.\/src\/app\/loading-screen\.js"/. Input:
+    The input did not match the regular expression /ToxicLoadingScreen\?\.hide/. Input:
     
-    '<!doctype html>\n' +
-      '<html lang="en">\n' +
-      '<head>\n' +
-      '  <meta charset="UTF-8" />\n' +
-      '  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />\n' +
-      '  <meta name="theme-color" content="#0F0C08" />\n' +
-      '  <meta name="description" content="Toxic Teddies Arrow Escape — the face is the puzzle." />\n' +
-      '  <meta name="toxic-teddies-build" content="0.5.0+3.tt01-launch-2026.07.22.1" />\n' +
-      '  <title>Toxic Teddies: Arrow Escape</title>\n' +
-      '  <script>\n' +
-      '    (() => {\n' +
-      "      const onGitHubPages = location.hostname.endsWith('github.io');\n" +
-      "      const alreadyBundled = location.pathname.includes('/play/');\n" +
-      '      if (!onGitHubPages || alreadyBundled) return;\n' +
-      "      const target = new URL('./play/', location.href);\n" +
-      '      target.search = location.search;\n' +
-      '      target.hash = location.hash;\n' +
-      '      location.replace(target.href);\n' +
-      '    })();\n' +
-      '  </script>\n' +
-      '  <link rel="manifest" href="./manifest.webmanifest" />\n' +
-      '  <link rel="stylesheet" href="./src/design-system/tokens.css" />\n' +
-      '  <link rel="stylesheet" href="./styles.css?v=37" />\n' +
-      '  <link rel="stylesheet" href="./compiled-patterns.css?v=37" />\n' +
-      '  <link rel="stylesheet" href="./hard-mode-v3.css?v=37" />\n' +
-      '  <link rel="stylesheet" href="./src/design-system/accessibility.css" />\n' +
-      '  <link rel="stylesheet" href="./src/design-system/completion-feed.css" />\n' +
-      '  <link rel="stylesheet" href="./src/design-system/loading-screen.css" />\n' +
-      '  <link rel="stylesheet" href="./src/design-system/dark-theme-overrides.css" />\n' +
-      '</head>\n' +
-      '<body class="boot-loading">\n' +
-      '  <div id="bootSplash" class="boot-splash" role="status" aria-live="polite" aria-label="Toxic Teddies is loading">\n' +
-      '    <div class="boot-splash-card">\n' +
-      '      <img id="bootSplashImage" class="boot-splash-image" alt="Toxic Teddies Arrow Escape loading artwork with Toxic Toby in a radioactive laboratory" />\n' +
-      '      <div class="boot-splash-progress" aria-hidden="true">\n' +
-      '        <span id="bootSplashFill" class="boot-splash-fill"></span>\n' +
-      '      </div>\n' +
-      '      <span class="boot-splash-bubbles" aria-hidden="true"></span>\n' +
-      '      <span id="bootSplashStatus" class="sr-only">Preparing the contamination…</span>\n' +
-      '    </div>\n' +
-      '  </div>\n' +
+    "import { createAccessibilityController } from '../accessibility/accessibility.js';\n" +
+      "import { createAnalytics } from '../analytics/analytics.js';\n" +
+      "import { createContentRegistry } from '../content/content-registry.js';\n" +
+      "import buildInfo from '../generated/build-info.json';\n" +
+      "import { createInputController } from '../game/input-controller.js';\n" +
+      "import * as progression from '../game/progression.js';\n" +
+      "import { createSaveStore } from '../storage/save-store.js';\n" +
+      "import { verifyBundledContent } from './content-integrity.js';\n" +
+      "import { createNativeBridge } from './native-bridge.js';\n" +
+      "import { installMobileShell } from './mobile-shell.js';\n" +
       '\n' +
-      '  <div id="appStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>\n' +
+      "let startupPlatform = 'web';\n" +
+      'const loadingScreen = window.ToxicLoadingScreen;\n' +
+      'const setLoadingStage = (message, progress) => loadingScreen?.setStage?.(message, progress);\n' +
       '\n' +
-      '  <div class="app-shell" inert aria-hidden="true">\n' +
-      '    <section id="homeView" class="home-view" aria-labelledby="homeTitle">\n' +
-      '      <header class="home-header">\n' +
-      '        <div>\n' +
-      '          <p class="eyebrow">SERIES 1</p>\n' +
-      '          <h1 id="homeTitle">TOXIC TEDDIES</h1>\n' +
-      '          <p>The face is the puzzle. Find a clear arrowhead and pull the whole trail free.</p>\n' +
-      '        </div>\n' +
-      '        <div id="collectionCounter" class="collection-counter" aria-label="Playable expressions completed">0 / 5</div>\n' +
-      '      </header>\n' +
-      '      <div id="teddyGrid" class="teddy-grid"></div>\n' +
-      '      <nav class="home-utilities" aria-label="Game information and settings">\n' +
-      '        <button id="feedButton" class="secondary-button feed-home-button hidden" type="button">\n' +
-      `          Toxic Toby's Feed <span id="feedUnreadBadge" class="feed-unread-badge" hidden>0</span>\n` +
-      '        </button>\n' +
-      '        <button id="howToButton" class="secondary-button" type="button">How to play</button>\n' +
-      '        <button id="settingsButton" class="secondary-button" type="button">Settings</button>\n' +
-      '      </nav>\n' +
-      '    </section>\n' +
+      'function showStartupFailure(error, platform) {\n' +
+      '  loadingScreen?.fail?.();\n' +
+      '  console.error(error);\n' +
+      "  document.body.innerHTML = '';\n" +
+      "  const main = document.createElement('main');\n" +
+      "  main.className = 'startup-failure';\n" +
+      "  main.setAttribute('role', 'alert');\n" +
+      "  const action = platform === 'web'\n" +
+      "    ? 'Refresh the page. Clear the site data if the problem remains.'\n" +
+      "    : 'Install the latest app update. Reinstall the app if the problem remains.';\n" +
+      '  main.innerHTML = `\n' +
+      '    <p class="eyebrow">STARTUP CHECK FAILED</p>\n' +
+      '    <h1>Toxic Teddies could not verify its game files.</h1>\n' +
+      '    <p>${action}</p>\n' +
+      '    <p class="build-diagnostic">Build ${buildInfo.buildId}</p>\n' +
+      '  `;\n' +
+      '  document.body.append(main);\n' +
+      '}\n' +
       '\n' +
-      '    <section id="gameView" class="game-view hidden" aria-labelledby="levelTitle">\n' +
-      '      <header class="game-topbar">\n' +
-      '        <button id="backButton" class="top-icon" type="button" aria-label="Back to Teddies">←</button>\n' +
-      '        <div class="game-title">\n' +
-      '          <h2 id="levelTitle">Level 1</h2>\n' +
-      '          <p id="characterName">Toxic Toby</p>\n' +
-      '        </div>\n' +
-      '        <div class="top-actions">\n' +
-      '          <button id="hintButton" class="top-icon" type="button" aria-label="Show a clear arrow trail">◌</button>\n' +
-      '          <button id="resetButton" class="top-icon" type="button" aria-label="Restart this expression">↻</button>\n' +
-      '        </div>\n' +
-      '      </header>\n' +
+      'async function bootstrap() {\n' +
+      '  const bridge = createNativeBridge(buildInfo);\n' +
+      '  startupPlatform = bridge.platform;\n' +
+      '  const content = createContentRegistry();\n' +
+      '  const accessibility = createAccessibilityController();\n' +
       '\n' +
-      '      <div class="status-row">\n' +
-      '        <div id="lives" class="lives" hidden aria-hidden="true"></div>\n' +
-      '        <div class="progress" aria-label="Puzzle progress">\n' +
-      '          <span id="clearProgress">0 / 0</span>\n' +
-      '          <strong id="percentProgress">0%</strong>\n' +
-      '        </div>\n' +
-      '      </div>\n' +
+      "  setLoadingStage('Clearing old contamination…', 0.16);\n" +
+      '  await bridge.disableLegacyBrowserCaches();\n' +
+      "  setLoadingStage('Checking the toxic cargo…', 0.3);\n" +
+      '  const integrity = await verifyBundledContent(buildInfo);\n' +
+      '  const appInfo = await bridge.getAppInfo();\n' +
+      '  const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});\n' +
+      "  setLoadingStage('Restoring your collection…', 0.46);\n" +
+      '  const saveStore = await createSaveStore(bridge, content, buildInfo);\n' +
+      '  const analytics = createAnalytics({bridge, buildInfo: runtimeBuildInfo});\n' +
       '\n' +
-      '      <p id="statusText" class="status-text" role="status" aria-live="polite">Loading solver-verified Toxic Toby pattern…</p>\n' +
+      '  window.ToxicNative = bridge;\n' +
+      '  window.ToxicContent = content;\n' +
+      '  window.ToxicSaveStore = saveStore;\n' +
+      '  window.ToxicProgression = progression;\n' +
+      '  window.ToxicInputControllerFactory = createInputController;\n' +
+      '  window.ToxicAccessibility = accessibility;\n' +
+      '  window.ToxicBuildInfo = runtimeBuildInfo;\n' +
+      '  window.ToxicAnalytics = analytics;\n' +
+      '  window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;\n' +
       '\n' +
-      '      <main class="board-shell">\n' +
-      '        <div id="boardBackdrop" class="board-backdrop" aria-hidden="true"></div>\n' +
-      '        <svg id="board" class="board" role="img" aria-label="Dense arrow puzzle shaped like Toxic Toby">\n' +
-      '          <g id="pieceLayer"></g>\n' +
-      '        </svg>\n' +
-      '        <svg id="previewLayer" class="preview-layer" aria-hidden="true"></svg>\n' +
-      '      </main>\n' +
+      "  setLoadingStage('Waking the laboratory…', 0.6);\n" +
+      '  await bridge.initialize();\n' +
+      '  await analytics.initialize();\n' +
       '\n' +
-      '      <footer class="game-footer">\n' +
-      '        <button id="accessibleMovesButton" class="accessible-moves-trigger" type="button">Open arrow trails</button>\n' +
-      '        <div id="levelButtons" class="level-buttons" aria-label="Toxic Toby expressions"></div>\n' +
-      '      </footer>\n' +
-      '    </section>\n' +
+      "  async function persistLifecycleState(reason = 'lifecycle') {\n" +
+      '    await window.__toxicPersistCurrentSession?.();\n' +
+      '    await saveStore.flush();\n' +
+      "    await analytics.track('progress_saved', {reason});\n" +
+      '  }\n' +
       '\n' +
-      '    <section id="feedView" class="feed-view hidden" aria-labelledby="feedTitle">\n' +
-      '      <header class="feed-topbar">\n' +
-      '        <button id="feedBackButton" class="top-icon" type="button" aria-label="Back to Teddies">←</button>\n' +
-      '        <div>\n' +
-      '          <p class="eyebrow">PRIVATE FEED</p>\n' +
-      '          <h2 id="feedTitle">Toxic Toby</h2>\n' +
-      '        </div>\n' +
-      '        <span class="feed-lock-state" aria-label="Unlocked private feed">UNLOCKED</span>\n' +
-      '      </header>\n' +
+      '  bridge.onPause(async () => {\n' +
+      "    await analytics.track('app_pause');\n" +
+      "    await persistLifecycleState('app_pause');\n" +
+      '  });\n' +
+      '  bridge.onResume(async () => {\n' +
+      '    window.__toxicInputController?.refresh?.();\n' +
+      "    window.dispatchEvent(new Event('resize'));\n" +
+      "    await analytics.track('app_resume');\n" +
+      '  });\n' +
       '\n' +
-      '      <main class="feed-shell">\n' +
-      '        <section class="feed-profile" aria-label="Toxic Toby profile">\n' +
-      '          <div id="feedAvatar" class="feed-avatar feed-avatar-placeholder" aria-label="Toxic Toby profile artwork placeholder">☣</div>\n' +
-      '          <div>\n' +
-      '            <h3 id="feedDisplayName">Toxic Toby</h3>\n' +
-      '            <p id="feedHandle">@ToxicToby</p>\n' +
-      '            <p id="feedBio">Radioactive since Tuesday.</p>\n' +
-      '            <strong id="feedProgress">5 / 5 expressions cleared</strong>\n' +
-      '          </div>\n' +
-      '        </section>\n' +
+      "  document.addEventListener('visibilitychange', () => {\n" +
+      "    if (document.visibilityState === 'hidden') persistLifecycleState('visibility_hidden').catch(console.error);\n" +
+      '    else window.__toxicInputController?.refresh?.();\n' +
+      '  });\n' +
+      "  window.addEventListener('pagehide', () => persistLifecycleState('pagehide').catch(console.error));\n" +
+      "  window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());\n" +
       '\n' +
-      '        <section aria-labelledby="feedPostsTitle">\n' +
-      '          <div class="feed-section-heading">\n' +
-      '            <h3 id="feedPostsTitle">Private posts</h3>\n' +
-      '            <span id="feedUnreadSummary">3 unread</span>\n' +
-      '          </div>\n' +
-      '          <div id="feedPosts" class="feed-posts"></div>\n' +
-      '        </section>\n' +
-      '      </main>\n' +
-      '    </section>\n' +
-      '  </div>\n' +
+      "  if (!bridge.native && 'serviceWorker' in navigator) {\n" +
+      "    navigator.serviceWorker.register('./sw.js?v=37').catch(error => {\n" +
+      "      console.warn('Browser prototype service worker registration failed', error);\n" +
+      '    });\n' +
+      '  }\n' +
       '\n' +
-      '  <div id="completionModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">\n' +
-      '    <section class="modal-card completion-card">\n' +
-      '      <div id="completionArt" class="completion-art completion-art-placeholder" aria-label="Expression artwork placeholder">\n' +
-      '        <span class="completion-art-symbol" aria-hidden="true">☣</span>\n' +
-      '        <span id="completionArtLabel">Final expression artwork will appear here</span>\n' +
-      '      </div>\n' +
-      '      <div class="completion-content">\n' +
-      '        <p id="completionEyebrow" class="eyebrow">EXPRESSION CLEARED</p>\n' +
-      '        <h3 id="completionTitle">Toxic Toby — Neutral</h3>\n' +
-      '        <p id="completionCopy"></p>\n' +
-      '        <div class="modal-actions completion-actions">\n' +
-      '          <button id="replayButton" class="secondary-button" type="button">Replay</button>\n' +
-      '          <button id="shareButton" class="secondary-button" type="button">Share</button>\n' +
-      '          <button id="nextButton" class="primary-button" type="button">Next expression</button>\n' +
-      '          <button id="completionBackButton" class="secondary-button completion-back-button hidden" type="button">Back to Teddies</button>\n' +
-      '        </div>\n' +
-      '      </div>\n' +
-      '    </section>\n' +
-      '  </div>\n' +
+      "  setLoadingStage('Loading the face puzzles…', 0.78);\n" +
+      "  await import('../../dense-loader.js');\n" +
+      '  await window.__toxicBootPromise;\n' +
       '\n' +
-      '  <div id="gameOverModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deadlockTitle">\n' +
-      '    <section class="modal-card">\n' +
-      '      <p class="eyebrow">NO CLEAR EXIT</p>\n' +
-      '      <h3 id="deadlockTitle">No arrowhead currently has a clear lane.</h3>\n' +
-      '      <button id="tryAgainButton" class="primary-button full" type="button">Restart expression</button>\n' +
-      '    </section>\n' +
-      '  </div>\n' +
+      "  setLoadingStage('Finishing the contamination…', 0.92);\n" +
+      '  accessibility.install();\n' +
+      '  await installMobileShell(bridge);\n' +
+      '  await saveStore.markSuccessfulLaunch();\n' +
       '\n' +
-      '  <div id="howToModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="howToTitle">\n' +
-      '    <section class="modal-card text-left">\n' +
-      '      <p class="eyebrow">HOW TO PLAY</p>\n' +
-      '      <h3 id="howToTitle">Pull the face apart one trail at a time.</h3>\n' +
-      '      <ol class="instruction-list">\n' +
-      '        <li>Tap an arrow trail whose arrowhead has a clear lane to the edge.</li>\n' +
-      '        <li>The arrowhead exits first and the connected trail follows.</li>\n' +
-      '        <li>A blocked trail stays in place and highlights the first visible blocker.</li>\n' +
-      '        <li>Use Hint or Open arrow trails when you need a clear move.</li>\n' +
-      '      </ol>\n' +
-      '      <button id="closeHowToButton" class="primary-button full" type="button">Got it</button>\n' +
-      '    </section>\n' +
-      '  </div>\n' +
+      '  document.documentElement.dataset.platform = bridge.platform;\n' +
+      '  document.documentElement.dataset.build = buildInfo.buildId;\n' +
+      "  document.documentElement.classList.toggle('native-app', bridge.native);\n" +
+      '  await loadingScreen?.hide?.();\n' +
+      '}\n' +
       '\n' +
-      '  <div id="settingsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">\n' +
-      '    <section class="modal-card text-left">\n' +
-      '      <p class="eyebrow">SETTINGS</p>\n' +
-      '      <h3 id="settingsTitle">Gameplay and accessibility</h3>\n' +
-      '      <label class="setting-row">\n' +
-      '        <span><strong>Reduced motion</strong><small>Shortens trail-removal movement.</small></span>\n' +
-      '        <input id="reducedMotionToggle" type="checkbox" />\n' +
-      '      </label>\n' +
-      '      <label class="setting-row">\n' +
-      '        <span><strong>High contrast</strong><small>Removes texture and strengthens path contrast.</small></span>\n' +
-      '        <input id="highContrastToggle" type="checkbox" />\n' +
-      '      </label>\n' +
-      '      <label class="setting-row">\n' +
-      '        <span><strong>Touch assistance</strong><small>Uses a larger invisible selection area.</small></span>\n' +
-      '        <input id="touchAssistanceToggle" type="checkbox" />\n' +
-      '      </label>\n' +
-      '      <p id="buildInfo" class="build-info" aria-label="App build information">Checking app build…</p>\n' +
-      '      <button id="closeSettingsButton" class="primary-button full" type="button">Done</button>\n' +
-      '    </section>\n' +
-      '  </div>\n' +
-      '\n' +
-      '  <div id="accessibleMovesModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="accessibleMovesTitle">\n' +
-      '    <section class="modal-card text-left">\n' +
-      '      <p class="eyebrow">OPEN TRAILS</p>\n' +
-      '      <h3 id="accessi'... 389 more characters
+      'bootstrap().catch(error => showStartupFailure(error, startupPlatform));\n'
     
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected:
   actual: |-
-    <!doctype html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-      <meta name="theme-color" content="#0F0C08" />
-      <meta name="description" content="Toxic Teddies Arrow Escape — the face is the puzzle." />
-      <meta name="toxic-teddies-build" content="0.5.0+3.tt01-launch-2026.07.22.1" />
-      <title>Toxic Teddies: Arrow Escape</title>
-      <script>
-        (() => {
-          const onGitHubPages = location.hostname.endsWith('github.io');
-          const alreadyBundled = location.pathname.includes('/play/');
-          if (!onGitHubPages || alreadyBundled) return;
-          const target = new URL('./play/', location.href);
-          target.search = location.search;
-          target.hash = location.hash;
-          location.replace(target.href);
-        })();
-      </script>
-      <link rel="manifest" href="./manifest.webmanifest" />
-      <link rel="stylesheet" href="./src/design-system/tokens.css" />
-      <link rel="stylesheet" href="./styles.css?v=37" />
-      <link rel="stylesheet" href="./compiled-patterns.css?v=37" />
-      <link rel="stylesheet" href="./hard-mode-v3.css?v=37" />
-      <link rel="stylesheet" href="./src/design-system/accessibility.css" />
-      <link rel="stylesheet" href="./src/design-system/completion-feed.css" />
-      <link rel="stylesheet" href="./src/design-system/loading-screen.css" />
-      <link rel="stylesheet" href="./src/design-system/dark-theme-overrides.css" />
-    </head>
-    <body class="boot-loading">
-      <div id="bootSplash" class="boot-splash" role="status" aria-live="polite" aria-label="Toxic Teddies is loading">
-        <div class="boot-splash-card">
-          <img id="bootSplashImage" class="boot-splash-image" alt="Toxic Teddies Arrow Escape loading artwork with Toxic Toby in a radioactive laboratory" />
-          <div class="boot-splash-progress" aria-hidden="true">
-            <span id="bootSplashFill" class="boot-splash-fill"></span>
-          </div>
-          <span class="boot-splash-bubbles" aria-hidden="true"></span>
-          <span id="bootSplashStatus" class="sr-only">Preparing the contamination…</span>
-        </div>
-      </div>
+    import { createAccessibilityController } from '../accessibility/accessibility.js';
+    import { createAnalytics } from '../analytics/analytics.js';
+    import { createContentRegistry } from '../content/content-registry.js';
+    import buildInfo from '../generated/build-info.json';
+    import { createInputController } from '../game/input-controller.js';
+    import * as progression from '../game/progression.js';
+    import { createSaveStore } from '../storage/save-store.js';
+    import { verifyBundledContent } from './content-integrity.js';
+    import { createNativeBridge } from './native-bridge.js';
+    import { installMobileShell } from './mobile-shell.js';
     
-      <div id="appStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    let startupPlatform = 'web';
+    const loadingScreen = window.ToxicLoadingScreen;
+    const setLoadingStage = (message, progress) => loadingScreen?.setStage?.(message, progress);
     
-      <div class="app-shell" inert aria-hidden="true">
-        <section id="homeView" class="home-view" aria-labelledby="homeTitle">
-          <header class="home-header">
-            <div>
-              <p class="eyebrow">SERIES 1</p>
-              <h1 id="homeTitle">TOXIC TEDDIES</h1>
-              <p>The face is the puzzle. Find a clear arrowhead and pull the whole trail free.</p>
-            </div>
-            <div id="collectionCounter" class="collection-counter" aria-label="Playable expressions completed">0 / 5</div>
-          </header>
-          <div id="teddyGrid" class="teddy-grid"></div>
-          <nav class="home-utilities" aria-label="Game information and settings">
-            <button id="feedButton" class="secondary-button feed-home-button hidden" type="button">
-              Toxic Toby's Feed <span id="feedUnreadBadge" class="feed-unread-badge" hidden>0</span>
-            </button>
-            <button id="howToButton" class="secondary-button" type="button">How to play</button>
-            <button id="settingsButton" class="secondary-button" type="button">Settings</button>
-          </nav>
-        </section>
+    function showStartupFailure(error, platform) {
+      loadingScreen?.fail?.();
+      console.error(error);
+      document.body.innerHTML = '';
+      const main = document.createElement('main');
+      main.className = 'startup-failure';
+      main.setAttribute('role', 'alert');
+      const action = platform === 'web'
+        ? 'Refresh the page. Clear the site data if the problem remains.'
+        : 'Install the latest app update. Reinstall the app if the problem remains.';
+      main.innerHTML = `
+        <p class="eyebrow">STARTUP CHECK FAILED</p>
+        <h1>Toxic Teddies could not verify its game files.</h1>
+        <p>${action}</p>
+        <p class="build-diagnostic">Build ${buildInfo.buildId}</p>
+      `;
+      document.body.append(main);
+    }
     
-        <section id="gameView" class="game-view hidden" aria-labelledby="levelTitle">
-          <header class="game-topbar">
-            <button id="backButton" class="top-icon" type="button" aria-label="Back to Teddies">←</button>
-            <div class="game-title">
-              <h2 id="levelTitle">Level 1</h2>
-              <p id="characterName">Toxic Toby</p>
-            </div>
-            <div class="top-actions">
-              <button id="hintButton" class="top-icon" type="button" aria-label="Show a clear arrow trail">◌</button>
-              <button id="resetButton" class="top-icon" type="button" aria-label="Restart this expression">↻</button>
-            </div>
-          </header>
+    async function bootstrap() {
+      const bridge = createNativeBridge(buildInfo);
+      startupPlatform = bridge.platform;
+      const content = createContentRegistry();
+      const accessibility = createAccessibilityController();
     
-          <div class="status-row">
-            <div id="lives" class="lives" hidden aria-hidden="true"></div>
-            <div class="progress" aria-label="Puzzle progress">
-              <span id="clearProgress">0 / 0</span>
-              <strong id="percentProgress">0%</strong>
-            </div>
-          </div>
+      setLoadingStage('Clearing old contamination…', 0.16);
+      await bridge.disableLegacyBrowserCaches();
+      setLoadingStage('Checking the toxic cargo…', 0.3);
+      const integrity = await verifyBundledContent(buildInfo);
+      const appInfo = await bridge.getAppInfo();
+      const runtimeBuildInfo = Object.freeze({...buildInfo, ...appInfo, integrity});
+      setLoadingStage('Restoring your collection…', 0.46);
+      const saveStore = await createSaveStore(bridge, content, buildInfo);
+      const analytics = createAnalytics({bridge, buildInfo: runtimeBuildInfo});
     
-          <p id="statusText" class="status-text" role="status" aria-live="polite">Loading solver-verified Toxic Toby pattern…</p>
+      window.ToxicNative = bridge;
+      window.ToxicContent = content;
+      window.ToxicSaveStore = saveStore;
+      window.ToxicProgression = progression;
+      window.ToxicInputControllerFactory = createInputController;
+      window.ToxicAccessibility = accessibility;
+      window.ToxicBuildInfo = runtimeBuildInfo;
+      window.ToxicAnalytics = analytics;
+      window.__TOXIC_TEDDIES_BUILD__ = buildInfo.buildId;
     
-          <main class="board-shell">
-            <div id="boardBackdrop" class="board-backdrop" aria-hidden="true"></div>
-            <svg id="board" class="board" role="img" aria-label="Dense arrow puzzle shaped like Toxic Toby">
-              <g id="pieceLayer"></g>
-            </svg>
-            <svg id="previewLayer" class="preview-layer" aria-hidden="true"></svg>
-          </main>
+      setLoadingStage('Waking the laboratory…', 0.6);
+      await bridge.initialize();
+      await analytics.initialize();
     
-          <footer class="game-footer">
-            <button id="accessibleMovesButton" class="accessible-moves-trigger" type="button">Open arrow trails</button>
-            <div id="levelButtons" class="level-buttons" aria-label="Toxic Toby expressions"></div>
-          </footer>
-        </section>
+      async function persistLifecycleState(reason = 'lifecycle') {
+        await window.__toxicPersistCurrentSession?.();
+        await saveStore.flush();
+        await analytics.track('progress_saved', {reason});
+      }
     
-        <section id="feedView" class="feed-view hidden" aria-labelledby="feedTitle">
-          <header class="feed-topbar">
-            <button id="feedBackButton" class="top-icon" type="button" aria-label="Back to Teddies">←</button>
-            <div>
-              <p class="eyebrow">PRIVATE FEED</p>
-              <h2 id="feedTitle">Toxic Toby</h2>
-            </div>
-            <span class="feed-lock-state" aria-label="Unlocked private feed">UNLOCKED</span>
-          </header>
+      bridge.onPause(async () => {
+        await analytics.track('app_pause');
+        await persistLifecycleState('app_pause');
+      });
+      bridge.onResume(async () => {
+        window.__toxicInputController?.refresh?.();
+        window.dispatchEvent(new Event('resize'));
+        await analytics.track('app_resume');
+      });
     
-          <main class="feed-shell">
-            <section class="feed-profile" aria-label="Toxic Toby profile">
-              <div id="feedAvatar" class="feed-avatar feed-avatar-placeholder" aria-label="Toxic Toby profile artwork placeholder">☣</div>
-              <div>
-                <h3 id="feedDisplayName">Toxic Toby</h3>
-                <p id="feedHandle">@ToxicToby</p>
-                <p id="feedBio">Radioactive since Tuesday.</p>
-                <strong id="feedProgress">5 / 5 expressions cleared</strong>
-              </div>
-            </section>
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') persistLifecycleState('visibility_hidden').catch(console.error);
+        else window.__toxicInputController?.refresh?.();
+      });
+      window.addEventListener('pagehide', () => persistLifecycleState('pagehide').catch(console.error));
+      window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
     
-            <section aria-labelledby="feedPostsTitle">
-              <div class="feed-section-heading">
-                <h3 id="feedPostsTitle">Private posts</h3>
-                <span id="feedUnreadSummary">3 unread</span>
-              </div>
-              <div id="feedPosts" class="feed-posts"></div>
-            </section>
-          </main>
-        </section>
-      </div>
+      if (!bridge.native && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js?v=37').catch(error => {
+          console.warn('Browser prototype service worker registration failed', error);
+        });
+      }
     
-      <div id="completionModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
-        <section class="modal-card completion-card">
-          <div id="completionArt" class="completion-art completion-art-placeholder" aria-label="Expression artwork placeholder">
-            <span class="completion-art-symbol" aria-hidden="true">☣</span>
-            <span id="completionArtLabel">Final expression artwork will appear here</span>
-          </div>
-          <div class="completion-content">
-            <p id="completionEyebrow" class="eyebrow">EXPRESSION CLEARED</p>
-            <h3 id="completionTitle">Toxic Toby — Neutral</h3>
-            <p id="completionCopy"></p>
-            <div class="modal-actions completion-actions">
-              <button id="replayButton" class="secondary-button" type="button">Replay</button>
-              <button id="shareButton" class="secondary-button" type="button">Share</button>
-              <button id="nextButton" class="primary-button" type="button">Next expression</button>
-              <button id="completionBackButton" class="secondary-button completion-back-button hidden" type="button">Back to Teddies</button>
-            </div>
-          </div>
-        </section>
-      </div>
+      setLoadingStage('Loading the face puzzles…', 0.78);
+      await import('../../dense-loader.js');
+      await window.__toxicBootPromise;
     
-      <div id="gameOverModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deadlockTitle">
-        <section class="modal-card">
-          <p class="eyebrow">NO CLEAR EXIT</p>
-          <h3 id="deadlockTitle">No arrowhead currently has a clear lane.</h3>
-          <button id="tryAgainButton" class="primary-button full" type="button">Restart expression</button>
-        </section>
-      </div>
+      setLoadingStage('Finishing the contamination…', 0.92);
+      accessibility.install();
+      await installMobileShell(bridge);
+      await saveStore.markSuccessfulLaunch();
     
-      <div id="howToModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="howToTitle">
-        <section class="modal-card text-left">
-          <p class="eyebrow">HOW TO PLAY</p>
-          <h3 id="howToTitle">Pull the face apart one trail at a time.</h3>
-          <ol class="instruction-list">
-            <li>Tap an arrow trail whose arrowhead has a clear lane to the edge.</li>
-            <li>The arrowhead exits first and the connected trail follows.</li>
-            <li>A blocked trail stays in place and highlights the first visible blocker.</li>
-            <li>Use Hint or Open arrow trails when you need a clear move.</li>
-          </ol>
-          <button id="closeHowToButton" class="primary-button full" type="button">Got it</button>
-        </section>
-      </div>
+      document.documentElement.dataset.platform = bridge.platform;
+      document.documentElement.dataset.build = buildInfo.buildId;
+      document.documentElement.classList.toggle('native-app', bridge.native);
+      await loadingScreen?.hide?.();
+    }
     
-      <div id="settingsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-        <section class="modal-card text-left">
-          <p class="eyebrow">SETTINGS</p>
-          <h3 id="settingsTitle">Gameplay and accessibility</h3>
-          <label class="setting-row">
-            <span><strong>Reduced motion</strong><small>Shortens trail-removal movement.</small></span>
-            <input id="reducedMotionToggle" type="checkbox" />
-          </label>
-          <label class="setting-row">
-            <span><strong>High contrast</strong><small>Removes texture and strengthens path contrast.</small></span>
-            <input id="highContrastToggle" type="checkbox" />
-          </label>
-          <label class="setting-row">
-            <span><strong>Touch assistance</strong><small>Uses a larger invisible selection area.</small></span>
-            <input id="touchAssistanceToggle" type="checkbox" />
-          </label>
-          <p id="buildInfo" class="build-info" aria-label="App build information">Checking app build…</p>
-          <button id="closeSettingsButton" class="primary-button full" type="button">Done</button>
-        </section>
-      </div>
-    
-      <div id="accessibleMovesModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="accessibleMovesTitle">
-        <section class="modal-card text-left">
-          <p class="eyebrow">OPEN TRAILS</p>
-          <h3 id="accessibleMovesTitle">Choose a trail with a clear exit</h3>
-          <p id="accessibleMovesSummary"></p>
-          <div id="accessibleMovesList" class="accessible-moves-list" role="list"></div>
-          <button id="closeAccessibleMovesButton" class="secondary-button full" type="button">Close</button>
-        </section>
-      </div>
-    
-      <script type="module" src="./src/app/bootstrap.js"></script>
-    </body>
-    </html>
+    bootstrap().catch(error => showStartupFailure(error, startupPlatform));
     
   operator: 'match'
   stack: |-
-    TestContext.<anonymous> (file:///home/runner/work/toxic-teddies-face-trails/toxic-teddies-face-trails/tests/loading-screen.test.mjs:19:10)
+    TestContext.<anonymous> (file:///home/runner/work/toxic-teddies-face-trails/toxic-teddies-face-trails/tests/loading-screen.test.mjs:20:10)
     async Test.run (node:internal/test_runner/test:1054:7)
     async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
   ...
 # Subtest: every Toxic Toby expression has one validated completion destination
 ok 16 - every Toxic Toby expression has one validated completion destination
   ---
-  duration_ms: 1.9082
+  duration_ms: 1.471571
   type: 'test'
   ...
 # Subtest: finishing expressions advances through the complete 1 to 5 chain
 ok 17 - finishing expressions advances through the complete 1 to 5 chain
   ---
-  duration_ms: 0.669299
+  duration_ms: 0.395638
   type: 'test'
   ...
 # Subtest: finishing expression 1 advances to expression 2
 ok 18 - finishing expression 1 advances to expression 2
   ---
-  duration_ms: 0.194834
+  duration_ms: 0.10675
   type: 'test'
   ...
 # Subtest: finishing expression 2 advances to expression 3
 ok 19 - finishing expression 2 advances to expression 3
   ---
-  duration_ms: 0.160119
+  duration_ms: 0.122847
   type: 'test'
   ...
 # Subtest: finishing expression 3 advances to expression 4
 ok 20 - finishing expression 3 advances to expression 4
   ---
-  duration_ms: 0.189593
+  duration_ms: 0.079519
   type: 'test'
   ...
 # Subtest: finishing expression 4 advances to expression 5
 ok 21 - finishing expression 4 advances to expression 5
   ---
-  duration_ms: 0.149158
+  duration_ms: 0.066012
   type: 'test'
   ...
 # Subtest: a missing playable expression is rejected before navigation
 ok 22 - a missing playable expression is rejected before navigation
   ---
-  duration_ms: 0.440482
+  duration_ms: 0.25883
   type: 'test'
   ...
 # Subtest: a missing final feed is rejected before navigation
 ok 23 - a missing final feed is rejected before navigation
   ---
-  duration_ms: 0.221514
+  duration_ms: 0.087517
   type: 'test'
   ...
 # Subtest: finishing all five expressions unlocks the private feed
 ok 24 - finishing all five expressions unlocks the private feed
   ---
-  duration_ms: 0.469315
+  duration_ms: 0.371515
   type: 'test'
   ...
 # Subtest: replaying a completed expression does not erase completion or feed access
 ok 25 - replaying a completed expression does not erase completion or feed access
   ---
-  duration_ms: 0.528807
+  duration_ms: 0.446977
   type: 'test'
   ...
 # Subtest: restart state alone cannot unlock the private feed
 ok 26 - restart state alone cannot unlock the private feed
   ---
-  duration_ms: 0.19831
+  duration_ms: 0.174994
   type: 'test'
   ...
 # Subtest: a locked feed URL cannot bypass the completion requirement
 ok 27 - a locked feed URL cannot bypass the completion requirement
   ---
-  duration_ms: 0.142186
+  duration_ms: 0.137151
   type: 'test'
   ...
 # Subtest: viewed feed posts are unique and unread count survives repeated views
 ok 28 - viewed feed posts are unique and unread count survives repeated views
   ---
-  duration_ms: 0.304919
+  duration_ms: 0.218955
   type: 'test'
   ...
 # Subtest: migrateSave upgrades schema 1 and preserves progress
 ok 29 - migrateSave upgrades schema 1 and preserves progress
   ---
-  duration_ms: 3.071991
+  duration_ms: 1.690476
   type: 'test'
   ...
 # Subtest: migrateSave refuses a future schema without modifying it
 ok 30 - migrateSave refuses a future schema without modifying it
   ---
-  duration_ms: 0.748927
+  duration_ms: 0.343179
   type: 'test'
   ...
 # Subtest: save store migrates legacy completion and writes exact session state
 ok 31 - save store migrates legacy completion and writes exact session state
   ---
-  duration_ms: 2.186359
+  duration_ms: 1.26822
   type: 'test'
   ...
 # Subtest: schema 1 progress migrates to schema 2 without losing completion
 ok 32 - schema 1 progress migrates to schema 2 without losing completion
   ---
-  duration_ms: 1.422323
+  duration_ms: 0.859634
   type: 'test'
   ...
 # Subtest: markCompleted clears active session
 ok 33 - markCompleted clears active session
   ---
-  duration_ms: 0.411628
+  duration_ms: 0.281383
   type: 'test'
   ...
 # Subtest: feed unlocks and viewed posts survive save normalization
 ok 34 - feed unlocks and viewed posts survive save normalization
   ---
-  duration_ms: 0.457884
+  duration_ms: 0.23514
   type: 'test'
   ...
 1..34
@@ -654,5 +463,5 @@ ok 34 - feed unlocks and viewed posts survive save normalization
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 223.742927
+# duration_ms 128.433888
 exit_status=1
