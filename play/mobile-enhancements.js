@@ -7,6 +7,8 @@
   const progression = window.ToxicProgression;
   const analytics = window.ToxicAnalytics;
   let loadingLevel = false;
+  let advancingCompletion = false;
+  let pendingCompletion = null;
 
   if (!progression) throw new Error('Toxic Teddies progression rules are unavailable');
   if (saveStore) state.save = saveStore.getSnapshot();
@@ -69,6 +71,27 @@
 
   function canOpenFeed(teddyId) {
     return progression.canOpenFeed(state.save, teddyId, LEVELS_PER_TEDDY);
+  }
+
+  function completionRoute(teddyId, level) {
+    return progression.completionDestinationForContent({
+      teddyId,
+      level,
+      total: LEVELS_PER_TEDDY,
+      levels: content?.levels || [],
+      feedAvailable: Boolean(content?.getFeed(teddyId)),
+    });
+  }
+
+  function setCompletionBusy(busy) {
+    advancingCompletion = busy;
+    els.nextButton.disabled = busy;
+    els.nextButton.setAttribute('aria-busy', String(busy));
+  }
+
+  function clearPendingCompletion() {
+    pendingCompletion = null;
+    setCompletionBusy(false);
   }
 
   function saveSnapshot(nextSave = state.save) {
@@ -292,13 +315,27 @@
     els.collectionCounter.title = `${playable} playable now · 60-level Founding 12 roadmap`;
   };
 
-  openGame = async function manifestOpenGame(index, requestedLevel) {
+  openGame = async function manifestOpenGame(index, requestedLevel, options = {}) {
     const item = TEDDIES[index];
-    const level = unlocked(item?.id, requestedLevel) ? requestedLevel : latestUnlocked(item);
-    if (!item || !content?.isPlayable(item.id, level)) {
-      window.ToxicAccessibility?.announce?.(`${item?.primary || 'This Teddy'} is coming soon.`);
-      return;
+    if (!item || !Number.isInteger(requestedLevel)) {
+      window.ToxicAccessibility?.announce?.('That expression could not be opened.');
+      return false;
     }
+
+    const requestedIsUnlocked = unlocked(item.id, requestedLevel);
+    const level = requestedIsUnlocked
+      ? requestedLevel
+      : options.requireExact
+        ? null
+        : latestUnlocked(item);
+    if (!level || !content?.isPlayable(item.id, level)) {
+      const message = options.requireExact
+        ? `${item.primary} expression ${requestedLevel} is not ready to open.`
+        : `${item.primary} is coming soon.`;
+      window.ToxicAccessibility?.announce?.(message);
+      return false;
+    }
+
     state.teddyIndex = index;
     state.level = level;
     feedView?.classList.add('hidden');
@@ -309,18 +346,36 @@
     url.searchParams.set('teddy', teddy().id);
     url.searchParams.set('level', String(level));
     history.replaceState({}, '', url);
-    await loadLevel();
+
+    const loaded = await loadLevel();
+    if (!loaded) {
+      window.ToxicAccessibility?.announce?.(`${item.primary} expression ${level} failed to load.`);
+      return false;
+    }
+    return state.level === level && Number(state.data?.level) === level;
   };
 
   loadLevel = async function nativeLoadLevel() {
     loadingLevel = true;
-    await baseLoadLevel();
-    applySavedSession();
-    applyBackdrop();
-    loadingLevel = false;
-    updateProgress();
-    updateAccessibleMoves();
-    window.__toxicInputController?.refresh?.();
+    const expectedTeddyId = teddy().id;
+    const expectedLevel = state.level;
+    try {
+      await baseLoadLevel();
+      const loaded = (
+        state.data?.teddy === expectedTeddyId
+        && Number(state.data?.level) === expectedLevel
+        && state.transitionLock === false
+      );
+      if (!loaded) return false;
+      applySavedSession();
+      applyBackdrop();
+      updateProgress();
+      updateAccessibleMoves();
+      window.__toxicInputController?.refresh?.();
+      return true;
+    } finally {
+      loadingLevel = false;
+    }
   };
 
   updateProgress = function nativeUpdateProgress() {
@@ -330,12 +385,14 @@
   };
 
   resetLevel = function nativeResetLevel() {
+    clearPendingCompletion();
     state.save.activeSession = null;
     saveStore?.replace(state.save);
     return baseResetLevel();
   };
 
   showHome = function nativeShowHome() {
+    clearPendingCompletion();
     if (!els.gameView.classList.contains('hidden')) persistCurrentSession();
     feedView?.classList.add('hidden');
     return baseShowHome();
@@ -354,6 +411,17 @@
     const finalExpression = currentLevel === LEVELS_PER_TEDDY;
     applyCompletionReveal();
 
+    try {
+      pendingCompletion = {
+        ...completionRoute(teddyId, currentLevel),
+        teddyIndex: state.teddyIndex,
+        expressionId: state.data?.expression,
+      };
+    } catch (error) {
+      console.error(error);
+      pendingCompletion = null;
+    }
+
     window.__toxicCurrentLevelSummary = {
       title: 'Toxic Teddies: Arrow Escape',
       text: finalExpression
@@ -366,19 +434,24 @@
     els.completionTitle.textContent = finalExpression
       ? `${teddy().primary.toUpperCase()} COMPLETED`
       : `${teddy().primary} — ${label}`;
-    els.completionCopy.textContent = finalExpression
-      ? `${completedCount} / ${LEVELS_PER_TEDDY} expressions cleared. Private feed unlocked.`
-      : `${label} cleared. Expression ${currentLevel + 1} is now unlocked.`;
+    els.completionCopy.textContent = pendingCompletion
+      ? finalExpression
+        ? `${completedCount} / ${LEVELS_PER_TEDDY} expressions cleared. Private feed unlocked.`
+        : `${label} cleared. Expression ${currentLevel + 1} is now unlocked.`
+      : 'The next destination is unavailable in this build. Your completion is saved.';
     els.nextButton.textContent = finalExpression ? `Enter ${teddy().primary}'s Feed` : 'Next Expression';
-    els.nextButton.disabled = false;
+    els.nextButton.disabled = !pendingCompletion;
+    els.nextButton.setAttribute('aria-busy', 'false');
     completionBackButton?.classList.toggle('hidden', !finalExpression);
     els.completionModal.classList.remove('hidden');
-    setTimeout(() => els.nextButton.focus(), 0);
+    setTimeout(() => (pendingCompletion ? els.nextButton : completionBackButton)?.focus(), 0);
 
     window.ToxicAccessibility?.announce?.(
-      finalExpression
-        ? `${teddy().primary} completed. Private feed unlocked.`
-        : `${label} expression cleared. The next expression is unlocked.`,
+      pendingCompletion
+        ? finalExpression
+          ? `${teddy().primary} completed. Private feed unlocked.`
+          : `${label} expression cleared. The next expression is unlocked.`
+        : 'Completion saved, but the next destination is unavailable.',
     );
 
     if (finalExpression && !wasFeedUnlocked) {
@@ -391,13 +464,55 @@
   };
 
   goNext = async function completionGoNext() {
-    const destination = progression.nextCompletionDestination(state.level, LEVELS_PER_TEDDY);
-    hideModals();
-    if (destination.type === 'expression') {
-      await openGame(state.teddyIndex, destination.level);
-      return;
+    if (advancingCompletion) return false;
+
+    let destination = pendingCompletion;
+    if (!destination) {
+      try {
+        destination = {
+          ...completionRoute(teddy().id, state.level),
+          teddyIndex: state.teddyIndex,
+          expressionId: state.data?.expression,
+        };
+      } catch (error) {
+        console.error(error);
+        window.ToxicAccessibility?.announce?.('The next expression is unavailable. Your completion is saved.');
+        return false;
+      }
     }
-    await openFeed(teddy().id);
+
+    if (!completed(destination.teddyId, destination.sourceLevel)) {
+      window.ToxicAccessibility?.announce?.('Completion must be saved before advancing.');
+      return false;
+    }
+
+    setCompletionBusy(true);
+    try {
+      if (destination.type === 'expression') {
+        const loaded = await openGame(destination.teddyIndex, destination.level, {requireExact: true});
+        if (!loaded || state.level !== destination.level || Number(state.data?.level) !== destination.level) {
+          throw new Error(`Expression ${destination.level} did not load`);
+        }
+        hideModals();
+        pendingCompletion = null;
+        return true;
+      }
+
+      const opened = await openFeed(destination.teddyId);
+      if (!opened) throw new Error(`${destination.teddyId} feed did not open`);
+      pendingCompletion = null;
+      return true;
+    } catch (error) {
+      console.error(error);
+      els.completionCopy.textContent = destination.type === 'expression'
+        ? `Expression ${destination.level} is unlocked, but it did not load. Tap Retry Next Expression.`
+        : 'The private feed is unlocked, but it did not open. Tap Retry Feed.';
+      els.nextButton.textContent = destination.type === 'expression' ? 'Retry Next Expression' : 'Retry Feed';
+      window.ToxicAccessibility?.announce?.('The next screen did not load. Your completion is saved. Try again.');
+      return false;
+    } finally {
+      setCompletionBusy(false);
+    }
   };
 
   setStatus = function accessibleStatus(text) {
@@ -452,6 +567,7 @@
     level: state.level,
     completedExpressions: progression.completedExpressionCount(state.save, teddy().id, LEVELS_PER_TEDDY),
     feedUnlocked: canOpenFeed(teddy().id),
-    next: progression.nextCompletionDestination(state.level, LEVELS_PER_TEDDY),
+    next: pendingCompletion || completionRoute(teddy().id, state.level),
+    advancing: advancingCompletion,
   });
 })();
