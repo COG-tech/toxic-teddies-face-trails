@@ -1,0 +1,151 @@
+body.boot-loading {
+  margin: 0;
+  overflow: hidden;
+  background: #050604;
+}
+
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(141,187,19,.16), transparent 42%),
+    #050604;
+  opacity: 1;
+  transition: opacity 240ms ease, visibility 240ms ease;
+}
+
+.boot-splash-card {
+  position: relative;
+  width: min(100vw, calc(100dvh * .5625));
+  height: min(100dvh, calc(100vw * 1.7778));
+  max-width: 480px;
+  max-height: 853px;
+  overflow: hidden;
+  background: #050604;
+  box-shadow: 0 0 80px rgba(183,226,75,.16);
+}
+
+.boot-splash-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.boot-splash-progress {
+  position: absolute;
+  left: 13.4%;
+  bottom: 9.3%;
+  width: 72.4%;
+  height: 5.2%;
+  overflow: hidden;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 9px rgba(183,226,75,.78));
+}
+
+.boot-splash-fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--boot-progress, .08));
+  transform-origin: left center;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(141,187,19,.12), rgba(183,226,75,.68), rgba(231,211,45,.92));
+  mix-blend-mode: screen;
+  transition: transform 220ms ease-out;
+}
+
+.boot-splash-fill::after {
+  content: '';
+  position: absolute;
+  top: -45%;
+  bottom: -45%;
+  width: 24%;
+  left: -30%;
+  transform: skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,220,.95), transparent);
+  animation: toxic-loading-scan 1.15s linear infinite;
+}
+
+.boot-splash-bubbles,
+.boot-splash-bubbles::before,
+.boot-splash-bubbles::after {
+  position: absolute;
+  content: '';
+  border-radius: 50%;
+  background: rgba(220,255,87,.82);
+  box-shadow: 0 0 10px rgba(183,226,75,.9);
+}
+
+.boot-splash-bubbles {
+  left: 24%;
+  bottom: 12%;
+  width: 7px;
+  height: 7px;
+  animation: toxic-bubble-rise 1.8s ease-in infinite;
+}
+
+.boot-splash-bubbles::before {
+  width: 4px;
+  height: 4px;
+  left: 95px;
+  top: 12px;
+  animation: toxic-bubble-rise 1.4s .35s ease-in infinite;
+}
+
+.boot-splash-bubbles::after {
+  width: 5px;
+  height: 5px;
+  left: 190px;
+  top: -4px;
+  animation: toxic-bubble-rise 1.65s .8s ease-in infinite;
+}
+
+.boot-splash-leaving {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.boot-splash-hidden {
+  display: none;
+}
+
+body.boot-loading .app-shell {
+  visibility: hidden;
+}
+
+@keyframes toxic-loading-scan {
+  from { left: -30%; }
+  to { left: 115%; }
+}
+
+@keyframes toxic-bubble-rise {
+  0% { transform: translateY(12px) scale(.65); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-34px) scale(1.15); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-splash,
+  .boot-splash-fill {
+    transition: none;
+  }
+  .boot-splash-fill::after,
+  .boot-splash-bubbles,
+  .boot-splash-bubbles::before,
+  .boot-splash-bubbles::after {
+    animation: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .boot-splash-card {
+    border-radius: 24px;
+  }
+}
