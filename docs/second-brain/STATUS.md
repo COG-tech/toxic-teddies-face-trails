@@ -1,7 +1,7 @@
 # Canonical Project Status
 
 Updated: 2026-07-24
-Last verified product baseline: `2553750675b2e5930aad49868d7c5287c660eb97`
+Last verified product baseline: `42cd7158b26e0ccfa5e128754400d315bf24f691`
 
 ## Product identity
 
@@ -28,7 +28,10 @@ Last verified product baseline: `2553750675b2e5930aad49868d7c5287c660eb97`
 - Feed unlock, viewed/unread post persistence, and direct-route protection.
 - Manifest-validated completion destinations for `1 → 2 → 3 → 4 → 5 → feed`.
 - Exact next-level loading with duplicate-tap protection, loaded-level verification, preserved completion state, and visible retry behavior.
-- Browser runtime/service-worker cache v35 for the progression repair.
+- Owner-approved Toxic Teddies opening artwork installed as a full-screen startup layer.
+- Loading progress is tied to real startup stages: cache handling, integrity verification, save restoration, native initialization, puzzle loading, accessibility and shell setup.
+- Animated toxic scan, bubbles and progress fill with reduced-motion support.
+- Browser runtime/service-worker cache v36 for the loading-screen release.
 - Canonical second-brain records for status, next action, locked decisions, failures, testing, design system, visual level reference and change control.
 - Automated second-brain validation included in the full repository quality check.
 
@@ -39,6 +42,15 @@ Last verified product baseline: `2553750675b2e5930aad49868d7c5287c660eb97`
 - Issue #29 records this defect.
 - The all-level repair is implemented and automated checks validate the complete manifest chain.
 - The defect remains **pending owner verification** until the published browser build is played through all five expressions and the final feed.
+
+## Canonical loading-screen state
+
+- Approved artwork: Toxic Teddies Arrow Escape with Toxic Toby in the radioactive laboratory.
+- The artwork is bundled locally and does not require a network image request.
+- The in-app loading layer remains visible until startup genuinely completes, with a minimum 700 ms presentation to avoid a flash.
+- The home/game interface is inert and hidden while startup is incomplete.
+- Startup failure removes the splash and shows the existing actionable error screen.
+- Visual placement and animation still require owner review on the published phone build.
 
 ## Canonical design-system memory
 
@@ -55,6 +67,7 @@ The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md`, includ
 
 ## What is not complete
 
+- Owner verification of the animated loading screen on the published phone build remains pending.
 - Owner verification of every repaired completion transition and final feed remains pending.
 - The five owner-produced clean Toxic Toby reveal images have not been inserted.
 - Physical iPhone testing has not been completed.
@@ -74,7 +87,7 @@ The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md`, includ
 
 ## Artwork state
 
-Expected owner-supplied files:
+Expected owner-supplied reveal files:
 
 ```text
 assets/reveals/tt01/neutral.webp
