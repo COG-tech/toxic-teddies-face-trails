@@ -17,6 +17,32 @@ const expected = [
   './assets/backdrops/tt01/maniacal-laugh.webp',
 ];
 
+function fakeStyle() {
+  return {
+    backgroundImage: '',
+    backgroundPosition: '',
+    backgroundSize: '',
+    backgroundRepeat: '',
+    setProperty(name, value) {
+      this[name] = value;
+    },
+    removeProperty(name) {
+      const camel = name.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      this[camel] = '';
+      delete this[name];
+    },
+  };
+}
+
+function fakeClassList() {
+  const values = new Set();
+  return {
+    add: (...names) => names.forEach(name => values.add(name)),
+    remove: (...names) => names.forEach(name => values.delete(name)),
+    contains: name => values.has(name),
+  };
+}
+
 test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => {
   assert.deepEqual(manifest.backdrops.map(item => item.src), expected);
   assert.ok(manifest.backdrops.every(item => item.status === 'owner_approved'));
@@ -31,19 +57,93 @@ test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => 
 });
 
 test('gameplay backdrop presentation is bundled without replacing puzzle input code', () => {
-  assert.match(index, /gameplay-backdrops\.css\?v=42/);
+  assert.match(index, /gameplay-backdrops\.css/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
-  assert.match(runtime, /MutationObserver/);
-  assert.match(runtime, /--gameplay-backdrop-image/);
+  assert.match(bootstrap, /sw\.js\?v=44/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v44/);
+  assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
+  assert.match(runtime, /new Image\(\)/);
+  assert.match(runtime, /gameView\.style\.backgroundImage/);
+  assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
+  assert.doesNotMatch(runtime, /--gameplay-backdrop-image/);
 });
 
-test('gameplay environment paints above the game-view background and behind every control', () => {
-  assert.match(styles, /\.game-view::before\s*\{[\s\S]*z-index:\s*0;/);
-  assert.doesNotMatch(styles, /\.game-view::before\s*\{[\s\S]*z-index:\s*-[0-9]+;/);
-  assert.match(styles, /\.game-view::after\s*\{[\s\S]*z-index:\s*1;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*2;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*min\(76%, 690px\);/);
+test('relative manifest paths become absolute loaded URLs on the real game-view element', async () => {
+  const gameView = {style: fakeStyle(), classList: fakeClassList(), dataset: {}};
+  const boardBackdrop = {style: fakeStyle(), dataset: {}};
+  boardBackdrop.style.backgroundImage = "url('./assets/backdrops/tt01/neutral.webp')";
+  boardBackdrop.style.backgroundPosition = '50% 50%';
+
+  const originals = {
+    document: globalThis.document,
+    Image: globalThis.Image,
+    MutationObserver: globalThis.MutationObserver,
+  };
+
+  class FakeImage {
+    constructor() {
+      this.listeners = new Map();
+      this.complete = false;
+      this.naturalWidth = 0;
+    }
+
+    addEventListener(type, listener) {
+      this.listeners.set(type, listener);
+    }
+
+    set src(value) {
+      this.value = value;
+      this.complete = true;
+      this.naturalWidth = 1080;
+      queueMicrotask(() => this.listeners.get('load')?.());
+    }
+
+    get src() {
+      return this.value;
+    }
+  }
+
+  try {
+    globalThis.document = {
+      baseURI: 'https://example.test/toxic-teddies-face-trails/play/',
+      getElementById(id) {
+        if (id === 'gameView') return gameView;
+        if (id === 'boardBackdrop') return boardBackdrop;
+        return null;
+      },
+    };
+    globalThis.Image = FakeImage;
+    globalThis.MutationObserver = class {
+      constructor(callback) {
+        this.callback = callback;
+      }
+      observe() {}
+    };
+
+    await import(`../src/app/gameplay-backdrops.js?test=${Date.now()}`);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const expectedUrl = 'https://example.test/toxic-teddies-face-trails/play/assets/backdrops/tt01/neutral.webp';
+    assert.equal(gameView.dataset.gameplayBackdropStatus, 'loaded');
+    assert.equal(gameView.dataset.gameplayBackdropUrl, expectedUrl);
+    assert.equal(gameView.style.backgroundImage, `url(${JSON.stringify(expectedUrl)})`);
+    assert.equal(gameView.style.backgroundSize, '100% 100%');
+    assert.equal(gameView.classList.contains('has-gameplay-backdrop'), true);
+  } finally {
+    globalThis.document = originals.document;
+    globalThis.Image = originals.Image;
+    globalThis.MutationObserver = originals.MutationObserver;
+  }
+});
+
+test('portrait environment is visible and the duplicate square board stays transparent', () => {
+  assert.match(styles, /\.game-view\s*\{[\s\S]*width:\s*min\(100%, 56\.25dvh, 560px\);/);
+  assert.match(styles, /\.game-view\s*\{[\s\S]*aspect-ratio:\s*9 \/ 16;/);
+  assert.match(styles, /\.game-view\s*\{[\s\S]*background-size:\s*100% 100%;/);
+  assert.doesNotMatch(styles, /z-index:\s*-[0-9]+;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*1;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*76%;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*background:\s*transparent;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::before\s*\{[\s\S]*display:\s*none;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::after\s*\{[\s\S]*background:\s*none;/);

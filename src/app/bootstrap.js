@@ -88,7 +88,7 @@ async function bootstrap() {
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=42').catch(error => {
+    navigator.serviceWorker.register('./sw.js?v=44').catch(error => {
       console.warn('Browser prototype service worker registration failed', error);
     });
   }
