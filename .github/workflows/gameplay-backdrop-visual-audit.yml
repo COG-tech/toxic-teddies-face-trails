@@ -11,6 +11,8 @@ on:
       - 'sw.js'
       - 'tests/gameplay-backdrops.test.mjs'
       - 'scripts/capture-gameplay-backdrop-audit.mjs'
+      - 'docs/second-brain/FAILURE_LEDGER.md'
+      - 'docs/second-brain/NEXT_ACTION.md'
       - '.github/workflows/gameplay-backdrop-visual-audit.yml'
   workflow_dispatch:
 
