@@ -1,7 +1,7 @@
 # Canonical Project Status
 
 Updated: 2026-07-29
-Last verified product baseline: `a0a3727a6a220652b224db29217159802196c931`
+Last verified product baseline: `2fd3ab26567540047575aa5f05905cdb4b4a62b2`
 
 ## Product identity
 
@@ -43,6 +43,7 @@ Last verified product baseline: `a0a3727a6a220652b224db29217159802196c931`
 - High-contrast mode reduces decorative backdrop visibility and restores a solid readable board surface.
 - Browser runtime/service-worker cache v41 includes the five Toxic Toby WebP gameplay environments.
 - Automated tests reject the retired cream page theme, verify canonical runtime colors, materialize the approved loading WebP byte-for-byte, require direct startup image markup, require visible loading progression, and verify the five gameplay-backdrop mappings and WebP signatures.
+- Quality checks, browser publication, native validation, and store-artifact workflows passed for the gameplay-background source commit before merge.
 - `BRAND_ASSET_PIPELINE.md` records the exact proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
 
 ## Owner-reported defect state
@@ -69,7 +70,7 @@ Last verified product baseline: `a0a3727a6a220652b224db29217159802196c931`
 - The image is now materialized as a normal WebP during every build and referenced directly from HTML.
 - The owner has confirmed that the complete radioactive-laboratory artwork appears.
 - Failure F-012 records that the painted bar looked permanently full and did not visibly progress.
-- The loading lane is now darkened and revealed by a monotonic real-stage fill with cache v40.
+- The loading lane is now darkened and revealed by a monotonic real-stage fill with cache v41.
 - Published confirmation of the repaired bar and home logo remains pending.
 
 ## Canonical loading-screen state
