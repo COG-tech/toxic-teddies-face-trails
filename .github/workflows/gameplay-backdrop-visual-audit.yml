@@ -1,0 +1,148 @@
+name: Gameplay backdrop visual audit
+
+on:
+  pull_request:
+    paths:
+      - 'src/app/gameplay-backdrops.js'
+      - 'src/design-system/gameplay-backdrops.css'
+      - 'src/content/backdrop-manifest.json'
+      - 'assets/backdrops/tt01/**'
+      - 'mobile-enhancements.js'
+      - 'sw.js'
+      - 'tests/gameplay-backdrops.test.mjs'
+      - '.github/workflows/gameplay-backdrop-visual-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rendered-browser-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run repository checks
+        run: npm run check
+
+      - name: Build verified browser bundle
+        run: npm run build
+
+      - name: Start clean local production server
+        shell: bash
+        run: |
+          python3 -m http.server 4173 --directory dist > /tmp/toxic-teddies-server.log 2>&1 &
+          echo $! > /tmp/toxic-teddies-server.pid
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/toxic-teddies-server.log
+          exit 1
+
+      - name: Verify all five WebP assets are served correctly
+        shell: bash
+        run: |
+          mkdir -p audit/assets
+          for file in neutral evil-grin gross angry maniacal-laugh; do
+            curl -fsS "http://127.0.0.1:4173/assets/backdrops/tt01/${file}.webp" -o "audit/assets/${file}.webp"
+            test "$(head -c 4 "audit/assets/${file}.webp")" = "RIFF"
+            test "$(dd if="audit/assets/${file}.webp" bs=1 skip=8 count=4 status=none)" = "WEBP"
+          done
+
+      - name: Render fresh mobile and desktop gameplay screenshots
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=44'
+
+          "$CHROME" \
+            --headless=new \
+            --no-sandbox \
+            --disable-gpu \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --no-first-run \
+            --no-default-browser-check \
+            --user-data-dir=/tmp/tt-mobile-profile \
+            --window-size=430,764 \
+            --virtual-time-budget=12000 \
+            --hide-scrollbars \
+            --screenshot=audit/toxic-toby-neutral-mobile.png \
+            "$URL"
+
+          "$CHROME" \
+            --headless=new \
+            --no-sandbox \
+            --disable-gpu \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --no-first-run \
+            --no-default-browser-check \
+            --user-data-dir=/tmp/tt-desktop-profile \
+            --window-size=1365,768 \
+            --virtual-time-budget=12000 \
+            --hide-scrollbars \
+            --screenshot=audit/toxic-toby-neutral-desktop.png \
+            "$URL"
+
+          test -s audit/toxic-toby-neutral-mobile.png
+          test -s audit/toxic-toby-neutral-desktop.png
+
+      - name: Audit the rendered DOM and resolved background URL
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=44'
+
+          "$CHROME" \
+            --headless=new \
+            --no-sandbox \
+            --disable-gpu \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --no-first-run \
+            --no-default-browser-check \
+            --user-data-dir=/tmp/tt-dom-profile \
+            --window-size=430,764 \
+            --virtual-time-budget=12000 \
+            --dump-dom \
+            "$URL" > audit/rendered-dom.html
+
+          grep -q 'data-gameplay-backdrop-status="loaded"' audit/rendered-dom.html
+          grep -q 'data-gameplay-backdrop-url="http://127.0.0.1:4173/assets/backdrops/tt01/neutral.webp"' audit/rendered-dom.html
+          grep -q 'has-gameplay-backdrop' audit/rendered-dom.html
+          grep -q 'style="[^"]*background-image: url(&quot;http://127.0.0.1:4173/assets/backdrops/tt01/neutral.webp&quot;)' audit/rendered-dom.html
+          ! grep -q 'data-gameplay-backdrop-status="load-error"' audit/rendered-dom.html
+          ! grep -q 'STARTUP CHECK FAILED' audit/rendered-dom.html
+
+      - name: Record screenshot metadata
+        shell: bash
+        run: |
+          file audit/toxic-toby-neutral-mobile.png audit/toxic-toby-neutral-desktop.png | tee audit/screenshot-metadata.txt
+          stat -c '%n %s bytes' audit/toxic-toby-neutral-mobile.png audit/toxic-toby-neutral-desktop.png | tee -a audit/screenshot-metadata.txt
+          cat /tmp/toxic-teddies-server.log > audit/server.log
+
+      - name: Upload rendered audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: toxic-toby-gameplay-backdrop-audit
+          path: audit/
+          if-no-files-found: error
+          retention-days: 14
