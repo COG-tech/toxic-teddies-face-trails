@@ -153,7 +153,7 @@ const diagnosticExpression = `(() => {
   return {
     href: location.href,
     readyState: document.readyState,
-    bodyClass: document.body.className,
+    bodyClass: document.body?.className || null,
     splashClass: splash?.className || null,
     splashDisplay: splashStyle?.display || null,
     splashVisibility: splashStyle?.visibility || null,
@@ -177,6 +177,7 @@ const diagnosticExpression = `(() => {
 
 let finalDiagnostics = null;
 let auditError = null;
+let transientEvaluationError = null;
 
 try {
   await send('Page.enable');
@@ -198,7 +199,15 @@ try {
 
   const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
-    finalDiagnostics = await evaluate(diagnosticExpression);
+    try {
+      finalDiagnostics = await evaluate(diagnosticExpression);
+      transientEvaluationError = null;
+    } catch (error) {
+      transientEvaluationError = error;
+      await sleep(250);
+      continue;
+    }
+
     const ready = finalDiagnostics?.splashHidden
       && finalDiagnostics?.gameVisible
       && finalDiagnostics?.backdropStatus === 'loaded'
@@ -208,6 +217,7 @@ try {
     await sleep(250);
   }
 
+  if (!finalDiagnostics && transientEvaluationError) throw transientEvaluationError;
   if (!finalDiagnostics?.splashHidden) throw new Error('Loading screen did not hand off to gameplay');
   if (!finalDiagnostics?.gameVisible) throw new Error('Gameplay view is not visible');
   if (finalDiagnostics?.backdropStatus !== 'loaded') throw new Error(`Backdrop status is ${finalDiagnostics?.backdropStatus}`);
@@ -234,13 +244,18 @@ try {
 } finally {
   try {
     finalDiagnostics = await evaluate(diagnosticExpression);
+  } catch (evidenceError) {
+    if (!auditError) auditError = evidenceError;
+  }
+
+  try {
     const screenshot = await send('Page.captureScreenshot', {
       format: 'png',
       fromSurface: true,
       captureBeyondViewport: false,
     });
     await writeFile(outputPath, Buffer.from(screenshot.data, 'base64'));
-    const dom = await evaluate('document.documentElement.outerHTML');
+    const dom = await evaluate('document.documentElement?.outerHTML || ""');
     await writeFile(domPath, dom || '', 'utf8');
   } catch (evidenceError) {
     if (!auditError) auditError = evidenceError;
