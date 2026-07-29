@@ -1,64 +1,56 @@
 # Single Canonical Next Action
 
-Updated: 2026-07-24
+Updated: 2026-07-29
 Status: **ACTIVE — OWNER BROWSER VISUAL AND PROGRESSION RETEST REQUIRED**
 
 ## Action
 
-Verify the repaired left-to-right loading bar, real static loading artwork, approved illustrated home logo, canonical dark interface and repaired Toxic Toby completion chain before inserting final reveal artwork or beginning Moldy Molly.
+Verify the published cache-v41 build: loading handoff, illustrated home logo, dark interface, five owner-approved Toxic Toby gameplay backgrounds, arrow readability, and the complete `1 → 2 → 3 → 4 → 5 → feed` chain before inserting final reveal artwork or beginning Moldy Molly.
 
-Playable build after this repair is merged and published:
+Playable build:
 
 ```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?v=11
+https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=41
 ```
 
 ## Required retest sequence
 
 1. Close every old Toxic Teddies tab.
-2. Open the `?v=11` build in a new tab.
-3. Confirm the full radioactive-laboratory image appears immediately—no black card and no broken-image text.
-4. Confirm the illustrated bar begins near empty because the unfilled lane is visibly dark.
-5. Confirm the bright toxic fill moves from left to right through the startup stages.
-6. Confirm the bar visibly reaches 100 percent before the splash leaves.
-7. Confirm the loading screen hands off cleanly to the home screen.
-8. Confirm the home header uses the illustrated green-and-purple Toxic Teddies logo from the approved artwork, not the generic block-letter imitation.
-9. Confirm the home background is dark Grime 900 rather than cream.
-10. Confirm Teddy cards use dark distressed surfaces, parchment text and toxic/slime accents.
-11. Confirm Coming Soon cards are clearly disabled but still readable.
-12. Open Toxic Toby and confirm the surrounding game chrome is dark while the puzzle board remains readable parchment.
-13. Complete Neutral and confirm Evil Grin loads.
-14. Complete Evil Grin and confirm Gross loads.
-15. Complete Gross and confirm Angry loads.
-16. Complete Angry and confirm Maniacal Laugh loads.
-17. Complete Maniacal Laugh and confirm Toxic Toby is shown as `5 / 5` complete.
-18. Open Toxic Toby's private feed and confirm the feed uses the same dark design system.
-19. Return home and confirm the feed remains available.
-20. Refresh and confirm the real loading image, visible bar progress, completion and feed states remain correct.
+2. Open the cache-busted v41 link in a new or private tab.
+3. Confirm the complete radioactive-laboratory loading image appears immediately.
+4. Confirm the loading bar starts visibly unfilled, moves left to right, reaches 100 percent, and hands off cleanly.
+5. Confirm the home header uses the approved illustrated Toxic Teddies logo.
+6. Confirm the home uses the dark Grime 900 interface and Coming Soon cards remain readable.
+7. Open Toxic Toby Neutral and confirm `neutral.webp` fills the gameplay environment behind the arrow puzzle.
+8. Confirm the quiet central panel aligns behind the Teddy face and arrows remain readable.
+9. Complete Neutral and confirm Evil Grin loads with `evil-grin.webp`.
+10. Complete Evil Grin and confirm Gross loads with `gross.webp`.
+11. Complete Gross and confirm Angry loads with `angry.webp`.
+12. Complete Angry and confirm Maniacal Laugh loads with `maniacal-laugh.webp`.
+13. Complete Maniacal Laugh and confirm Toxic Toby becomes `5 / 5` complete.
+14. Open Toxic Toby's private feed and confirm it remains readable and unlocked.
+15. Refresh and confirm the backgrounds, progress, completion state, and feed access persist.
+16. Turn on High Contrast and confirm decorative background visibility drops while the puzzle remains clear.
 
 ## Evidence needed
 
-- One short screen recording showing the bar begin near empty, fill left to right, reach 100 percent and hand off.
-- One screenshot of the approved illustrated logo on the home screen.
-- One screenshot of a gameplay screen.
-- One screenshot of the private Toxic Feed.
+- One gameplay screenshot for each of the five expression backgrounds.
+- One short recording showing loading handoff and at least one arrow removal.
 - Screenshots or recording showing `1 → 2`, `2 → 3`, `3 → 4`, `4 → 5`, and `5 → feed`.
 - Exact text and screenshot for any failure.
-- Device/browser and whether the page was opened fresh or from an existing tab.
+- Device/browser and whether the page was opened fresh, privately, or from an existing tab.
 
 ## Visual behavior to verify
 
-- The loading artwork is a complete edge-to-edge portrait image.
-- No alt text or broken-image icon is visible.
-- The painted green bar has a visibly dark unfilled state.
-- The runtime fill advances monotonically and visibly reaches 100 percent.
-- The home display branding uses the actual approved logo artwork.
-- Grime 900 / Ink 900 dominate the app shell.
-- Toxic Green and Slime Green identify active and completed states.
-- Patch Purple identifies secondary actions.
-- Parchment is used for readable text, puzzle and modal surfaces—not the entire page.
-- The home, game, feed and loading screen feel like one product.
-- The face puzzle remains the dominant game-screen object.
+- Each expression uses its matching owner-approved environment.
+- The environment fills the portrait gameplay view instead of appearing only inside the old square board.
+- The central quiet panel sits behind the arrow face.
+- Pipes, slime, vats, sparks, barrels, and lighting remain peripheral.
+- The face puzzle remains the first visual focus.
+- Dark, cream, green, rust, pink, and yellow trails remain distinguishable.
+- Controls remain outside important face regions and exit lanes.
+- No duplicate square backdrop remains visible.
+- High Contrast restores a strong functional board surface.
 
 ## Progression behavior to verify
 
@@ -73,19 +65,18 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?v=11
 
 - Do not begin Moldy Molly levels.
 - Do not replace the stable path interaction system.
-- Do not mark physical iPhone or Android testing complete.
+- Do not mark physical iPhone or Android testing complete without device evidence.
 - Do not generate substitute reveal artwork.
-- Do not add unrelated design-board concepts such as currencies, shops, ratings or achievements.
+- Do not add currencies, shops, ratings, or unrelated achievement systems.
 
 ## After this action passes
 
 1. Mark issue #29 verified and close it.
-2. Mark issue #34 and failures F-010/F-011/F-012 verified.
-3. Mark loading-screen, home-logo and runtime-palette review complete.
-4. Insert the five owner-approved Toxic Toby reveal images when supplied.
-5. Review reveal crop and readability on target phone sizes.
-6. Complete physical Android and iPhone validation.
-7. Only then start Moldy Molly's complete five-expression package.
+2. Mark the loading-screen, home-logo, dark-runtime, and gameplay-background reviews complete.
+3. Insert the five owner-approved Toxic Toby reveal images when supplied.
+4. Review reveal crop and readability on target phone sizes.
+5. Complete physical Android and iPhone validation.
+6. Only then start Moldy Molly's complete five-expression package.
 
 ## Replacement rule
 
