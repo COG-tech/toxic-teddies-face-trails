@@ -51,8 +51,8 @@ test('startup controller is bundled through the Vite module entry', async () => 
   assert.match(theme, /\.home-brand-logo img/);
   assert.match(bootstrap, /ToxicLoadingScreen\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=42/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v42/);
+  assert.match(bootstrap, /sw\.js\?v=44/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v44/);
   assert.doesNotMatch(serviceWorker, /src\/app\/gameplay-backdrops\.js/);
   assert.doesNotMatch(serviceWorker, /src\/design-system\/gameplay-backdrops\.css/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
