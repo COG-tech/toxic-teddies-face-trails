@@ -1,7 +1,7 @@
 # Canonical Project Status
 
 Updated: 2026-07-29
-Last verified product baseline: `2fd3ab26567540047575aa5f05905cdb4b4a62b2`
+Last independently rendered PR baseline: `146fcc7af3b0abcc08a1ea5c195e7f52b679a9b3`
 
 ## Product identity
 
@@ -32,18 +32,21 @@ Last verified product baseline: `2fd3ab26567540047575aa5f05905cdb4b4a62b2`
 - The splash HTML preloads and references the WebP directly, so the first visual no longer depends on JavaScript or a data URI.
 - The same approved artwork provides the exact Toxic Teddies logo crop on the home screen; a hidden semantic H1 remains for accessibility.
 - The owner confirmed that the complete loading artwork now appears.
-- Loading progress is tied to real startup stages and now uses a dark unfilled lane plus a bright left-to-right fill so movement remains visible over artwork that already contains a painted green bar.
+- Loading progress is tied to real startup stages and uses a dark unfilled lane plus a bright left-to-right fill.
 - Full-motion loading remains visible for at least 1,800 ms and reaches visible 100 percent before handoff; reduced-motion uses 700 ms.
 - Runtime design tokens contain the exact Design System 1.0.0 palette.
 - Home collection, game chrome, feed and accessibility controls use the dark Grime 900 / Ink 900 shell with Toxic Green, Slime Green, Mold Olive and Patch Purple accents.
 - Parchment is reserved for puzzle and modal readability instead of being used as the entire app background.
 - Five owner-approved 9:16 Toxic Toby gameplay environments are stored as local WebP files and mapped in expression order: Neutral, Evil Grin, Gross, Angry and Maniacal Laugh.
-- Gameplay environments are promoted behind the complete game view without changing pointer selection, blocker detection, trail geometry, head-first removal, saves or progression.
-- The old square backdrop layer is suppressed visually after its manifest-selected image is mirrored to the game screen.
-- High-contrast mode reduces decorative backdrop visibility and restores a solid readable board surface.
-- Browser runtime/service-worker cache v41 includes the five Toxic Toby WebP gameplay environments.
-- Automated tests reject the retired cream page theme, verify canonical runtime colors, materialize the approved loading WebP byte-for-byte, require direct startup image markup, require visible loading progression, and verify the five gameplay-backdrop mappings and WebP signatures.
-- Quality checks, browser publication, native validation, and store-artifact workflows passed for the gameplay-background source commit before merge.
+- Gameplay backdrop paths are resolved against `document.baseURI`, preloaded with a real `Image`, and applied as absolute inline backgrounds directly to the 9:16 game view after successful loading.
+- The gameplay element exposes `loading`, `loaded`, `invalid-url`, and `load-error` diagnostics for test and support evidence.
+- The old square backdrop layer is suppressed and the arrow board remains transparent over the artwork's quiet central panel.
+- High-contrast mode removes decorative background art and restores a solid readable board surface.
+- Browser runtime/service-worker cache v44 includes the five Toxic Toby WebP gameplay environments.
+- Automated unit tests validate manifest order, WebP signatures, absolute URL resolution, successful load state, 9:16 layout, and transparent board treatment.
+- A dedicated Chrome production-browser audit builds and serves the real Vite bundle, validates all five WebPs over HTTP, waits for intro handoff, verifies computed background state and 122 Neutral paths, and captures mobile and desktop gameplay screenshots.
+- The successful v44 PR audit screenshots visibly show the radioactive laboratory perimeter, quiet center panel, and arrow face at 430×764 and 1365×768.
+- No runtime exceptions or gameplay-background console errors occurred in the successful rendered audit.
 - `BRAND_ASSET_PIPELINE.md` records the exact proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
 
 ## Owner-reported defect state
@@ -70,8 +73,16 @@ Last verified product baseline: `2fd3ab26567540047575aa5f05905cdb4b4a62b2`
 - The image is now materialized as a normal WebP during every build and referenced directly from HTML.
 - The owner has confirmed that the complete radioactive-laboratory artwork appears.
 - Failure F-012 records that the painted bar looked permanently full and did not visibly progress.
-- The loading lane is now darkened and revealed by a monotonic real-stage fill with cache v41.
+- The loading lane is darkened and revealed by a monotonic real-stage fill with cache v44.
 - Published confirmation of the repaired bar and home logo remains pending.
+
+### Gameplay background rendering
+
+- The owner reported that v42 and v43 showed a flat dark gameplay surface with no visible laboratory environment.
+- Failure F-013 records that class, layout, and source-string tests passed without proving the production browser painted the image.
+- The v44 repair loads the exact WebP to the real game view with an absolute URL and does not activate the visual state until the image load event succeeds.
+- The real production-browser audit passed on both mobile and desktop and the screenshots were manually inspected.
+- Published GitHub Pages owner verification remains pending after merge.
 
 ## Canonical loading-screen state
 
@@ -105,6 +116,7 @@ No custom Toxic Head font file is currently bundled. The approved logo artwork m
 
 ## What is not complete
 
+- Owner verification of the v44 gameplay environment on the published GitHub Pages build remains pending.
 - Owner visual approval of the dark runtime palette on the published phone build remains pending.
 - Owner verification that all five Toxic Toby gameplay backgrounds align with the board and preserve arrow readability remains pending.
 - Owner verification of the repaired animated loading bar and approved home logo remains pending.
@@ -138,6 +150,16 @@ assets/backdrops/tt01/maniacal-laugh.webp
 ```
 
 These files are environment-only gameplay backgrounds. They are separate from the clean expression reveal artwork.
+
+Required rendering evidence for any future backdrop change:
+
+- valid local WebP signature;
+- HTTP 200 from the built production bundle;
+- absolute resolved runtime URL;
+- computed background-image on the visible game view;
+- successful image-load diagnostic;
+- rendered puzzle paths over the backdrop;
+- clean mobile and desktop gameplay screenshots inspected before merge.
 
 ## Reveal artwork state
 
