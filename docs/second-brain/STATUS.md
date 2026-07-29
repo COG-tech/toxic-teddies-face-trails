@@ -1,6 +1,6 @@
 # Canonical Project Status
 
-Updated: 2026-07-24
+Updated: 2026-07-29
 Last verified product baseline: `a0a3727a6a220652b224db29217159802196c931`
 
 ## Product identity
@@ -37,8 +37,12 @@ Last verified product baseline: `a0a3727a6a220652b224db29217159802196c931`
 - Runtime design tokens contain the exact Design System 1.0.0 palette.
 - Home collection, game chrome, feed and accessibility controls use the dark Grime 900 / Ink 900 shell with Toxic Green, Slime Green, Mold Olive and Patch Purple accents.
 - Parchment is reserved for puzzle and modal readability instead of being used as the entire app background.
-- Browser runtime/service-worker cache v40 for the visible loading-progress repair.
-- Automated tests reject the retired cream page theme, verify canonical runtime colors, materialize the approved WebP byte-for-byte, require direct startup image markup, and require visible loading progression.
+- Five owner-approved 9:16 Toxic Toby gameplay environments are stored as local WebP files and mapped in expression order: Neutral, Evil Grin, Gross, Angry and Maniacal Laugh.
+- Gameplay environments are promoted behind the complete game view without changing pointer selection, blocker detection, trail geometry, head-first removal, saves or progression.
+- The old square backdrop layer is suppressed visually after its manifest-selected image is mirrored to the game screen.
+- High-contrast mode reduces decorative backdrop visibility and restores a solid readable board surface.
+- Browser runtime/service-worker cache v41 includes the five Toxic Toby WebP gameplay environments.
+- Automated tests reject the retired cream page theme, verify canonical runtime colors, materialize the approved loading WebP byte-for-byte, require direct startup image markup, require visible loading progression, and verify the five gameplay-backdrop mappings and WebP signatures.
 - `BRAND_ASSET_PIPELINE.md` records the exact proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
 
 ## Owner-reported defect state
@@ -101,6 +105,7 @@ No custom Toxic Head font file is currently bundled. The approved logo artwork m
 ## What is not complete
 
 - Owner visual approval of the dark runtime palette on the published phone build remains pending.
+- Owner verification that all five Toxic Toby gameplay backgrounds align with the board and preserve arrow readability remains pending.
 - Owner verification of the repaired animated loading bar and approved home logo remains pending.
 - Owner verification of every repaired completion transition and final feed remains pending.
 - The five owner-produced clean Toxic Toby reveal images have not been inserted.
@@ -119,7 +124,21 @@ No custom Toxic Head font file is currently bundled. The approved logo artwork m
 - Founding 12 target: 60 total levels.
 - All other Teddy cards must remain honest **COMING SOON** states.
 
-## Artwork state
+## Gameplay backdrop state
+
+Owner-approved gameplay environment files:
+
+```text
+assets/backdrops/tt01/neutral.webp
+assets/backdrops/tt01/evil-grin.webp
+assets/backdrops/tt01/gross.webp
+assets/backdrops/tt01/angry.webp
+assets/backdrops/tt01/maniacal-laugh.webp
+```
+
+These files are environment-only gameplay backgrounds. They are separate from the clean expression reveal artwork.
+
+## Reveal artwork state
 
 Expected owner-supplied reveal files:
 
@@ -131,4 +150,4 @@ assets/reveals/tt01/angry.webp
 assets/reveals/tt01/maniacal-laugh.webp
 ```
 
-Until those files are approved, the app must use the existing neutral placeholders and must not invent replacement character art.
+Until those reveal files are approved, the app must use the existing neutral placeholders and must not invent replacement character art.
