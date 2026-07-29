@@ -10,6 +10,7 @@ on:
       - 'mobile-enhancements.js'
       - 'sw.js'
       - 'tests/gameplay-backdrops.test.mjs'
+      - 'scripts/capture-gameplay-backdrop-audit.mjs'
       - '.github/workflows/gameplay-backdrop-visual-audit.yml'
   workflow_dispatch:
 
@@ -40,7 +41,9 @@ jobs:
           npm run prepare:build
 
       - name: Run repository checks
-        run: npm run check
+        run: |
+          node --check scripts/capture-gameplay-backdrop-audit.mjs
+          npm run check
 
       - name: Build verified browser bundle
         run: npm run build
@@ -69,72 +72,42 @@ jobs:
             test "$(dd if="audit/assets/${file}.webp" bs=1 skip=8 count=4 status=none)" = "WEBP"
           done
 
-      - name: Render fresh mobile and desktop gameplay screenshots
+      - name: Render and audit gameplay after the intro handoff
         shell: bash
         run: |
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME"
           URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=44'
 
-          "$CHROME" \
-            --headless=new \
-            --no-sandbox \
-            --disable-gpu \
-            --disable-dev-shm-usage \
-            --disable-background-networking \
-            --no-first-run \
-            --no-default-browser-check \
-            --user-data-dir=/tmp/tt-mobile-profile \
-            --window-size=430,764 \
-            --virtual-time-budget=12000 \
-            --hide-scrollbars \
-            --screenshot=audit/toxic-toby-neutral-mobile.png \
-            "$URL"
+          CHROME_BIN="$CHROME" node scripts/capture-gameplay-backdrop-audit.mjs \
+            "$URL" audit/toxic-toby-neutral-mobile.png 430 764
 
-          "$CHROME" \
-            --headless=new \
-            --no-sandbox \
-            --disable-gpu \
-            --disable-dev-shm-usage \
-            --disable-background-networking \
-            --no-first-run \
-            --no-default-browser-check \
-            --user-data-dir=/tmp/tt-desktop-profile \
-            --window-size=1365,768 \
-            --virtual-time-budget=12000 \
-            --hide-scrollbars \
-            --screenshot=audit/toxic-toby-neutral-desktop.png \
-            "$URL"
+          CHROME_BIN="$CHROME" node scripts/capture-gameplay-backdrop-audit.mjs \
+            "$URL" audit/toxic-toby-neutral-desktop.png 1365 768
 
           test -s audit/toxic-toby-neutral-mobile.png
           test -s audit/toxic-toby-neutral-desktop.png
 
-      - name: Audit the rendered DOM and resolved background URL
-        shell: bash
+      - name: Verify captured runtime diagnostics
         run: |
-          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
-          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=44'
-
-          "$CHROME" \
-            --headless=new \
-            --no-sandbox \
-            --disable-gpu \
-            --disable-dev-shm-usage \
-            --disable-background-networking \
-            --no-first-run \
-            --no-default-browser-check \
-            --user-data-dir=/tmp/tt-dom-profile \
-            --window-size=430,764 \
-            --virtual-time-budget=12000 \
-            --dump-dom \
-            "$URL" > audit/rendered-dom.html
-
-          grep -q 'data-gameplay-backdrop-status="loaded"' audit/rendered-dom.html
-          grep -q 'data-gameplay-backdrop-url="http://127.0.0.1:4173/assets/backdrops/tt01/neutral.webp"' audit/rendered-dom.html
-          grep -q 'has-gameplay-backdrop' audit/rendered-dom.html
-          grep -q 'neutral.webp' audit/rendered-dom.html
-          ! grep -q 'data-gameplay-backdrop-status="load-error"' audit/rendered-dom.html
-          ! grep -q 'STARTUP CHECK FAILED' audit/rendered-dom.html
+          node --input-type=module <<'NODE'
+          import {readFile} from 'node:fs/promises';
+          for (const name of ['mobile', 'desktop']) {
+            const report = JSON.parse(await readFile(`audit/toxic-toby-neutral-${name}.json`, 'utf8'));
+            if (report.error) throw new Error(`${name} audit failed: ${report.error.message}`);
+            const d = report.diagnostics;
+            if (!d?.splashHidden) throw new Error(`${name}: splash remained visible`);
+            if (!d?.gameVisible) throw new Error(`${name}: game view is hidden`);
+            if (d?.backdropStatus !== 'loaded') throw new Error(`${name}: backdrop status ${d?.backdropStatus}`);
+            if (!d?.computedBackgroundImage?.includes('/assets/backdrops/tt01/neutral.webp')) {
+              throw new Error(`${name}: incorrect computed background ${d?.computedBackgroundImage}`);
+            }
+            if (!(d?.pathCount > 0)) throw new Error(`${name}: no puzzle paths rendered`);
+            if (!report.networkEvents.some(event => event.type === 'response' && event.url.endsWith('/neutral.webp') && event.status === 200)) {
+              throw new Error(`${name}: neutral.webp did not return HTTP 200`);
+            }
+          }
+          NODE
 
       - name: Record screenshot metadata
         shell: bash
