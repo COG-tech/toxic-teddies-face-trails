@@ -150,6 +150,24 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Status:** Fixed in code; published owner confirmation pending.
 
+## F-013 — Gameplay backdrop class activated but the image did not render
+
+**Observed:** The owner’s published v43 screenshot showed the new portrait layout, transparent square board, and resized arrow face, but the gameplay area remained flat black. No pipes, machinery, barrels, slime, or radioactive laboratory perimeter were visible.
+
+**Environment/build:** GitHub Pages browser build v43, desktop Chrome Incognito, reported by the owner on 2026-07-29.
+
+**Expected:** The matching owner-approved 9:16 WebP must visibly fill the gameplay view, with the arrow face positioned over its quiet central panel and the illustrated laboratory frame visible around the perimeter.
+
+**Root cause:** The runtime copied a relative CSS `url('./assets/...')` string from the hidden legacy board layer into a separate presentation layer. Source-string and CSS tests confirmed the class and stacking rules but did not prove that the production browser had successfully loaded and painted the image. The previous release therefore passed non-rendering tests while the image remained absent.
+
+**Resolution:** The runtime now resolves the manifest path against `document.baseURI`, preloads it with a real `Image`, applies the successfully loaded absolute URL directly to `.game-view`, and exposes explicit `loading`, `loaded`, `invalid-url`, and `load-error` diagnostics. The game view uses an exact 9:16 canvas, the legacy square backdrop stays suppressed, and the browser/service-worker cache advances to `v44`.
+
+**Regression evidence:** `tests/gameplay-backdrops.test.mjs` exercises relative-to-absolute URL loading with a fake browser DOM. `.github/workflows/gameplay-backdrop-visual-audit.yml` builds and serves the actual Vite production bundle, validates all five WebPs over HTTP, waits for the intro to hand off, verifies the computed Neutral background and 122 rendered paths in Chrome, and saves mobile and desktop gameplay screenshots. The successful audit artifact visibly shows the radioactive laboratory behind the arrows at 430×764 and 1365×768.
+
+**Never repeat:** Do not approve visual asset rendering from manifest paths, class names, CSS strings, or successful compilation alone. A gameplay-background change must pass a clean production-browser render, computed-style/network assertions, and screenshot inspection before merge.
+
+**Status:** Fixed and independently rendered in the PR build; published owner verification pending.
+
 ## Incident entry template
 
 ```text
