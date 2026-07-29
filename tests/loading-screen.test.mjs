@@ -28,7 +28,7 @@ test('approved Toxic Teddies loading artwork materializes as the exact real WebP
   assert.deepEqual(actual, expected, 'materialized artwork differs from the approved source chunks');
 });
 
-test('startup markup loads the approved artwork without waiting for JavaScript', async () => {
+test('startup controller is bundled through the Vite module entry', async () => {
   const [index, loader, bootstrap, serviceWorker, theme] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../src/app/loading-screen.js', import.meta.url), 'utf8'),
@@ -36,18 +36,25 @@ test('startup markup loads the approved artwork without waiting for JavaScript',
     readFile(new URL('../sw.js', import.meta.url), 'utf8'),
     readFile(new URL('../src/design-system/dark-theme-overrides.css', import.meta.url), 'utf8'),
   ]);
+
   assert.match(index, /id="bootSplash"/);
   assert.match(index, /id="bootSplashImage"[\s\S]*src="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp"/);
   assert.match(index, /<link rel="preload" as="image" type="image\/webp" href="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp" \/>/);
-  assert.match(index, /<script src="\.\/src\/app\/loading-screen\.js\?v=41"><\/script>/);
-  assert.doesNotMatch(loader, /loading-image-part-a|data:image\/webp;base64|import\s/);
+  assert.match(index, /<script type="module" src="\.\/src\/app\/bootstrap\.js\?v=42"><\/script>/);
+  assert.doesNotMatch(index, /<script src="\.\/src\/app\/loading-screen\.js/);
+  assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
+  assert.match(bootstrap, /^import '\.\/loading-screen\.js';/m);
+  assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
+  assert.doesNotMatch(loader, /loading-image-part-a|data:image\/webp;base64/);
   assert.match(index, /class="home-brand-logo"[\s\S]*toxic-teddies-loading\.webp/);
   assert.match(theme, /\.home-brand-logo/);
   assert.match(theme, /\.home-brand-logo img/);
-  assert.match(bootstrap, /ToxicLoadingScreen\?\.hide/);
+  assert.match(bootstrap, /ToxicLoadingScreen\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=41/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v41/);
+  assert.match(bootstrap, /sw\.js\?v=42/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v42/);
+  assert.doesNotMatch(serviceWorker, /src\/app\/gameplay-backdrops\.js/);
+  assert.doesNotMatch(serviceWorker, /src\/design-system\/gameplay-backdrops\.css/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
 });
 
