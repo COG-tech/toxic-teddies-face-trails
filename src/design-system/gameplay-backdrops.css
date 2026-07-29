@@ -5,6 +5,7 @@
   min-height: min(100dvh, 980px);
   overflow: hidden;
   border-radius: var(--tt-radius-lg, 22px);
+  background: transparent;
 }
 
 .game-view::before,
@@ -15,8 +16,9 @@
   pointer-events: none;
 }
 
+/* Keep the environment inside the game-view stacking context, above the element background. */
 .game-view::before {
-  z-index: -2;
+  z-index: 0;
   background-color: var(--tt-grime-900, #0F0C08);
   background-image: var(--gameplay-backdrop-image, none);
   background-repeat: no-repeat;
@@ -26,11 +28,12 @@
   transition: opacity .18s ease;
 }
 
+/* A restrained readability wash; the illustrated perimeter must remain visible. */
 .game-view::after {
-  z-index: -1;
+  z-index: 1;
   background:
-    linear-gradient(180deg, rgba(15,12,8,.72) 0%, rgba(15,12,8,.16) 18%, rgba(15,12,8,.06) 72%, rgba(15,12,8,.72) 100%),
-    linear-gradient(90deg, rgba(15,12,8,.36), transparent 14% 86%, rgba(15,12,8,.36));
+    linear-gradient(180deg, rgba(15,12,8,.34) 0%, rgba(15,12,8,.06) 18%, rgba(15,12,8,.02) 76%, rgba(15,12,8,.38) 100%),
+    linear-gradient(90deg, rgba(15,12,8,.16), transparent 11% 89%, rgba(15,12,8,.16));
   opacity: 0;
 }
 
@@ -41,7 +44,7 @@
 
 .game-view.has-gameplay-backdrop > * {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .game-view.has-gameplay-backdrop .game-topbar,
@@ -50,7 +53,7 @@
 .game-view.has-gameplay-backdrop .game-footer {
   margin-inline: 10px;
   border-radius: 14px;
-  background: rgba(15,12,8,.58);
+  background: rgba(15,12,8,.56);
   box-shadow: inset 0 0 0 1px rgba(183,226,75,.08);
   backdrop-filter: blur(5px);
 }
@@ -76,22 +79,25 @@
   padding: 12px;
 }
 
-/* The approved image is promoted to the whole gameplay screen, so suppress the old square duplicate. */
+/* The approved portrait image supplies the panel and frame. Do not paint a second square board over it. */
 .game-view.has-gameplay-backdrop .board-backdrop {
   opacity: 0 !important;
 }
 
 .game-view.has-gameplay-backdrop .board-shell {
-  border-color: rgba(29,22,15,.72);
-  background: rgba(119,121,101,.13);
-  box-shadow:
-    0 18px 44px rgba(0,0,0,.34),
-    inset 0 0 0 1px rgba(243,228,189,.06);
+  width: min(76%, 690px);
+  border-color: transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.game-view.has-gameplay-backdrop .board-shell::before {
+  display: none;
 }
 
 .game-view.has-gameplay-backdrop .board-shell::after {
-  background:
-    radial-gradient(circle at 50% 50%, transparent 64%, rgba(15,12,8,.09) 100%);
+  background: none;
 }
 
 .high-contrast .game-view.has-gameplay-backdrop::before {
@@ -100,7 +106,9 @@
 }
 
 .high-contrast .game-view.has-gameplay-backdrop .board-shell {
+  border-radius: var(--tt-radius-lg, 22px);
   background: var(--tt-parchment-100, #F3E4BD);
+  box-shadow: 0 14px 38px rgba(0,0,0,.42);
 }
 
 .reduced-motion .game-view::before {
@@ -117,5 +125,11 @@
   .game-view.has-gameplay-backdrop .status-text,
   .game-view.has-gameplay-backdrop .game-footer {
     margin-inline: 6px;
+  }
+
+  .game-view.has-gameplay-backdrop .board-shell {
+    width: 76%;
+    border-right: 0;
+    border-left: 0;
   }
 }
