@@ -36,9 +36,8 @@ test('startup markup loads the approved artwork without waiting for JavaScript',
     readFile(new URL('../sw.js', import.meta.url), 'utf8'),
     readFile(new URL('../src/design-system/dark-theme-overrides.css', import.meta.url), 'utf8'),
   ]);
-  const assetPath = './assets/branding/loading/toxic-teddies-loading.webp';
   assert.match(index, /id="bootSplash"/);
-  assert.match(index, new RegExp(`id="bootSplashImage"[\s\S]*src="${assetPath.replaceAll('.', '\.') }"`));
+  assert.match(index, /id="bootSplashImage"[\s\S]*src="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp"/);
   assert.match(index, /<link rel="preload" as="image" type="image\/webp" href="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp" \/>/);
   assert.match(index, /<script src="\.\/src\/app\/loading-screen\.js\?v=41"><\/script>/);
   assert.doesNotMatch(loader, /loading-image-part-a|data:image\/webp;base64|import\s/);
