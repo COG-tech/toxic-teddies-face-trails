@@ -36,6 +36,15 @@ test('gameplay backdrop presentation is bundled without replacing puzzle input c
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
   assert.match(runtime, /MutationObserver/);
   assert.match(runtime, /--gameplay-backdrop-image/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop::before/);
-  assert.match(styles, /\.board-backdrop\s*\{/);
+});
+
+test('gameplay environment paints above the game-view background and behind every control', () => {
+  assert.match(styles, /\.game-view::before\s*\{[\s\S]*z-index:\s*0;/);
+  assert.doesNotMatch(styles, /\.game-view::before\s*\{[\s\S]*z-index:\s*-[0-9]+;/);
+  assert.match(styles, /\.game-view::after\s*\{[\s\S]*z-index:\s*1;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*2;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*min\(76%, 690px\);/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*background:\s*transparent;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::before\s*\{[\s\S]*display:\s*none;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::after\s*\{[\s\S]*background:\s*none;/);
 });
