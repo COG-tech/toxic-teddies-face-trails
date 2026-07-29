@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toxic-teddies-arrow-escape-v40';
+const CACHE_NAME = 'toxic-teddies-arrow-escape-v41';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -9,17 +9,19 @@ const CORE_ASSETS = [
   './mobile-enhancements.js?v=35',
   './analytics-enhancements.js?v=35',
   './manifest.webmanifest',
+  './src/app/gameplay-backdrops.js?v=41',
+  './src/design-system/gameplay-backdrops.css?v=41',
   './assets/branding/loading/toxic-teddies-loading.webp',
   './levels/tt01/level-1.json',
   './levels/tt01/level-2.json',
   './levels/tt01/level-3.json',
   './levels/tt01/level-4.json',
   './levels/tt01/level-5.json',
-  './assets/backdrops/tt01/neutral.svg',
-  './assets/backdrops/tt01/evil-grin.svg',
-  './assets/backdrops/tt01/gross.svg',
-  './assets/backdrops/tt01/angry.svg',
-  './assets/backdrops/tt01/maniacal-laugh.svg',
+  './assets/backdrops/tt01/neutral.webp',
+  './assets/backdrops/tt01/evil-grin.webp',
+  './assets/backdrops/tt01/gross.webp',
+  './assets/backdrops/tt01/angry.webp',
+  './assets/backdrops/tt01/maniacal-laugh.webp',
 ];
 
 self.addEventListener('install', event => {
