@@ -145,11 +145,21 @@ const diagnosticExpression = `(() => {
   const splash = document.getElementById('bootSplash');
   const game = document.getElementById('gameView');
   const board = document.querySelector('.board-shell');
+  const puzzle = document.querySelector('.compiled-piece-layer');
   const splashStyle = splash ? getComputedStyle(splash) : null;
   const gameStyle = game ? getComputedStyle(game) : null;
   const boardStyle = board ? getComputedStyle(board) : null;
   const gameRect = game?.getBoundingClientRect();
   const boardRect = board?.getBoundingClientRect();
+  const puzzleRect = puzzle?.getBoundingClientRect();
+  const boardWidthRatio = gameRect?.width && boardRect ? boardRect.width / gameRect.width : null;
+  const puzzleWidthRatio = gameRect?.width && puzzleRect ? puzzleRect.width / gameRect.width : null;
+  const puzzleHeightRatio = gameRect?.height && puzzleRect ? puzzleRect.height / gameRect.height : null;
+  const puzzleInsideGame = Boolean(gameRect && puzzleRect
+    && puzzleRect.left >= gameRect.left - 1
+    && puzzleRect.right <= gameRect.right + 1
+    && puzzleRect.top >= gameRect.top - 1
+    && puzzleRect.bottom <= gameRect.bottom + 1);
   return {
     href: location.href,
     readyState: document.readyState,
@@ -170,6 +180,11 @@ const diagnosticExpression = `(() => {
     gameRect: gameRect ? {x: gameRect.x, y: gameRect.y, width: gameRect.width, height: gameRect.height} : null,
     boardBackground: boardStyle?.backgroundImage || null,
     boardRect: boardRect ? {x: boardRect.x, y: boardRect.y, width: boardRect.width, height: boardRect.height} : null,
+    puzzleRect: puzzleRect ? {x: puzzleRect.x, y: puzzleRect.y, width: puzzleRect.width, height: puzzleRect.height} : null,
+    boardWidthRatio,
+    puzzleWidthRatio,
+    puzzleHeightRatio,
+    puzzleInsideGame,
     pathCount: document.querySelectorAll('.dense-path, .path-piece').length,
     statusText: document.getElementById('statusText')?.textContent || null,
   };
@@ -212,7 +227,10 @@ try {
       && finalDiagnostics?.gameVisible
       && finalDiagnostics?.backdropStatus === 'loaded'
       && finalDiagnostics?.computedBackgroundImage?.includes('/assets/backdrops/tt01/neutral.webp')
-      && finalDiagnostics?.pathCount > 0;
+      && finalDiagnostics?.pathCount > 0
+      && finalDiagnostics?.boardWidthRatio >= 0.9
+      && finalDiagnostics?.puzzleWidthRatio >= 0.68
+      && finalDiagnostics?.puzzleInsideGame;
     if (ready) break;
     await sleep(250);
   }
@@ -225,6 +243,13 @@ try {
     throw new Error(`Computed background image is incorrect: ${finalDiagnostics?.computedBackgroundImage}`);
   }
   if (!(finalDiagnostics?.pathCount > 0)) throw new Error('No puzzle paths rendered');
+  if (!(finalDiagnostics?.boardWidthRatio >= 0.9)) {
+    throw new Error(`Board is too narrow: ${finalDiagnostics?.boardWidthRatio}`);
+  }
+  if (!(finalDiagnostics?.puzzleWidthRatio >= 0.68)) {
+    throw new Error(`Visible Teddy puzzle is too small: ${finalDiagnostics?.puzzleWidthRatio}`);
+  }
+  if (!finalDiagnostics?.puzzleInsideGame) throw new Error('Enlarged Teddy puzzle is clipped outside the gameplay canvas');
 
   const backdropResponse = networkEvents.find(event =>
     event.type === 'response'
