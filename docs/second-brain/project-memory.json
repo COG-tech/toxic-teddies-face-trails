@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-24",
+  "updatedAt": "2026-07-29",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "a0a3727a6a220652b224db29217159802196c931",
+  "baselineCommit": "2fd3ab26567540047575aa5f05905cdb4b4a62b2",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -51,17 +51,7 @@
     "typography": {
       "display": "Toxic Head custom",
       "body": "Inter system",
-      "runtimeDisplayPolicy": "Use the approved illustrated Toxic Teddies logo where exact branding is required because no custom Toxic Head font file is bundled.",
-      "scale": {
-        "h1": "48px/56px bold",
-        "h2": "32px/40px bold",
-        "h3": "24px/32px bold",
-        "h4": "18px/24px semibold",
-        "bodyLarge": "16px/24px regular",
-        "body": "14px/20px regular",
-        "small": "12px/16px regular",
-        "micro": "11px/14px regular"
-      }
+      "runtimeDisplayPolicy": "Use the approved illustrated Toxic Teddies logo where exact branding is required because no custom Toxic Head font file is bundled."
     },
     "spacingScale": [4, 8, 12, 16, 24, 32, 64],
     "gridColumns": 12,
@@ -71,32 +61,6 @@
       "desktop": "768-1099px",
       "wide": "1100px+"
     },
-    "componentFamilies": [
-      "primary buttons",
-      "secondary buttons",
-      "icon buttons",
-      "text inputs",
-      "dropdowns",
-      "checkboxes",
-      "toggles",
-      "radio buttons",
-      "Teddy collection cards",
-      "expression and level cards",
-      "locked and coming-soon cards",
-      "top navigation",
-      "mobile bottom navigation",
-      "success warning error and information alerts",
-      "achievement badges",
-      "level-complete modal"
-    ],
-    "achievementConcepts": [
-      "First Clear",
-      "Perfect",
-      "Speed Demon",
-      "Collector",
-      "Survivor",
-      "Toxic Master"
-    ],
     "accessibilityStandards": [
       "WCAG 2.1 AA",
       "keyboard navigation",
@@ -128,17 +92,20 @@
     "secondaryActions": "Patch Purple",
     "supportingFrames": "Mold Olive and Brown 700",
     "readabilitySurfaces": "Parchment 100 and Parchment 300",
-    "boardPolicy": "Parchment board retained for arrow and path readability inside dark game chrome",
+    "boardPolicy": "The owner-approved environment sits behind the complete game view while the central board remains quiet and readable.",
     "modalPolicy": "Parchment modal cards with dark text and toxic primary actions",
     "retiredTheme": "Cream page background with translucent white cards",
-    "browserCacheVersion": 40,
+    "browserCacheVersion": 41,
     "runtimeFiles": [
       "src/design-system/tokens.css",
       "styles.css",
-      "src/design-system/dark-theme-overrides.css"
+      "src/design-system/dark-theme-overrides.css",
+      "src/design-system/gameplay-backdrops.css",
+      "src/app/gameplay-backdrops.js"
     ],
     "regressionTests": [
       "tests/design-system-runtime.test.mjs",
+      "tests/gameplay-backdrops.test.mjs",
       "scripts/validate-second-brain.mjs"
     ]
   },
@@ -161,61 +128,52 @@
     "delivery": "Real preloaded WebP file materialized into public assets and copied unchanged by Vite",
     "runtimePath": "assets/branding/loading/toxic-teddies-loading.webp",
     "publicBuildPath": "public/assets/branding/loading/toxic-teddies-loading.webp",
-    "sourceParts": [
-      "src/generated/loading-image-approved-part-01.txt",
-      "src/generated/loading-image-approved-part-02.txt",
-      "src/generated/loading-image-approved-part-03.txt",
-      "src/generated/loading-image-approved-part-04.txt",
-      "src/generated/loading-image-approved-part-05.txt"
-    ],
     "expectedByteLength": 64450,
     "expectedSha256": "a0a6a06e34b538027b755427d0a24026b988d69705468dff1bf075e2286198ed",
     "offlineCapable": true,
     "minimumVisibleMs": 1800,
     "reducedMotionMinimumVisibleMs": 700,
-    "browserCacheVersion": 40,
-    "realStartupStages": [
-      "prepare contamination",
-      "disable legacy browser caches",
-      "verify bundled content integrity",
-      "restore save progress",
-      "initialize native bridge and analytics",
-      "load deterministic face puzzles",
-      "install accessibility and mobile shell",
-      "mark successful launch"
-    ],
-    "animation": [
-      "dark unfilled lane over the painted artwork bar",
-      "monotonic left-to-right toxic fill",
-      "scanning highlight",
-      "rising bubbles",
-      "visible 100 percent completion before handoff"
-    ],
+    "browserCacheVersion": 41,
     "reducedMotionSupported": true,
     "ownerArtworkVisibilityConfirmed": true,
     "ownerProgressAnimationReviewPending": true
+  },
+  "gameplayBackdrops": {
+    "approved": true,
+    "teddyId": "tt01",
+    "expressionOrder": [
+      "neutral",
+      "evil_grin",
+      "gross",
+      "angry",
+      "maniacal_laugh"
+    ],
+    "manifest": "src/content/backdrop-manifest.json",
+    "files": [
+      "assets/backdrops/tt01/neutral.webp",
+      "assets/backdrops/tt01/evil-grin.webp",
+      "assets/backdrops/tt01/gross.webp",
+      "assets/backdrops/tt01/angry.webp",
+      "assets/backdrops/tt01/maniacal-laugh.webp"
+    ],
+    "presentation": "The manifest-selected environment is mirrored behind the complete game view and the old square duplicate is suppressed.",
+    "offlineCapable": true,
+    "cacheVersion": 41,
+    "ownerVisualReviewPending": true
   },
   "brandAssetPipeline": {
     "canonicalDocument": "docs/second-brain/BRAND_ASSET_PIPELINE.md",
     "materializer": "scripts/materialize-brand-assets.mjs",
     "buildRule": "Essential first-paint artwork must be a real file referenced directly from HTML and must not depend on JavaScript execution.",
     "viteRule": "Place exact-name static assets under public so Vite copies them unchanged into dist.",
-    "htmlRule": "Preload the WebP and assign it directly to the splash img src.",
-    "nativeRule": "Capacitor sync copies the same verified dist asset into Android and iOS.",
-    "offlineRule": "The service worker caches the same runtime path.",
-    "logoRule": "Use a CSS crop of the approved artwork for exact Toxic Teddies lettering while retaining a hidden semantic H1.",
-    "forbidden": [
-      "JavaScript image imports for first paint",
-      "Base64 data URI splash sources",
-      "hand-edited play build assets",
-      "generic font imitation of the approved logo",
-      "silent checksum filename crop or cache changes"
-    ]
+    "nativeRule": "Capacitor sync copies the verified dist assets into Android and iOS.",
+    "offlineRule": "The service worker caches the same runtime paths."
   },
   "activeNextAction": {
-    "id": "verify-dark-runtime-loading-and-completion-chain",
+    "id": "verify-v41-gameplay-backgrounds-and-completion-chain",
     "status": "owner_browser_visual_and_progression_retest_required",
-    "summary": "Verify the repaired visible loading bar, approved home logo, canonical dark home/game/feed surfaces, and all five expression transitions through the private feed in the published browser build.",
+    "summary": "Verify the cache-v41 loading handoff, illustrated home logo, dark runtime, five Toxic Toby gameplay backgrounds, arrow readability, and all expression transitions through the private feed.",
+    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=41",
     "blockNewTeddyProduction": true
   },
   "knownDefects": [
@@ -235,7 +193,7 @@
       "ledger": "F-012",
       "title": "Illustrated loading bar looked permanently full",
       "status": "fixed_in_code_pending_owner_visual_review",
-      "requiredEvidence": "Owner confirms the published v40 bar visibly advances from near empty to 100 percent before the app opens."
+      "requiredEvidence": "Owner confirms the published v41 bar visibly advances from near empty to 100 percent before the app opens."
     }
   ],
   "artwork": {
@@ -250,7 +208,6 @@
     "placeholderPolicy": "Use clearly non-final placeholders only. Do not generate or substitute final character art without owner approval."
   },
   "visualReference": {
-    "source": "Owner-supplied portrait mobile arrow-puzzle screenshot on 2026-07-24",
     "purpose": "Composition and readability only",
     "requirements": [
       "The face puzzle is the dominant screen object",
@@ -260,12 +217,6 @@
       "Arrowheads remain readable at normal phone size",
       "The background remains secondary",
       "Trail removal reveals the expression beneath the same face area"
-    ],
-    "forbiddenCopies": [
-      "blue plastic 3D tile style",
-      "exact green background",
-      "exact HUD and currency controls",
-      "exact fonts icons shadows panels branding or commercial assets"
     ]
   },
   "lockedSystems": [
@@ -279,11 +230,13 @@
     "canonical startup loading screen",
     "real static brand-image delivery pipeline",
     "canonical runtime design-system palette",
+    "manifest-driven gameplay backdrops",
     "browser Vite publication under play",
     "native offline bundling",
     "content integrity verification"
   ],
   "humanGatesPending": [
+    "owner verifies all five gameplay backgrounds map correctly and preserve arrow readability",
     "owner verifies dark home game and feed palette alignment",
     "owner verifies loading-bar progress home-logo crop and handoff",
     "owner verifies all five completion transitions and final feed",
