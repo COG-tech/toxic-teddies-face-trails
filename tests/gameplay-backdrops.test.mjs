@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const manifest = JSON.parse(await readFile('src/content/backdrop-manifest.json', 'utf8'));
 const index = await readFile('index.html', 'utf8');
+const bootstrap = await readFile('src/app/bootstrap.js', 'utf8');
 const runtime = await readFile('src/app/gameplay-backdrops.js', 'utf8');
 const styles = await readFile('src/design-system/gameplay-backdrops.css', 'utf8');
 const serviceWorker = await readFile('sw.js', 'utf8');
@@ -29,9 +30,10 @@ test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => 
   }
 });
 
-test('gameplay backdrop presentation is loaded without replacing puzzle input code', () => {
-  assert.match(index, /gameplay-backdrops\.css\?v=41/);
-  assert.match(index, /gameplay-backdrops\.js\?v=41/);
+test('gameplay backdrop presentation is bundled without replacing puzzle input code', () => {
+  assert.match(index, /gameplay-backdrops\.css\?v=42/);
+  assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
+  assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
   assert.match(runtime, /MutationObserver/);
   assert.match(runtime, /--gameplay-backdrop-image/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop::before/);
