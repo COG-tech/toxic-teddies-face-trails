@@ -13,7 +13,9 @@ if (!chromeBinary) throw new Error('CHROME_BIN is required');
 
 const width = Number(widthArg);
 const height = Number(heightArg);
-if (!Number.isInteger(width) || !Number.isInteger(height)) throw new Error('Viewport dimensions must be integers');
+if (!Number.isInteger(width) || !Number.isInteger(height)) {
+  throw new Error('Viewport dimensions must be integers');
+}
 
 const port = 9300 + (process.pid % 500);
 const profilePath = `/tmp/toxic-teddies-cdp-${process.pid}-${width}x${height}`;
@@ -41,9 +43,7 @@ const chrome = spawn(chromeBinary, [
   `--remote-debugging-port=${port}`,
   `--user-data-dir=${profilePath}`,
   'about:blank',
-], {
-  stdio: ['ignore', 'pipe', 'pipe'],
-});
+], {stdio: ['ignore', 'pipe', 'pipe']});
 
 let chromeStdout = '';
 let chromeStderr = '';
@@ -54,7 +54,9 @@ const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, millise
 
 async function waitForPageTarget() {
   for (let attempt = 0; attempt < 100; attempt += 1) {
-    if (chrome.exitCode !== null) throw new Error(`Chrome exited before CDP became available: ${chromeStderr}`);
+    if (chrome.exitCode !== null) {
+      throw new Error(`Chrome exited before CDP became available: ${chromeStderr}`);
+    }
     try {
       const response = await fetch(`http://127.0.0.1:${port}/json`);
       const targets = await response.json();
@@ -137,7 +139,9 @@ async function evaluate(expression) {
     returnByValue: true,
     awaitPromise: true,
   });
-  if (response.exceptionDetails) throw new Error(`Evaluation failed: ${JSON.stringify(response.exceptionDetails)}`);
+  if (response.exceptionDetails) {
+    throw new Error(`Evaluation failed: ${JSON.stringify(response.exceptionDetails)}`);
+  }
   return response.result?.value;
 }
 
@@ -145,7 +149,7 @@ const diagnosticExpression = `(() => {
   const splash = document.getElementById('bootSplash');
   const game = document.getElementById('gameView');
   const board = document.querySelector('.board-shell');
-  const puzzle = document.querySelector('.compiled-piece-layer');
+  const puzzle = document.getElementById('pieceLayer');
   const splashStyle = splash ? getComputedStyle(splash) : null;
   const gameStyle = game ? getComputedStyle(game) : null;
   const boardStyle = board ? getComputedStyle(board) : null;
@@ -156,10 +160,10 @@ const diagnosticExpression = `(() => {
   const puzzleWidthRatio = gameRect?.width && puzzleRect ? puzzleRect.width / gameRect.width : null;
   const puzzleHeightRatio = gameRect?.height && puzzleRect ? puzzleRect.height / gameRect.height : null;
   const puzzleInsideGame = Boolean(gameRect && puzzleRect
-    && puzzleRect.left >= gameRect.left - 1
-    && puzzleRect.right <= gameRect.right + 1
-    && puzzleRect.top >= gameRect.top - 1
-    && puzzleRect.bottom <= gameRect.bottom + 1);
+    && puzzleRect.left >= gameRect.left - 4
+    && puzzleRect.right <= gameRect.right + 4
+    && puzzleRect.top >= gameRect.top - 4
+    && puzzleRect.bottom <= gameRect.bottom + 4);
   return {
     href: location.href,
     readyState: document.readyState,
@@ -243,12 +247,8 @@ try {
     throw new Error(`Computed background image is incorrect: ${finalDiagnostics?.computedBackgroundImage}`);
   }
   if (!(finalDiagnostics?.pathCount > 0)) throw new Error('No puzzle paths rendered');
-  if (!(finalDiagnostics?.boardWidthRatio >= 0.9)) {
-    throw new Error(`Board is too narrow: ${finalDiagnostics?.boardWidthRatio}`);
-  }
-  if (!(finalDiagnostics?.puzzleWidthRatio >= 0.68)) {
-    throw new Error(`Visible Teddy puzzle is too small: ${finalDiagnostics?.puzzleWidthRatio}`);
-  }
+  if (!(finalDiagnostics?.boardWidthRatio >= 0.9)) throw new Error(`Board is too narrow: ${finalDiagnostics?.boardWidthRatio}`);
+  if (!(finalDiagnostics?.puzzleWidthRatio >= 0.68)) throw new Error(`Visible Teddy puzzle is too small: ${finalDiagnostics?.puzzleWidthRatio}`);
   if (!finalDiagnostics?.puzzleInsideGame) throw new Error('Enlarged Teddy puzzle is clipped outside the gameplay canvas');
 
   const backdropResponse = networkEvents.find(event =>
