@@ -38,17 +38,17 @@ test('startup markup loads the approved artwork without waiting for JavaScript',
   ]);
   const assetPath = './assets/branding/loading/toxic-teddies-loading.webp';
   assert.match(index, /id="bootSplash"/);
-  assert.match(index, new RegExp(`id="bootSplashImage"[\\s\\S]*src="${assetPath.replaceAll('.', '\\.') }"`));
+  assert.match(index, new RegExp(`id="bootSplashImage"[\s\S]*src="${assetPath.replaceAll('.', '\.') }"`));
   assert.match(index, /<link rel="preload" as="image" type="image\/webp" href="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp" \/>/);
-  assert.match(index, /<script src="\.\/src\/app\/loading-screen\.js\?v=40"><\/script>/);
+  assert.match(index, /<script src="\.\/src\/app\/loading-screen\.js\?v=41"><\/script>/);
   assert.doesNotMatch(loader, /loading-image-part-a|data:image\/webp;base64|import\s/);
   assert.match(index, /class="home-brand-logo"[\s\S]*toxic-teddies-loading\.webp/);
   assert.match(theme, /\.home-brand-logo/);
   assert.match(theme, /\.home-brand-logo img/);
   assert.match(bootstrap, /ToxicLoadingScreen\?\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=40/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v40/);
+  assert.match(bootstrap, /sw\.js\?v=41/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v41/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
 });
 
