@@ -1,6 +1,6 @@
 # Test Matrix
 
-Updated: 2026-07-24
+Updated: 2026-07-29
 
 ## Automated repository gates — current alignment branch
 
@@ -23,6 +23,9 @@ Updated: 2026-07-24
 | Feed viewed/unread persistence | Unit test | PASS when branch checks pass |
 | Approved loading artwork decodes as WebP | Unit test | PASS when branch checks pass |
 | Loading screen markup and lifecycle hooks | Unit test | PASS when branch checks pass |
+| Five Toxic Toby gameplay backgrounds decode as WebP | Unit test | PASS when branch checks pass |
+| Gameplay backdrop expression order and manifest paths | Unit test | PASS when branch checks pass |
+| Full-screen backdrop synchronizer loaded after HTML exists | Markup/runtime unit test | PASS when branch checks pass |
 | Canonical runtime color hex values | Runtime CSS unit test | PASS when branch checks pass |
 | Retired cream page gradient rejected | Runtime CSS unit test | PASS when branch checks pass |
 | Dark home/card styling present | Runtime CSS unit test | PASS when branch checks pass |
@@ -45,7 +48,10 @@ Updated: 2026-07-24
 | Dark home collection | Owner confirms Grime 900 background, dark cards and toxic accents on phone | PENDING |
 | Coming-soon distinction | Owner confirms disabled cards remain visibly distinct and readable | PENDING |
 | Dark game chrome | Owner confirms top bar, progress, level chips and controls match the system | PENDING |
-| Parchment board readability | Owner confirms paths and arrowheads remain clear against the board | PENDING |
+| Toxic Toby gameplay backdrop mapping | Owner confirms Neutral, Evil Grin, Gross, Angry and Maniacal Laugh each show the correct environment | PENDING |
+| Gameplay backdrop board alignment | Owner confirms the quiet central panel sits behind the arrow face without visible misalignment | PENDING |
+| Arrow readability over gameplay backdrops | Owner confirms dark, cream and accent trails remain readable on phone | PENDING |
+| High-contrast fallback | Owner confirms decorative backdrop fades and the board becomes a solid readable surface | PENDING |
 | Dark Toxic Feed | Owner confirms profile, posts, unread state and replies remain readable | PENDING |
 | Modal hierarchy | Owner confirms parchment modals and toxic primary buttons match the design board | PENDING |
 | Animated startup screen | Owner confirms image, crop, loading animation and handoff on phone | PENDING |
@@ -95,6 +101,17 @@ Updated: 2026-07-24
 - Reduced-motion settings stop decorative animation.
 - Startup errors remove the splash and show the actionable failure screen.
 - The loading artwork remains fully offline in browser and native bundles.
+
+## Gameplay-backdrop acceptance gates
+
+- The five WebP files remain local and available offline.
+- Each expression maps to its matching background in the locked expression order.
+- The environment fills the complete portrait gameplay view instead of being cropped into the old square board layer.
+- The central quiet panel remains behind the Teddy face puzzle.
+- Strong pipes, slime, sparks, barrels and lighting remain peripheral.
+- The arrow puzzle remains the first visual focus.
+- No gameplay background introduces a teddy, character, text, logo, UI, arrows or puzzle pieces.
+- The background presentation does not modify pointer selection, blocker detection, trail removal, saves or progression.
 
 ## Visual-level acceptance gates
 
