@@ -1,3 +1,5 @@
+import './loading-screen.js';
+import './gameplay-backdrops.js';
 import { createAccessibilityController } from '../accessibility/accessibility.js';
 import { createAnalytics } from '../analytics/analytics.js';
 import { createContentRegistry } from '../content/content-registry.js';
@@ -86,7 +88,7 @@ async function bootstrap() {
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=41').catch(error => {
+    navigator.serviceWorker.register('./sw.js?v=42').catch(error => {
       console.warn('Browser prototype service worker registration failed', error);
     });
   }
@@ -103,7 +105,7 @@ async function bootstrap() {
   document.documentElement.dataset.platform = bridge.platform;
   document.documentElement.dataset.build = buildInfo.buildId;
   document.documentElement.classList.toggle('native-app', bridge.native);
-  await window.ToxicLoadingScreen?.hide?.();
+  await window.ToxicLoadingScreen.hide();
 }
 
 bootstrap().catch(error => showStartupFailure(error, startupPlatform));
