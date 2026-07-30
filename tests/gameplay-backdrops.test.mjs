@@ -8,6 +8,7 @@ const bootstrap = await readFile('src/app/bootstrap.js', 'utf8');
 const runtime = await readFile('src/app/gameplay-backdrops.js', 'utf8');
 const styles = await readFile('src/design-system/gameplay-backdrops.css', 'utf8');
 const serviceWorker = await readFile('sw.js', 'utf8');
+const visualAudit = await readFile('scripts/capture-gameplay-backdrop-audit.mjs', 'utf8');
 
 const expected = [
   './assets/backdrops/tt01/neutral.webp',
@@ -60,8 +61,8 @@ test('gameplay backdrop presentation is bundled without replacing puzzle input c
   assert.match(index, /gameplay-backdrops\.css/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
-  assert.match(bootstrap, /sw\.js\?v=45/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v45/);
+  assert.match(bootstrap, /sw\.js\?v=46/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v46/);
   assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
   assert.match(runtime, /new Image\(\)/);
   assert.match(runtime, /gameView\.style\.backgroundImage/);
@@ -137,15 +138,19 @@ test('relative manifest paths become absolute loaded URLs on the real game-view 
   }
 });
 
-test('portrait environment is visible and the Teddy face occupies the mobile play area', () => {
+test('portrait environment is visible and the Teddy face dominates the mobile play area', () => {
   assert.match(styles, /\.game-view\s*\{[\s\S]*width:\s*min\(100%, 56\.25dvh, 560px\);/);
   assert.match(styles, /\.game-view\s*\{[\s\S]*aspect-ratio:\s*9 \/ 16;/);
   assert.match(styles, /\.game-view\s*\{[\s\S]*background-size:\s*100% 100%;/);
   assert.doesNotMatch(styles, /z-index:\s*-[0-9]+;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*1;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*92%;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-4%;[\s\S]*width:\s*108%;[\s\S]*height:\s*108%;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*96%;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-30%;[\s\S]*width:\s*160%;[\s\S]*height:\s*160%;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*background:\s*transparent;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::before\s*\{[\s\S]*display:\s*none;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::after\s*\{[\s\S]*background:\s*none;/);
+  assert.match(visualAudit, /puzzleWidthRatio >= 0\.76/);
+  assert.match(visualAudit, /puzzleHeightRatio >= 0\.38/);
+  assert.match(visualAudit, /puzzleToBoardWidthRatio >= 0\.78/);
+  assert.match(visualAudit, /transformedSvgRect/);
 });
