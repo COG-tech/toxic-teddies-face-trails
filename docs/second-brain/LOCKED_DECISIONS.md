@@ -75,3 +75,20 @@ The opening layer must:
 - support reduced motion;
 - disappear only after the home/game shell is ready;
 - yield to the actionable startup-error screen when integrity or initialization fails.
+
+## D-015 — Gameplay-first mobile hierarchy
+
+The arrow puzzle is the product. On portrait gameplay screens, the actual rendered arrow paths must receive the largest safe area before decorative background art or persistent interface chrome.
+
+The locked mobile rules are:
+
+- Target actual rendered path bounds of approximately **88–94% of the usable gameplay width** and at least **52% of the portrait gameplay height** when the Teddy silhouette permits it.
+- The top header, progress/feedback area, and bottom persistent controls together should consume no more than approximately **24% of usable gameplay height** during normal play.
+- The owner-approved environment may be center-cropped or trimmed at the top, bottom, or sides to protect puzzle size. It must never be stretched or distorted.
+- Decorative perimeter art may be sacrificed before the arrow puzzle is reduced. Preserve the quiet central panel and enough outer machinery to retain the Teddy's environment identity.
+- Top and bottom controls must be compressed into compact rows or edge overlays. They may overlap decorative outer-frame regions, but never cover an arrow path, arrowhead, face-critical feature, or exit lane.
+- Compact visual controls must retain accessible touch targets of at least 44 CSS pixels through their visible or invisible hit area.
+- The accessibility move list remains opt-in and must not occupy a large persistent gameplay panel.
+- Scale and layout approval must use actual rendered path bounds from `getBBox()` plus `getScreenCTM()`, a no-clipping assertion, and inspected production-browser screenshots at phone size.
+
+A layout that shows more background but makes the arrow puzzle materially smaller is a failed layout.

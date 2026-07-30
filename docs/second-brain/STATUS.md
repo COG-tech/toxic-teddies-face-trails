@@ -1,7 +1,7 @@
 # Canonical Project Status
 
 Updated: 2026-07-30
-Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c7963457a6a9`
+Last merged source baseline: `83231811ed6653f7d5da03c7da1c5265136621b7`
 
 ## Product identity
 
@@ -38,16 +38,16 @@ Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c79634
 - Home collection, game chrome, feed and accessibility controls use the dark Grime 900 / Ink 900 shell with Toxic Green, Slime Green, Mold Olive and Patch Purple accents.
 - Parchment is reserved for puzzle and modal readability instead of being used as the entire app background.
 - Five owner-approved 9:16 Toxic Toby gameplay environments are stored as local WebP files and mapped in expression order.
-- Gameplay backdrop paths are resolved against `document.baseURI`, preloaded with a real `Image`, and applied as absolute inline backgrounds directly to the 9:16 game view after successful loading.
+- Gameplay backdrop paths are resolved against `document.baseURI`, preloaded with a real `Image`, and applied as absolute inline backgrounds directly to the game view after successful loading.
 - The gameplay element exposes `loading`, `loaded`, `invalid-url`, and `load-error` diagnostics.
 - The old square backdrop layer is suppressed and the arrow board remains transparent over the artwork's quiet central panel.
 - High-contrast mode removes decorative background art and restores a solid readable board surface.
 - Browser runtime/service-worker cache v46 includes the five Toxic Toby WebP gameplay environments.
-- The transparent board shell occupies 96 percent of gameplay width.
-- The compiled board and preview SVG layers use a centered 122 percent presentation with `inset: -11%`.
-- The actual rendered Neutral Teddy paths measure 87.1 percent of gameplay width, 49.0 percent of portrait height, and 90.7 percent of board width.
+- The current v46 transparent board shell occupies 96 percent of gameplay width.
+- The current v46 compiled board and preview SVG layers use a centered 122 percent presentation with `inset: -11%`.
+- The current v46 actual rendered Neutral Teddy paths measure 87.1 percent of gameplay width, 49.0 percent of portrait height, and 90.7 percent of board width.
 - All 122 Neutral paths remain inside the gameplay canvas.
-- Automated unit tests validate manifest order, WebP signatures, absolute URL resolution, successful load state, 9:16 layout, transparent board treatment, and the locked 122 percent scale.
+- Automated unit tests validate manifest order, WebP signatures, absolute URL resolution, successful load state, 9:16 layout, transparent board treatment, and the v46 122 percent scale.
 - A dedicated Chrome production-browser audit measures the actual rendered path bounds with `getBBox()` and `getScreenCTM()` rather than inferring size from the SVG rectangle.
 - The successful v46 audit builds and serves the real Vite bundle, validates all five WebPs over HTTP, waits for intro handoff, verifies computed background state and 122 Neutral paths, and captures mobile and desktop gameplay screenshots.
 - The audited viewports are 430×764 mobile and 1365×768 desktop.
@@ -55,7 +55,7 @@ Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c79634
 - Quality checks, browser build, native Android/iOS validation, store validation, Android AAB, and iOS archive passed on the audited implementation.
 - `BRAND_ASSET_PIPELINE.md` records the proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
 
-## Owner-reported defect state
+## Owner-reported defect and direction state
 
 ### Completion progression
 
@@ -95,8 +95,22 @@ Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c79634
 - Failure F-014 records that the 57×57 compiled SVG has deliberate empty cells around the actual Teddy paths, so the visible face remained undersized even after enlarging the shell.
 - A 160 percent test scale was rendered and rejected because the measured face became 114.2 percent of gameplay width and clipped side paths.
 - The accepted v46 scale is 122 percent with `inset: -11%`.
-- The final measured face is 87.1 percent of gameplay width and remains fully inside the canvas.
-- Published real-phone owner verification of v46 remains pending.
+- The v46 measured face is 87.1 percent of gameplay width and remains fully inside the canvas.
+- The owner supplied a new direct side-by-side phone comparison on 2026-07-30 and made a broader layout directive: maximize arrow gameplay even if background art must be cropped and the top and bottom menus must be compressed.
+- The v46 measured puzzle is now an **intermediate baseline**, not the final approved mobile composition.
+
+### Gameplay-first mobile composition directive
+
+The owner has explicitly locked the following priority:
+
+1. Arrow gameplay receives the largest safe area.
+2. Top and bottom menus must be compact.
+3. Background art may be cropped or trimmed before the arrow puzzle is reduced.
+4. The quiet central panel and enough perimeter laboratory identity must remain.
+5. No path, arrowhead, ear, chin, face-critical feature, or exit lane may be clipped.
+6. Accessibility touch targets must remain usable even when visual controls are compact.
+
+The next implementation must target approximately 90–94 percent actual rendered path width, at least 52 percent portrait path height when the silhouette permits it, and no more than approximately 24 percent combined persistent top/status/bottom chrome height.
 
 ## Canonical loading-screen state
 
@@ -109,10 +123,10 @@ Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c79634
 - The loading bar advances only toward real startup-stage targets and visibly completes before the splash leaves.
 - Minimum presentation: 1,800 ms for full motion and 700 ms for reduced motion.
 - The home/game interface is inert and hidden while startup is incomplete.
-- Startup failure removes the splash and shows the existing actionable error screen.
+- Startup failure removes the splash and shows the existing actionable failure screen.
 - The full method and replacement procedure are locked in `BRAND_ASSET_PIPELINE.md`.
 
-## Canonical mobile puzzle scale
+## Current v46 mobile scale baseline
 
 - Gameplay canvas: exact 9:16.
 - Board shell width: 96 percent of game width.
@@ -123,6 +137,16 @@ Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c79634
 - Path count: 122.
 - No clipped ears, chin, arrowheads or exit paths in the production audit.
 - The input controller, compiled coordinates, viewBox, blocker logic, solver data, exit animation, saves and progression are unchanged.
+- This baseline is safe but does not satisfy the owner's final gameplay-first composition directive.
+
+## Locked next mobile composition target
+
+- Actual rendered path width: approximately 90–94 percent of gameplay width.
+- Actual rendered path height: at least 52 percent of portrait gameplay height when the silhouette permits it.
+- Combined persistent top header, status/feedback, and bottom controls: no more than approximately 24 percent of gameplay height.
+- Background may be center-cropped or trimmed without stretching.
+- Persistent controls remain outside path and exit regions.
+- Compact controls retain at least 44 CSS-pixel touch targets.
 - Future scale changes must measure rendered path bounds and enforce both minimum size and no-clipping assertions.
 
 ## Canonical design-system implementation
@@ -143,7 +167,8 @@ No custom Toxic Head font file is currently bundled. The approved logo artwork m
 
 ## What is not complete
 
-- Owner verification of the v46 enlarged puzzle size on the published real-phone build remains pending.
+- The gameplay-first mobile composition with compressed chrome and background cropping has not yet been implemented.
+- Owner verification of the final enlarged puzzle size on the published real-phone build remains pending.
 - Owner verification that no ears, chin, arrowheads or exit lanes are clipped remains pending.
 - Owner visual approval of the dark runtime palette on the published phone build remains pending.
 - Owner verification that all five Toxic Toby gameplay backgrounds align with the board and preserve arrow readability remains pending.
@@ -179,7 +204,7 @@ assets/backdrops/tt01/maniacal-laugh.webp
 
 These files are environment-only gameplay backgrounds. They are separate from the clean expression reveal artwork.
 
-Required rendering evidence for any future backdrop or scale change:
+Required rendering evidence for any future backdrop, chrome, crop, or scale change:
 
 - valid local WebP signature;
 - HTTP 200 from the built production bundle;
@@ -188,7 +213,9 @@ Required rendering evidence for any future backdrop or scale change:
 - successful image-load diagnostic;
 - actual rendered SVG path bounds;
 - minimum face-size thresholds;
+- persistent chrome height budget;
 - no-clipping assertion;
+- proof that background crop does not distort the image;
 - clean mobile and desktop gameplay screenshots inspected before merge.
 
 ## Reveal artwork state

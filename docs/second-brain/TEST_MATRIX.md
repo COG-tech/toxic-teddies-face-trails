@@ -1,6 +1,6 @@
 # Test Matrix
 
-Updated: 2026-07-29
+Updated: 2026-07-30
 
 ## Automated repository gates — current alignment branch
 
@@ -30,6 +30,11 @@ Updated: 2026-07-29
 | Retired cream page gradient rejected | Runtime CSS unit test | PASS when branch checks pass |
 | Dark home/card styling present | Runtime CSS unit test | PASS when branch checks pass |
 | Final dark-theme stylesheet order | Runtime CSS unit test | PASS when branch checks pass |
+| Gameplay-first mobile chrome budget | Production-browser measurement | REQUIRED for next layout branch |
+| Actual rendered path width/height target | `getBBox()` + `getScreenCTM()` | REQUIRED for next layout branch |
+| Background crop without distortion | Computed-style and screenshot audit | REQUIRED for next layout branch |
+| All rendered paths remain inside gameplay bounds | Production-browser assertion | REQUIRED for next layout branch |
+| Compact controls retain accessible touch targets | DOM geometry assertion | REQUIRED for next layout branch |
 | Analytics allow-list and privacy | Unit tests | PASS when branch checks pass |
 | Second-brain canonical records | Automated validator | PASS when branch checks pass |
 | Design-system documentation and runtime tokens | Automated second-brain validator | PASS when branch checks pass |
@@ -45,6 +50,9 @@ Updated: 2026-07-29
 
 | Gate | Required evidence | Status |
 |---|---|---|
+| Gameplay-first mobile hierarchy | Owner confirms arrows dominate the screen and menus are compact | PENDING — CURRENT PRIORITY |
+| Background crop acceptance | Owner confirms crop preserves laboratory identity without shrinking the puzzle | PENDING — CURRENT PRIORITY |
+| Top/bottom menu compression | Owner confirms persistent chrome no longer consumes excessive gameplay height | PENDING — CURRENT PRIORITY |
 | Dark home collection | Owner confirms Grime 900 background, dark cards and toxic accents on phone | PENDING |
 | Coming-soon distinction | Owner confirms disabled cards remain visibly distinct and readable | PENDING |
 | Dark game chrome | Owner confirms top bar, progress, level chips and controls match the system | PENDING |
@@ -77,6 +85,24 @@ Updated: 2026-07-29
 | Signed Play internal build | Play Console evidence | PENDING |
 | 12-person UX study | Participant exports, notes, metrics, report | PENDING |
 
+## Gameplay-first mobile acceptance gates
+
+The next mobile gameplay layout must satisfy all of the following before merge:
+
+- Actual rendered arrow-path width is approximately 90–94% of gameplay width.
+- Actual rendered arrow-path height is at least 52% of gameplay height when the silhouette permits it.
+- Every path, arrowhead, ear, chin line, and exit lane stays inside the gameplay canvas.
+- Combined persistent top header, status/feedback, and bottom controls consume no more than approximately 24% of gameplay height.
+- Top and bottom controls are compact rather than large card stacks.
+- Compact visual controls retain at least 44 CSS-pixel touch targets.
+- The accessibility move list remains opt-in and does not occupy a large persistent gameplay region.
+- The environment may crop at the top, bottom, or sides but is never stretched.
+- The quiet central panel remains aligned behind the Teddy face.
+- Enough pipes, machinery, slime, warning details, or frame structure remain to preserve the Toxic Toby laboratory identity.
+- The arrow puzzle is the first visual focus.
+- At least one valid path can be selected and removed after the layout change.
+- The complete progression and persistence regression suite still passes.
+
 ## Runtime color acceptance gates
 
 - The page background uses Grime 900 / Ink 900 rather than the retired cream gradient.
@@ -106,7 +132,7 @@ Updated: 2026-07-29
 
 - The five WebP files remain local and available offline.
 - Each expression maps to its matching background in the locked expression order.
-- The environment fills the complete portrait gameplay view instead of being cropped into the old square board layer.
+- The environment fills or intentionally crops to the complete portrait gameplay view instead of being trapped in the old square board layer.
 - The central quiet panel remains behind the Teddy face puzzle.
 - Strong pipes, slime, sparks, barrels and lighting remain peripheral.
 - The arrow puzzle remains the first visual focus.
@@ -130,4 +156,4 @@ Every new or changed level must pass all of the following before approval:
 
 ## Regression rule
 
-Any change touching `compiled-app.js`, `mobile-enhancements.js`, input geometry, progression, save state, manifests, design tokens, shared components, startup/loading behavior, service-worker behavior, build publication, or native bundling must run the complete automated suite and update this matrix when the evidence changes.
+Any change touching `compiled-app.js`, `mobile-enhancements.js`, gameplay layout, background crop, input geometry, progression, save state, manifests, design tokens, shared components, startup/loading behavior, service-worker behavior, build publication, or native bundling must run the complete automated suite and update this matrix when the evidence changes.

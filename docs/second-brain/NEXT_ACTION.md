@@ -1,111 +1,92 @@
 # Single Canonical Next Action
 
 Updated: 2026-07-30
-Status: **ACTIVE — OWNER V46 MOBILE SIZE AND PROGRESSION RETEST REQUIRED**
+Status: **ACTIVE — IMPLEMENT GAMEPLAY-FIRST MOBILE COMPOSITION BEFORE FURTHER OWNER RETEST**
 
 ## Action
 
-Verify the published cache-v46 build on a real phone: confirm the measured larger Toxic Toby arrow face now dominates the quiet gameplay panel, all five owner-approved backgrounds remain correct, every path remains readable and clickable, and the complete `1 → 2 → 3 → 4 → 5 → feed` chain still works before inserting final reveal artwork or beginning Moldy Molly.
+Replace the current v46 mobile presentation with a gameplay-first layout that maximizes the actual rendered Toxic Toby arrow paths, compresses the persistent top and bottom menus, and crops the environment when necessary instead of shrinking the puzzle.
 
-Playable build after merge:
+This owner directive supersedes the prior instruction to stop at the v46 layout.
 
-```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=46
-```
+## Locked implementation target
 
-## Locked v46 mobile scale
+- Keep the gameplay viewport portrait-first and full-width on phones.
+- Target actual rendered path bounds of approximately **90–94% of usable gameplay width**.
+- Target actual rendered path bounds of at least **52% of usable portrait gameplay height** when the Toxic Toby silhouette permits it.
+- Keep every ear, chin path, arrowhead, and exit lane inside the gameplay canvas.
+- Keep the top header compact, with title and utility controls in one short row.
+- Compress progress and feedback into a short row or overlay instead of a large separate card stack.
+- Compress the bottom accessibility trigger and five expression controls into one compact control region.
+- Keep the combined persistent top, status, and bottom chrome at or below approximately **24% of usable gameplay height**.
+- Retain accessible 44 CSS-pixel touch targets through visible or invisible hit areas.
+- Allow the owner-approved environment to be center-cropped or trimmed at the top, bottom, or sides.
+- Never stretch the environment.
+- Preserve the calm central board panel and enough perimeter machinery to retain the Toxic Toby laboratory identity.
+- Preserve all compiled path coordinates, viewBox data, input geometry, blocker calculations, head-first removal, save state, progression, and reveal logic.
 
-- Gameplay canvas remains 9:16.
-- Transparent puzzle shell width is 96% of the gameplay canvas.
-- Board and preview SVG layers use a centered 122% presentation with `inset: -11%`.
-- The rendered Neutral Teddy face measures 87.1% of gameplay-canvas width.
-- The rendered face measures 49.0% of the portrait canvas height.
-- The face fills 90.7% of the transparent board width.
-- The board measures 96.0% of gameplay width.
-- All 122 paths remain fully inside the gameplay canvas.
-- Path coordinates, viewBox, solver data, input geometry, blocker logic, removal behavior, saves, progression and reveal logic remain unchanged.
+## Required engineering sequence
 
-## Rejected enlargement
+1. Create a dedicated gameplay-layout branch from current `main`.
+2. Measure the current production mobile layout as the baseline.
+3. Compress the top header, progress/feedback area, and bottom controls without removing required actions.
+4. Change background sizing/positioning to crop decorative frame art when needed.
+5. Increase the rendered puzzle scale only as far as the no-clipping gate permits.
+6. Keep the accessibility move list opt-in rather than persistently expanded.
+7. Build the real Vite production bundle.
+8. Serve the production bundle locally.
+9. Capture clean Chrome screenshots at 430×764 and at least one taller real-phone-like viewport.
+10. Measure actual rendered path bounds with `getBBox()` and `getScreenCTM()`.
+11. Fail the audit if the puzzle is below the locked size target, if any path is clipped, or if persistent chrome exceeds the locked height budget.
+12. Verify `neutral.webp` loads with HTTP 200 and remains visible around the puzzle.
+13. Verify all 122 Neutral paths render and at least one valid path can still be removed.
+14. Run full quality, browser, native Android/iOS, and store validation before merge.
+15. Inspect the screenshots manually before merge.
 
-- A 160% SVG scale was rendered and audited before merge.
-- It measured 114.2% of gameplay width and clipped the side paths.
-- The audit failed and that scale was removed.
-- Do not restore the 160% scale or weaken the no-clipping assertion.
+## Automated acceptance gates
 
-## Automated evidence already passed
-
-- Full repository quality checks.
-- Vite production browser build.
-- All five Toxic Toby WebPs served with valid RIFF/WEBP signatures.
-- Clean Chrome navigation through the loading-screen handoff.
-- Neutral backdrop resolved to an absolute URL and returned HTTP 200.
-- Computed `.game-view` background contains `neutral.webp`.
-- The gameplay view reports `data-gameplay-backdrop-status="loaded"`.
-- All 122 Neutral paths render over the background.
-- Mobile 430×764 and desktop 1365×768 screenshots show the enlarged Teddy face filling the quiet center panel.
-- Measured board-width ratio is 0.960.
-- Measured visible-puzzle-width ratio is 0.871.
-- Measured visible-puzzle-height ratio is 0.490.
-- Measured puzzle-to-board-width ratio is 0.907.
-- The enlarged puzzle remains fully inside the gameplay canvas.
-- No runtime exceptions or gameplay-background console errors.
-- Native Android and iOS validation passed.
-- Store validation, Android AAB and iOS archive checks passed.
-
-## Required owner retest sequence
-
-1. Close every old Toxic Teddies tab.
-2. Open the cache-busted v46 link in a new private/incognito tab.
-3. Confirm the loading image hands off to gameplay.
-4. Confirm the arrow-face puzzle is substantially larger than the v45 phone screenshot and resembles the reference puzzle’s screen coverage.
-5. Confirm no ear, chin, arrowhead or exit lane is clipped.
-6. Confirm Neutral displays `neutral.webp` behind the arrows, with the laboratory frame visible around the perimeter.
-7. Remove at least one valid trail and confirm selection and head-first removal still work.
-8. Complete Neutral and confirm Evil Grin loads with `evil-grin.webp`.
-9. Complete Evil Grin and confirm Gross loads with `gross.webp`.
-10. Complete Gross and confirm Angry loads with `angry.webp`.
-11. Complete Angry and confirm Maniacal Laugh loads with `maniacal-laugh.webp`.
-12. Complete Maniacal Laugh and confirm Toxic Toby becomes `5 / 5` complete.
-13. Open Toxic Toby's private feed and confirm it remains readable and unlocked.
-14. Refresh and confirm backgrounds, progress, completion state and feed access persist.
-15. Turn on High Contrast and confirm the decorative background is removed while the enlarged puzzle remains clear.
-
-## Evidence needed from the published build
-
-- One phone screenshot proving the deployed v46 puzzle size.
-- One screenshot for any expression whose background or puzzle scale is incorrect.
-- Exact text and screenshot for any loading, clipping, interaction, progression or persistence failure.
-- Device/browser and whether the page was opened in a new private tab.
-
-## Visual behavior to verify
-
-- The Teddy face is the dominant screen object.
-- The face remains centered and immediately recognizable.
-- The puzzle fills most of the quiet central panel without overlapping important outer-frame detail.
-- Every arrowhead remains readable at normal phone size.
-- Controls stay outside important face regions and exit lanes.
-- Each expression uses its matching owner-approved environment.
+- Actual visible path width ratio: target `0.90–0.94` of gameplay width.
+- Actual visible path height ratio: minimum `0.52` of gameplay height when the silhouette permits it.
+- All rendered paths inside gameplay bounds.
+- Persistent top/status/bottom chrome height ratio: maximum approximately `0.24` of gameplay height.
+- Background image successfully loaded and computed on the visible game view.
+- Background is cropped without distortion when needed.
+- Quiet central panel remains behind the arrow puzzle.
 - No duplicate square backdrop appears.
-- High Contrast restores a strong solid board surface.
+- No runtime exceptions or gameplay-background errors.
+- Pointer selection, blocker feedback, and head-first removal remain functional.
+
+## Owner retest after implementation
+
+1. Close all old game tabs.
+2. Open the new cache-busted build on a real phone.
+3. Confirm the arrows are the dominant screen object.
+4. Confirm the puzzle is substantially larger than the phone screenshot supplied on 2026-07-30.
+5. Confirm the top and bottom menus are compact.
+6. Confirm background cropping does not remove the Toxic Toby laboratory identity.
+7. Confirm no arrowhead or exit lane is clipped.
+8. Remove at least one valid trail.
+9. Complete the full `1 → 2 → 3 → 4 → 5 → feed` chain.
+10. Refresh and verify persistence.
 
 ## Do not start yet
 
-- Do not begin Moldy Molly levels.
-- Do not replace the stable path interaction system.
-- Do not alter compiled level geometry merely to change screen size.
-- Do not mark physical iPhone or Android testing complete without device evidence.
-- Do not generate substitute reveal artwork.
-- Do not add currencies, shops, ratings or unrelated achievement systems.
+- Do not begin Moldy Molly.
+- Do not insert final reveal artwork.
+- Do not alter compiled level geometry merely to gain screen size.
+- Do not weaken the rendered-path or no-clipping audits.
+- Do not keep large decorative menu cards because they show more branding.
+- Do not prioritize full background visibility over arrow gameplay.
 
 ## After this action passes
 
-1. Mark the v46 mobile-size gate verified on the published build.
-2. Mark F-013 and F-014 verified.
-3. Mark issue #29 verified after the complete progression chain passes.
-4. Insert the five owner-approved Toxic Toby reveal images when supplied.
-5. Review reveal crop and readability on target phone sizes.
+1. Lock the approved mobile chrome dimensions and rendered puzzle ratios.
+2. Mark the gameplay-first composition gate verified.
+3. Mark F-014 verified only after the owner approves the published real-phone layout.
+4. Complete the progression-chain owner verification.
+5. Insert the five owner-approved Toxic Toby reveal images when supplied.
 6. Complete remaining physical-device accessibility and lifecycle validation.
-7. Only then start Moldy Molly's complete five-expression package.
+7. Only then begin Moldy Molly's complete five-expression package.
 
 ## Replacement rule
 
