@@ -76,8 +76,8 @@
 /*
  * The 57 x 57 compiled SVG contains deliberate empty grid cells around the Teddy.
  * A normal 100% SVG therefore makes the visible face much smaller than the board.
- * Keep the interaction geometry unchanged, but overscan the rendered SVG so the
- * actual arrow-face occupies roughly four-fifths of a phone screen like the target.
+ * Keep the interaction geometry unchanged, but use a measured centered overscan so
+ * the face dominates the phone panel without clipping ears, chin, paths, or exits.
  */
 .game-view.has-gameplay-backdrop .board-shell {
   width: 96%;
@@ -89,9 +89,9 @@
 
 .game-view.has-gameplay-backdrop .board,
 .game-view.has-gameplay-backdrop .preview-layer {
-  inset: -30%;
-  width: 160%;
-  height: 160%;
+  inset: -11%;
+  width: 122%;
+  height: 122%;
 }
 
 .game-view.has-gameplay-backdrop .board-shell::before {
