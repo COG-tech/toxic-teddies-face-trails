@@ -145,7 +145,7 @@ test('portrait environment is visible and the Teddy face dominates the mobile pl
   assert.doesNotMatch(styles, /z-index:\s*-[0-9]+;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*1;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*96%;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-30%;[\s\S]*width:\s*160%;[\s\S]*height:\s*160%;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-11%;[\s\S]*width:\s*122%;[\s\S]*height:\s*122%;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*background:\s*transparent;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::before\s*\{[\s\S]*display:\s*none;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::after\s*\{[\s\S]*background:\s*none;/);
