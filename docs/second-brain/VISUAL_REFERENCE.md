@@ -1,31 +1,48 @@
 # Game and Level Visual Reference
 
-Source: owner-supplied mobile puzzle screenshot, 2026-07-24.
+Sources:
 
-This reference defines **composition and readability**, not a style to copy. Toxic Teddies must keep its original hand-illustrated 2D grotesque world and must not imitate the reference game's branding, blue plastic rendering, HUD icons, currencies, or exact interface.
+- Owner-supplied mobile arrow-puzzle screenshot, 2026-07-24.
+- Owner-supplied direct size comparison against the Toxic Toby phone build, 2026-07-30.
+
+This reference defines **composition and readability**, not a style to copy. Toxic Teddies must keep its original hand-illustrated 2D grotesque world and must not imitate the reference game's branding, cream rendering, HUD icons, currencies, or exact interface.
 
 ## What the reference gets right
 
 - The puzzle is the dominant object on the screen.
-- The overall face silhouette is readable immediately.
+- The puzzle uses nearly the full safe width rather than sitting as a small object inside a large poster.
+- The overall silhouette is readable immediately.
 - The level number is easy to find without competing with the puzzle.
-- The board is centered and has generous breathing room around the outer silhouette.
-- Individual arrowheads are visible while still forming one dense character shape.
-- Controls are pushed to the screen edges and bottom so the face remains unobstructed.
+- Individual arrowheads are visible while still forming one dense designed shape.
+- Controls are compact and pushed to the screen edges.
+- Persistent top and bottom chrome consumes little vertical space.
 - Progression is visually simple: the player understands that the current screen is one self-contained level.
 - The background supports the puzzle instead of becoming a second focal point.
 
 ## Toxic Teddies translation
 
-### Portrait composition
+### Gameplay-first portrait composition
 
 - Design for portrait phone play first.
+- The actual arrow puzzle is the first allocation of screen space, not the background or menu cards.
 - Keep the playable Teddy face centered in the primary interaction zone.
-- Target approximately 68–82% of the usable screen width for the full outer silhouette.
-- Keep ears, chin, hanging props, and major mutations inside safe margins.
-- Reserve the top region for Teddy name, expression/level, progress, and compact utility controls.
-- Reserve the bottom region for expression navigation, accessibility actions, or contextual controls.
-- Never place a persistent control over an eye, mouth, arrowhead, or likely exit lane.
+- Target approximately **88–94% of usable gameplay width** for the actual rendered outer path bounds when the silhouette permits it.
+- Target at least **52% of usable portrait gameplay height** for the actual rendered path bounds when the silhouette permits it.
+- Keep ears, chin, hanging props, arrowheads, and exit lanes inside safe margins.
+- The combined persistent top header, status/feedback area, and bottom controls should normally remain at or below approximately **24% of gameplay height**.
+- Compress title, progress, feedback, expression navigation, and accessibility triggers before reducing the puzzle.
+- A compact menu may overlay decorative perimeter artwork, but it must not cover paths or exits.
+- Never place a persistent control over an eye, mouth, arrowhead, face-critical feature, or likely exit lane.
+
+### Background crop policy
+
+- Full visibility of the 9:16 environment is not more important than puzzle size.
+- The environment may be center-cropped or trimmed at the top, bottom, or sides to maximize the playable arrow area.
+- Never stretch or distort the background image.
+- Preserve the calm central panel behind the puzzle.
+- Preserve enough peripheral pipes, vats, machinery, slime, warning details, or framing to retain the environment identity.
+- Decorative top and bottom frame detail is the first material that may be cropped when vertical space is needed.
+- A layout that displays more illustration but makes the arrow puzzle materially smaller fails this reference.
 
 ### Puzzle silhouette
 
@@ -55,17 +72,16 @@ This reference defines **composition and readability**, not a style to copy. Tox
 
 1. Playable Teddy face puzzle.
 2. Current Teddy and expression/level.
-3. Progress and feedback.
-4. Hint, restart, back, accessibility, and settings.
+3. Progress and immediate move feedback.
+4. Hint, restart, back, accessibility, and expression navigation.
 5. Decorative atmosphere.
 
-No currency counter, shop icon, advertising icon, or unrelated game system should outrank the face puzzle.
+No currency counter, shop icon, advertising icon, large persistent accessibility panel, or unrelated game system should outrank the face puzzle.
 
 ## Do not copy from the reference
 
-- Blue beveled or plastic 3D tiles.
-- The exact green gradient background.
-- The exact top icon row, coins, shop controls, sound icon, or bottom booster buttons.
+- The exact cream surface or brown line style.
+- The exact top icon row, lives, palette button, light bulb, settings icon, or progress graphic.
 - The exact font, number treatment, shadows, panel shapes, or level layout.
 - Any character silhouette, asset, branding, or commercial interface from the reference.
 
@@ -73,12 +89,15 @@ No currency counter, shop icon, advertising icon, or unrelated game system shoul
 
 A reviewer should be able to answer **yes** to all of these from a normal phone screenshot:
 
-- Is the Teddy face the first thing I notice?
-- Can I identify the Teddy without reading the name?
+- Is the arrow puzzle the first thing I notice?
+- Does the puzzle occupy nearly the full safe width?
+- Is the Teddy face centered and immediately recognizable?
 - Can I identify the expression from the eyes, brows, muzzle, and mouth?
 - Can I see multiple arrowheads clearly?
-- Does the face occupy most of the usable portrait area?
-- Are all controls outside important face regions?
+- Does the face occupy most of the usable portrait interaction area?
+- Are the top and bottom menus compact rather than large cards?
+- Are all controls outside important face regions and exit lanes?
+- Has background detail been cropped when necessary instead of shrinking the puzzle?
 - Is the background quiet enough?
 - Does the level look dense but still tappable?
 - Does the puzzle feel like one designed face instead of a random pile of paths?
@@ -86,4 +105,4 @@ A reviewer should be able to answer **yes** to all of these from a normal phone 
 
 ## Approval rule
 
-This reference is now part of the second brain. Future level screenshots must be compared against this document before merge. Any intentional departure must be explained in the pull request and approved by the owner.
+This reference is part of the second brain. Future level screenshots and gameplay-layout changes must be compared against this document before merge. Any intentional departure must be explained in the pull request and approved by the owner.
