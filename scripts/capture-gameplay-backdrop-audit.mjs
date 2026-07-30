@@ -146,24 +146,57 @@ async function evaluate(expression) {
 }
 
 const diagnosticExpression = `(() => {
+  function serializeRect(rect) {
+    if (!rect) return null;
+    return {x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom};
+  }
+
+  function transformedSvgRect(element) {
+    if (!element?.getBBox || !element?.getScreenCTM) return null;
+    const bbox = element.getBBox();
+    const matrix = element.getScreenCTM();
+    if (!bbox || !matrix || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height)) return null;
+    const transform = (x, y) => ({
+      x: matrix.a * x + matrix.c * y + matrix.e,
+      y: matrix.b * x + matrix.d * y + matrix.f,
+    });
+    const points = [
+      transform(bbox.x, bbox.y),
+      transform(bbox.x + bbox.width, bbox.y),
+      transform(bbox.x, bbox.y + bbox.height),
+      transform(bbox.x + bbox.width, bbox.y + bbox.height),
+    ];
+    const xs = points.map(point => point.x);
+    const ys = points.map(point => point.y);
+    const left = Math.min(...xs);
+    const right = Math.max(...xs);
+    const top = Math.min(...ys);
+    const bottom = Math.max(...ys);
+    return {x: left, y: top, width: right - left, height: bottom - top, right, bottom};
+  }
+
   const splash = document.getElementById('bootSplash');
   const game = document.getElementById('gameView');
   const board = document.querySelector('.board-shell');
-  const puzzle = document.getElementById('pieceLayer');
+  const boardSvg = document.getElementById('board');
+  const puzzle = document.querySelector('.dense-piece-layer') || document.getElementById('pieceLayer');
   const splashStyle = splash ? getComputedStyle(splash) : null;
   const gameStyle = game ? getComputedStyle(game) : null;
   const boardStyle = board ? getComputedStyle(board) : null;
   const gameRect = game?.getBoundingClientRect();
   const boardRect = board?.getBoundingClientRect();
-  const puzzleRect = puzzle?.getBoundingClientRect();
+  const boardSvgRect = boardSvg?.getBoundingClientRect();
+  const puzzleRect = transformedSvgRect(puzzle);
   const boardWidthRatio = gameRect?.width && boardRect ? boardRect.width / gameRect.width : null;
   const puzzleWidthRatio = gameRect?.width && puzzleRect ? puzzleRect.width / gameRect.width : null;
   const puzzleHeightRatio = gameRect?.height && puzzleRect ? puzzleRect.height / gameRect.height : null;
+  const puzzleToBoardWidthRatio = boardRect?.width && puzzleRect ? puzzleRect.width / boardRect.width : null;
   const puzzleInsideGame = Boolean(gameRect && puzzleRect
-    && puzzleRect.left >= gameRect.left - 4
-    && puzzleRect.right <= gameRect.right + 4
-    && puzzleRect.top >= gameRect.top - 4
-    && puzzleRect.bottom <= gameRect.bottom + 4);
+    && puzzleRect.x >= gameRect.x - 6
+    && puzzleRect.right <= gameRect.right + 6
+    && puzzleRect.y >= gameRect.y - 6
+    && puzzleRect.bottom <= gameRect.bottom + 6);
+
   return {
     href: location.href,
     readyState: document.readyState,
@@ -181,13 +214,15 @@ const diagnosticExpression = `(() => {
     computedBackgroundImage: gameStyle?.backgroundImage || null,
     computedBackgroundSize: gameStyle?.backgroundSize || null,
     computedBackgroundColor: gameStyle?.backgroundColor || null,
-    gameRect: gameRect ? {x: gameRect.x, y: gameRect.y, width: gameRect.width, height: gameRect.height} : null,
+    gameRect: serializeRect(gameRect),
     boardBackground: boardStyle?.backgroundImage || null,
-    boardRect: boardRect ? {x: boardRect.x, y: boardRect.y, width: boardRect.width, height: boardRect.height} : null,
-    puzzleRect: puzzleRect ? {x: puzzleRect.x, y: puzzleRect.y, width: puzzleRect.width, height: puzzleRect.height} : null,
+    boardRect: serializeRect(boardRect),
+    boardSvgRect: serializeRect(boardSvgRect),
+    puzzleRect: serializeRect(puzzleRect),
     boardWidthRatio,
     puzzleWidthRatio,
     puzzleHeightRatio,
+    puzzleToBoardWidthRatio,
     puzzleInsideGame,
     pathCount: document.querySelectorAll('.dense-path, .path-piece').length,
     statusText: document.getElementById('statusText')?.textContent || null,
@@ -197,6 +232,19 @@ const diagnosticExpression = `(() => {
 let finalDiagnostics = null;
 let auditError = null;
 let transientEvaluationError = null;
+
+function diagnosticsReady(diagnostics) {
+  return diagnostics?.splashHidden
+    && diagnostics?.gameVisible
+    && diagnostics?.backdropStatus === 'loaded'
+    && diagnostics?.computedBackgroundImage?.includes('/assets/backdrops/tt01/neutral.webp')
+    && diagnostics?.pathCount > 0
+    && diagnostics?.boardWidthRatio >= 0.94
+    && diagnostics?.puzzleWidthRatio >= 0.76
+    && diagnostics?.puzzleHeightRatio >= 0.38
+    && diagnostics?.puzzleToBoardWidthRatio >= 0.78
+    && diagnostics?.puzzleInsideGame;
+}
 
 try {
   await send('Page.enable');
@@ -226,16 +274,7 @@ try {
       await sleep(250);
       continue;
     }
-
-    const ready = finalDiagnostics?.splashHidden
-      && finalDiagnostics?.gameVisible
-      && finalDiagnostics?.backdropStatus === 'loaded'
-      && finalDiagnostics?.computedBackgroundImage?.includes('/assets/backdrops/tt01/neutral.webp')
-      && finalDiagnostics?.pathCount > 0
-      && finalDiagnostics?.boardWidthRatio >= 0.9
-      && finalDiagnostics?.puzzleWidthRatio >= 0.68
-      && finalDiagnostics?.puzzleInsideGame;
-    if (ready) break;
+    if (diagnosticsReady(finalDiagnostics)) break;
     await sleep(250);
   }
 
@@ -247,8 +286,10 @@ try {
     throw new Error(`Computed background image is incorrect: ${finalDiagnostics?.computedBackgroundImage}`);
   }
   if (!(finalDiagnostics?.pathCount > 0)) throw new Error('No puzzle paths rendered');
-  if (!(finalDiagnostics?.boardWidthRatio >= 0.9)) throw new Error(`Board is too narrow: ${finalDiagnostics?.boardWidthRatio}`);
-  if (!(finalDiagnostics?.puzzleWidthRatio >= 0.68)) throw new Error(`Visible Teddy puzzle is too small: ${finalDiagnostics?.puzzleWidthRatio}`);
+  if (!(finalDiagnostics?.boardWidthRatio >= 0.94)) throw new Error(`Board is too narrow: ${finalDiagnostics?.boardWidthRatio}`);
+  if (!(finalDiagnostics?.puzzleWidthRatio >= 0.76)) throw new Error(`Visible Teddy puzzle is too narrow: ${finalDiagnostics?.puzzleWidthRatio}`);
+  if (!(finalDiagnostics?.puzzleHeightRatio >= 0.38)) throw new Error(`Visible Teddy puzzle is too short: ${finalDiagnostics?.puzzleHeightRatio}`);
+  if (!(finalDiagnostics?.puzzleToBoardWidthRatio >= 0.78)) throw new Error(`Teddy does not fill the board: ${finalDiagnostics?.puzzleToBoardWidthRatio}`);
   if (!finalDiagnostics?.puzzleInsideGame) throw new Error('Enlarged Teddy puzzle is clipped outside the gameplay canvas');
 
   const backdropResponse = networkEvents.find(event =>
