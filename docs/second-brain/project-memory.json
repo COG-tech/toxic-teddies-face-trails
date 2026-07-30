@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedAt": "2026-07-30",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "33f8b2cd5fb4656235764ab125f5c7963457a6a9",
+  "baselineCommit": "83231811ed6653f7d5da03c7da1c5265136621b7",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -86,13 +86,13 @@
     ]
   },
   "runtimeDesignImplementation": {
-    "status": "implemented_in_code_pending_owner_visual_review",
+    "status": "implemented_in_code_pending_gameplay_first_mobile_revision",
     "appShell": "Grime 900 and Ink 900 dark distressed surfaces",
     "activeStates": "Toxic Green and Slime Green",
     "secondaryActions": "Patch Purple",
     "supportingFrames": "Mold Olive and Brown 700",
     "readabilitySurfaces": "Parchment 100 and Parchment 300",
-    "boardPolicy": "The owner-approved environment sits behind the complete 9:16 game view while the enlarged Teddy face dominates the quiet central panel.",
+    "boardPolicy": "The actual rendered arrow puzzle receives the largest safe mobile area. Background art may crop and persistent chrome must compress before the puzzle is reduced.",
     "modalPolicy": "Parchment modal cards with dark text and toxic primary actions",
     "retiredTheme": "Cream page background with translucent white cards",
     "browserCacheVersion": 46,
@@ -157,28 +157,34 @@
       "assets/backdrops/tt01/angry.webp",
       "assets/backdrops/tt01/maniacal-laugh.webp"
     ],
-    "presentation": "The manifest-selected WebP is resolved to an absolute URL, preloaded, and applied directly to the 9:16 game view after successful loading. The legacy square duplicate is suppressed.",
+    "presentation": "The manifest-selected WebP is resolved to an absolute URL, preloaded, and applied directly to the gameplay view. The next mobile revision may center-crop the image to protect puzzle size but may not stretch it.",
     "offlineCapable": true,
     "cacheVersion": 46,
     "ownerVisualReviewPending": true
   },
   "mobilePuzzleScale": {
-    "status": "rendered_and_audited_pending_owner_phone_verification",
-    "boardWidthRatio": 0.96,
-    "svgPresentationScale": 1.22,
-    "svgPresentationInset": "-11%",
-    "visiblePuzzleWidthRatio": 0.871,
-    "visiblePuzzleHeightRatio": 0.49,
-    "puzzleToBoardWidthRatio": 0.907,
+    "status": "v46_intermediate_baseline_superseded_by_gameplay_first_owner_directive",
+    "currentBoardWidthRatio": 0.96,
+    "currentSvgPresentationScale": 1.22,
+    "currentSvgPresentationInset": "-11%",
+    "currentVisiblePuzzleWidthRatio": 0.871,
+    "currentVisiblePuzzleHeightRatio": 0.49,
+    "currentPuzzleToBoardWidthRatio": 0.907,
+    "targetVisiblePuzzleWidthRatioRange": [0.9, 0.94],
+    "targetVisiblePuzzleHeightRatioMinimum": 0.52,
+    "persistentChromeHeightRatioMaximum": 0.24,
+    "backgroundCropAllowed": true,
+    "backgroundStretchAllowed": false,
+    "minimumTouchTargetCssPixels": 44,
     "pathCount": 122,
     "allPathsInsideGameplayCanvas": true,
-    "auditViewports": ["430x764", "1365x768"],
+    "auditViewports": ["430x764", "tall real-phone-like portrait", "1365x768"],
     "rejectedScale": {
       "svgPresentationScale": 1.6,
       "visiblePuzzleWidthRatio": 1.142,
       "reason": "Side paths and ears clipped outside the gameplay canvas"
     },
-    "lockedRule": "Measure actual rendered path bounds with getBBox and getScreenCTM. Never infer visible size from the board or SVG rectangle alone."
+    "lockedRule": "Measure actual rendered path bounds with getBBox and getScreenCTM. Enforce minimum size, maximum persistent-chrome height, accessible touch targets, background crop without distortion, and no clipping."
   },
   "brandAssetPipeline": {
     "canonicalDocument": "docs/second-brain/BRAND_ASSET_PIPELINE.md",
@@ -189,10 +195,10 @@
     "offlineRule": "The service worker caches the same runtime paths."
   },
   "activeNextAction": {
-    "id": "verify-v46-mobile-puzzle-size-and-completion-chain",
-    "status": "owner_phone_visual_and_progression_retest_required",
-    "summary": "Verify the cache-v46 build on a real phone: larger Toxic Toby puzzle, no clipping, correct five backgrounds, working trail removal, and all expression transitions through the private feed.",
-    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=46",
+    "id": "implement-gameplay-first-mobile-composition",
+    "status": "engineering_required_before_owner_retest",
+    "summary": "Compress top, status, and bottom chrome; crop the Toxic Toby environment when needed; enlarge actual rendered arrow paths to the locked safe target; and audit the real production bundle before merge.",
+    "playUrl": null,
     "blockNewTeddyProduction": true
   },
   "knownDefects": [
@@ -212,19 +218,19 @@
       "ledger": "F-012",
       "title": "Illustrated loading bar looked permanently full",
       "status": "fixed_in_code_pending_owner_visual_review",
-      "requiredEvidence": "Owner confirms the published v46 bar visibly advances from near empty to 100 percent before the app opens."
+      "requiredEvidence": "Owner confirms the published bar visibly advances from near empty to 100 percent before the app opens."
     },
     {
       "ledger": "F-013",
       "title": "Gameplay backdrop class activated but the image did not render",
       "status": "fixed_and_rendered_pending_published_owner_verification",
-      "requiredEvidence": "Owner confirms the published v46 background is visible on a real phone."
+      "requiredEvidence": "Owner confirms each published background is visible on a real phone."
     },
     {
       "ledger": "F-014",
       "title": "Gameplay background rendered but the Teddy puzzle remained undersized",
-      "status": "fixed_and_rendered_pending_published_owner_verification",
-      "requiredEvidence": "Owner confirms the published v46 Teddy face is materially larger, centered, readable, and not clipped."
+      "status": "partially_fixed_v46_but_owner_requires_gameplay_first_layout_revision",
+      "requiredEvidence": "Owner confirms the published gameplay-first build has substantially larger arrows, compact chrome, acceptable background crop, and no clipping."
     }
   ],
   "artwork": {
@@ -241,10 +247,14 @@
   "visualReference": {
     "purpose": "Composition and readability only",
     "requirements": [
-      "The face puzzle is the dominant screen object",
+      "The arrow puzzle is the dominant screen object",
       "The Teddy silhouette is immediately recognizable",
-      "The puzzle occupies approximately 68 to 88 percent of usable portrait width",
+      "Actual rendered paths target approximately 90 to 94 percent of usable gameplay width",
+      "Actual rendered paths target at least 52 percent of portrait gameplay height when the silhouette permits it",
+      "Persistent top status and bottom chrome stays at or below approximately 24 percent of gameplay height",
+      "Background art may crop before the puzzle is reduced and may never stretch",
       "Controls stay outside important face regions and exit lanes",
+      "Compact controls retain at least 44 CSS-pixel touch targets",
       "Arrowheads remain readable at normal phone size",
       "The background remains secondary",
       "Trail removal reveals the expression beneath the same face area"
@@ -262,13 +272,17 @@
     "real static brand-image delivery pipeline",
     "canonical runtime design-system palette",
     "manifest-driven gameplay backdrops",
+    "gameplay-first mobile hierarchy",
     "measured rendered-path mobile scaling",
+    "background crop before puzzle reduction",
     "browser Vite publication under play",
     "native offline bundling",
     "content integrity verification"
   ],
   "humanGatesPending": [
-    "owner verifies the v46 enlarged puzzle size on a real phone",
+    "owner verifies the gameplay-first mobile arrow size on a real phone",
+    "owner verifies top and bottom menus are compact",
+    "owner verifies background cropping preserves the Toxic Toby laboratory identity",
     "owner verifies no ears chin arrowheads or exit lanes are clipped",
     "owner verifies all five gameplay backgrounds map correctly and preserve arrow readability",
     "owner verifies dark home game and feed palette alignment",
