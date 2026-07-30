@@ -1,7 +1,7 @@
 # Canonical Project Status
 
-Updated: 2026-07-29
-Last independently rendered PR baseline: `146fcc7af3b0abcc08a1ea5c195e7f52b679a9b3`
+Updated: 2026-07-30
+Last independently rendered source baseline: `33f8b2cd5fb4656235764ab125f5c7963457a6a9`
 
 ## Product identity
 
@@ -31,23 +31,29 @@ Last independently rendered PR baseline: `146fcc7af3b0abcc08a1ea5c195e7f52b679a9
 - Owner-approved Toxic Teddies opening artwork prepared as a real WebP file at `public/assets/branding/loading/toxic-teddies-loading.webp`.
 - The splash HTML preloads and references the WebP directly, so the first visual no longer depends on JavaScript or a data URI.
 - The same approved artwork provides the exact Toxic Teddies logo crop on the home screen; a hidden semantic H1 remains for accessibility.
-- The owner confirmed that the complete loading artwork now appears.
+- The owner confirmed that the complete loading artwork appears.
 - Loading progress is tied to real startup stages and uses a dark unfilled lane plus a bright left-to-right fill.
 - Full-motion loading remains visible for at least 1,800 ms and reaches visible 100 percent before handoff; reduced-motion uses 700 ms.
 - Runtime design tokens contain the exact Design System 1.0.0 palette.
 - Home collection, game chrome, feed and accessibility controls use the dark Grime 900 / Ink 900 shell with Toxic Green, Slime Green, Mold Olive and Patch Purple accents.
 - Parchment is reserved for puzzle and modal readability instead of being used as the entire app background.
-- Five owner-approved 9:16 Toxic Toby gameplay environments are stored as local WebP files and mapped in expression order: Neutral, Evil Grin, Gross, Angry and Maniacal Laugh.
+- Five owner-approved 9:16 Toxic Toby gameplay environments are stored as local WebP files and mapped in expression order.
 - Gameplay backdrop paths are resolved against `document.baseURI`, preloaded with a real `Image`, and applied as absolute inline backgrounds directly to the 9:16 game view after successful loading.
-- The gameplay element exposes `loading`, `loaded`, `invalid-url`, and `load-error` diagnostics for test and support evidence.
+- The gameplay element exposes `loading`, `loaded`, `invalid-url`, and `load-error` diagnostics.
 - The old square backdrop layer is suppressed and the arrow board remains transparent over the artwork's quiet central panel.
 - High-contrast mode removes decorative background art and restores a solid readable board surface.
-- Browser runtime/service-worker cache v44 includes the five Toxic Toby WebP gameplay environments.
-- Automated unit tests validate manifest order, WebP signatures, absolute URL resolution, successful load state, 9:16 layout, and transparent board treatment.
-- A dedicated Chrome production-browser audit builds and serves the real Vite bundle, validates all five WebPs over HTTP, waits for intro handoff, verifies computed background state and 122 Neutral paths, and captures mobile and desktop gameplay screenshots.
-- The successful v44 PR audit screenshots visibly show the radioactive laboratory perimeter, quiet center panel, and arrow face at 430×764 and 1365×768.
+- Browser runtime/service-worker cache v46 includes the five Toxic Toby WebP gameplay environments.
+- The transparent board shell occupies 96 percent of gameplay width.
+- The compiled board and preview SVG layers use a centered 122 percent presentation with `inset: -11%`.
+- The actual rendered Neutral Teddy paths measure 87.1 percent of gameplay width, 49.0 percent of portrait height, and 90.7 percent of board width.
+- All 122 Neutral paths remain inside the gameplay canvas.
+- Automated unit tests validate manifest order, WebP signatures, absolute URL resolution, successful load state, 9:16 layout, transparent board treatment, and the locked 122 percent scale.
+- A dedicated Chrome production-browser audit measures the actual rendered path bounds with `getBBox()` and `getScreenCTM()` rather than inferring size from the SVG rectangle.
+- The successful v46 audit builds and serves the real Vite bundle, validates all five WebPs over HTTP, waits for intro handoff, verifies computed background state and 122 Neutral paths, and captures mobile and desktop gameplay screenshots.
+- The audited viewports are 430×764 mobile and 1365×768 desktop.
 - No runtime exceptions or gameplay-background console errors occurred in the successful rendered audit.
-- `BRAND_ASSET_PIPELINE.md` records the exact proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
+- Quality checks, browser build, native Android/iOS validation, store validation, Android AAB, and iOS archive passed on the audited implementation.
+- `BRAND_ASSET_PIPELINE.md` records the proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
 
 ## Owner-reported defect state
 
@@ -61,7 +67,7 @@ Last independently rendered PR baseline: `146fcc7af3b0abcc08a1ea5c195e7f52b679a9
 
 ### Runtime visual mismatch
 
-- The owner reported that the collection screen still used a cream background, white cards and brown text that did not match the locked Toxic Teddies design system.
+- The owner reported that the collection screen used a cream background, white cards and brown text that did not match the locked Toxic Teddies design system.
 - Failure F-009 records the mismatch.
 - The runtime palette and shared surfaces are aligned in code.
 - Final approval remains pending a published phone screenshot showing the revised home, game and feed screens.
@@ -73,16 +79,24 @@ Last independently rendered PR baseline: `146fcc7af3b0abcc08a1ea5c195e7f52b679a9
 - The image is now materialized as a normal WebP during every build and referenced directly from HTML.
 - The owner has confirmed that the complete radioactive-laboratory artwork appears.
 - Failure F-012 records that the painted bar looked permanently full and did not visibly progress.
-- The loading lane is darkened and revealed by a monotonic real-stage fill with cache v44.
+- The loading lane is darkened and revealed by a monotonic real-stage fill with cache v46.
 - Published confirmation of the repaired bar and home logo remains pending.
 
 ### Gameplay background rendering
 
 - The owner reported that v42 and v43 showed a flat dark gameplay surface with no visible laboratory environment.
-- Failure F-013 records that class, layout, and source-string tests passed without proving the production browser painted the image.
+- Failure F-013 records that class, layout and source-string tests passed without proving the production browser painted the image.
 - The v44 repair loads the exact WebP to the real game view with an absolute URL and does not activate the visual state until the image load event succeeds.
-- The real production-browser audit passed on both mobile and desktop and the screenshots were manually inspected.
-- Published GitHub Pages owner verification remains pending after merge.
+- The owner subsequently confirmed that the background rendered on a real phone.
+
+### Mobile puzzle size
+
+- The owner reported that the v45 real-phone puzzle was substantially smaller than the reference.
+- Failure F-014 records that the 57×57 compiled SVG has deliberate empty cells around the actual Teddy paths, so the visible face remained undersized even after enlarging the shell.
+- A 160 percent test scale was rendered and rejected because the measured face became 114.2 percent of gameplay width and clipped side paths.
+- The accepted v46 scale is 122 percent with `inset: -11%`.
+- The final measured face is 87.1 percent of gameplay width and remains fully inside the canvas.
+- Published real-phone owner verification of v46 remains pending.
 
 ## Canonical loading-screen state
 
@@ -97,6 +111,19 @@ Last independently rendered PR baseline: `146fcc7af3b0abcc08a1ea5c195e7f52b679a9
 - The home/game interface is inert and hidden while startup is incomplete.
 - Startup failure removes the splash and shows the existing actionable error screen.
 - The full method and replacement procedure are locked in `BRAND_ASSET_PIPELINE.md`.
+
+## Canonical mobile puzzle scale
+
+- Gameplay canvas: exact 9:16.
+- Board shell width: 96 percent of game width.
+- SVG/preview presentation: 122 percent, centered with `inset: -11%`.
+- Measured visible path width: 87.1 percent of gameplay width.
+- Measured visible path height: 49.0 percent of portrait height.
+- Measured visible path width relative to board: 90.7 percent.
+- Path count: 122.
+- No clipped ears, chin, arrowheads or exit paths in the production audit.
+- The input controller, compiled coordinates, viewBox, blocker logic, solver data, exit animation, saves and progression are unchanged.
+- Future scale changes must measure rendered path bounds and enforce both minimum size and no-clipping assertions.
 
 ## Canonical design-system implementation
 
@@ -116,14 +143,15 @@ No custom Toxic Head font file is currently bundled. The approved logo artwork m
 
 ## What is not complete
 
-- Owner verification of the v44 gameplay environment on the published GitHub Pages build remains pending.
+- Owner verification of the v46 enlarged puzzle size on the published real-phone build remains pending.
+- Owner verification that no ears, chin, arrowheads or exit lanes are clipped remains pending.
 - Owner visual approval of the dark runtime palette on the published phone build remains pending.
 - Owner verification that all five Toxic Toby gameplay backgrounds align with the board and preserve arrow readability remains pending.
 - Owner verification of the repaired animated loading bar and approved home logo remains pending.
 - Owner verification of every repaired completion transition and final feed remains pending.
 - The five owner-produced clean Toxic Toby reveal images have not been inserted.
-- Physical iPhone testing has not been completed.
-- Physical Android testing has not been completed.
+- Full physical iPhone lifecycle and accessibility testing has not been completed.
+- Full physical Android lifecycle and accessibility testing has not been completed.
 - Airplane-mode, force-close, reboot, low-memory, VoiceOver, and TalkBack evidence remains pending.
 - The 12-person Toxic Toby UX study has not occurred.
 - Signed TestFlight and Google Play internal-test uploads remain pending.
@@ -151,14 +179,16 @@ assets/backdrops/tt01/maniacal-laugh.webp
 
 These files are environment-only gameplay backgrounds. They are separate from the clean expression reveal artwork.
 
-Required rendering evidence for any future backdrop change:
+Required rendering evidence for any future backdrop or scale change:
 
 - valid local WebP signature;
 - HTTP 200 from the built production bundle;
 - absolute resolved runtime URL;
-- computed background-image on the visible game view;
+- computed background image on the visible game view;
 - successful image-load diagnostic;
-- rendered puzzle paths over the backdrop;
+- actual rendered SVG path bounds;
+- minimum face-size thresholds;
+- no-clipping assertion;
 - clean mobile and desktop gameplay screenshots inspected before merge.
 
 ## Reveal artwork state
