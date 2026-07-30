@@ -79,7 +79,7 @@ jobs:
         run: |
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME"
-          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=45'
+          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=46'
 
           CHROME_BIN="$CHROME" node scripts/capture-gameplay-backdrop-audit.mjs \
             "$URL" audit/toxic-toby-neutral-mobile.png 430 764
@@ -105,8 +105,10 @@ jobs:
               throw new Error(`${name}: incorrect computed background ${d?.computedBackgroundImage}`);
             }
             if (!(d?.pathCount > 0)) throw new Error(`${name}: no puzzle paths rendered`);
-            if (!(d?.boardWidthRatio >= 0.9)) throw new Error(`${name}: board width ratio ${d?.boardWidthRatio}`);
-            if (!(d?.puzzleWidthRatio >= 0.68)) throw new Error(`${name}: puzzle width ratio ${d?.puzzleWidthRatio}`);
+            if (!(d?.boardWidthRatio >= 0.94)) throw new Error(`${name}: board width ratio ${d?.boardWidthRatio}`);
+            if (!(d?.puzzleWidthRatio >= 0.76)) throw new Error(`${name}: puzzle width ratio ${d?.puzzleWidthRatio}`);
+            if (!(d?.puzzleHeightRatio >= 0.38)) throw new Error(`${name}: puzzle height ratio ${d?.puzzleHeightRatio}`);
+            if (!(d?.puzzleToBoardWidthRatio >= 0.78)) throw new Error(`${name}: puzzle-to-board ratio ${d?.puzzleToBoardWidthRatio}`);
             if (!d?.puzzleInsideGame) throw new Error(`${name}: enlarged puzzle is clipped`);
             if (!report.networkEvents.some(event => event.type === 'response' && event.url.endsWith('/neutral.webp') && event.status === 200)) {
               throw new Error(`${name}: neutral.webp did not return HTTP 200`);
@@ -125,7 +127,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: toxic-toby-gameplay-backdrop-audit
+          name: toxic-toby-gameplay-scale-audit-v46
           path: audit/
           if-no-files-found: warn
           retention-days: 14
