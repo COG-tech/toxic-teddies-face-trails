@@ -168,6 +168,26 @@ Read this before proposing a fix. Do not repeat a failed approach under a new na
 
 **Status:** Fixed and independently rendered in the PR build; published owner verification pending.
 
+## F-014 — The gameplay background rendered, but the Teddy puzzle remained undersized
+
+**Observed:** The owner’s real-phone screenshot showed the approved radioactive laboratory correctly, but the arrow-face occupied only the middle of the quiet panel and was substantially smaller than the reference puzzle.
+
+**Environment/build:** Published GitHub Pages v45 on a real Android phone, reported by the owner on 2026-07-30.
+
+**Expected:** The Teddy face must be the dominant gameplay object, approximately matching the reference puzzle’s screen coverage while preserving the illustrated perimeter and every exit lane.
+
+**Root cause:** The compiled level uses a 57×57 SVG viewBox with deliberate empty grid cells around the actual Teddy silhouette. Enlarging only the transparent board shell to 92% and the SVG to 108% left those internal margins in place, so source-level CSS measurements overstated the visible face size.
+
+**Rejected overcorrection:** A first v46 attempt used a 160% SVG scale. The new browser audit measured the actual rendered paths at 114.2% of gameplay width and rejected the build because ears and side paths were clipped. That failed render was not merged.
+
+**Resolution:** The shell is 96% wide and the centered SVG/preview layers use a measured 122% scale with `inset: -11%`. The production Chrome audit measures actual path bounds using `getBBox()` and `getScreenCTM()`. The final render measures 87.1% of gameplay width, 49.0% of portrait height, and 90.7% of board width, with all 122 paths inside the canvas.
+
+**Regression evidence:** Mobile 430×764 and desktop 1365×768 production screenshots were captured after the intro handoff. Both passed background loading, path-count, measured-size and clipping assertions. Quality, browser, native and store workflows also pass on the final branch head.
+
+**Never repeat:** Do not infer visible puzzle size from the outer SVG or board rectangle. Measure the rendered path bounds. Do not merge an enlargement without both lower size limits and a no-clipping assertion.
+
+**Status:** Fixed and independently rendered in PR #45; published owner verification pending.
+
 ## Incident entry template
 
 ```text

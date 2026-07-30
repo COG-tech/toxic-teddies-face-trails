@@ -1,27 +1,36 @@
 # Single Canonical Next Action
 
 Updated: 2026-07-30
-Status: **ACTIVE — OWNER V45 MOBILE SIZE AND PROGRESSION RETEST REQUIRED**
+Status: **ACTIVE — OWNER V46 MOBILE SIZE AND PROGRESSION RETEST REQUIRED**
 
 ## Action
 
-Verify the published cache-v45 build on a real phone: confirm the enlarged Toxic Toby arrow face now dominates the quiet gameplay panel, all five owner-approved backgrounds remain correct, every path remains readable and clickable, and the complete `1 → 2 → 3 → 4 → 5 → feed` chain still works before inserting final reveal artwork or beginning Moldy Molly.
+Verify the published cache-v46 build on a real phone: confirm the measured larger Toxic Toby arrow face now dominates the quiet gameplay panel, all five owner-approved backgrounds remain correct, every path remains readable and clickable, and the complete `1 → 2 → 3 → 4 → 5 → feed` chain still works before inserting final reveal artwork or beginning Moldy Molly.
 
-Playable build:
+Playable build after merge:
 
 ```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=45
+https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=46
 ```
 
-## Locked v45 mobile scale
+## Locked v46 mobile scale
 
 - Gameplay canvas remains 9:16.
-- Transparent puzzle shell width is 92% of the gameplay canvas.
-- Board and preview SVG layers use a centered 108% presentation with `inset: -4%`.
-- The rendered Neutral Teddy face measures 73.9% of the gameplay-canvas width in the production-browser audit.
-- The board measures 92.0% of gameplay width.
+- Transparent puzzle shell width is 96% of the gameplay canvas.
+- Board and preview SVG layers use a centered 122% presentation with `inset: -11%`.
+- The rendered Neutral Teddy face measures 87.1% of gameplay-canvas width.
+- The rendered face measures 49.0% of the portrait canvas height.
+- The face fills 90.7% of the transparent board width.
+- The board measures 96.0% of gameplay width.
 - All 122 paths remain fully inside the gameplay canvas.
 - Path coordinates, viewBox, solver data, input geometry, blocker logic, removal behavior, saves, progression and reveal logic remain unchanged.
+
+## Rejected enlargement
+
+- A 160% SVG scale was rendered and audited before merge.
+- It measured 114.2% of gameplay width and clipped the side paths.
+- The audit failed and that scale was removed.
+- Do not restore the 160% scale or weaken the no-clipping assertion.
 
 ## Automated evidence already passed
 
@@ -33,9 +42,11 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 - Computed `.game-view` background contains `neutral.webp`.
 - The gameplay view reports `data-gameplay-backdrop-status="loaded"`.
 - All 122 Neutral paths render over the background.
-- Mobile 430×764 and desktop 1365×768 screenshots show the enlarged Teddy face filling nearly the complete quiet center panel.
-- Measured board-width ratio is at least 0.90.
-- Measured visible-puzzle-width ratio is at least 0.68.
+- Mobile 430×764 and desktop 1365×768 screenshots show the enlarged Teddy face filling the quiet center panel.
+- Measured board-width ratio is 0.960.
+- Measured visible-puzzle-width ratio is 0.871.
+- Measured visible-puzzle-height ratio is 0.490.
+- Measured puzzle-to-board-width ratio is 0.907.
 - The enlarged puzzle remains fully inside the gameplay canvas.
 - No runtime exceptions or gameplay-background console errors.
 - Native Android and iOS validation passed.
@@ -44,9 +55,9 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 ## Required owner retest sequence
 
 1. Close every old Toxic Teddies tab.
-2. Open the cache-busted v45 link in a new private/incognito tab.
+2. Open the cache-busted v46 link in a new private/incognito tab.
 3. Confirm the loading image hands off to gameplay.
-4. Confirm the arrow-face puzzle is substantially larger than the v44 phone screenshot and nearly fills the quiet center panel.
+4. Confirm the arrow-face puzzle is substantially larger than the v45 phone screenshot and resembles the reference puzzle’s screen coverage.
 5. Confirm no ear, chin, arrowhead or exit lane is clipped.
 6. Confirm Neutral displays `neutral.webp` behind the arrows, with the laboratory frame visible around the perimeter.
 7. Remove at least one valid trail and confirm selection and head-first removal still work.
@@ -61,7 +72,7 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 
 ## Evidence needed from the published build
 
-- One phone screenshot proving the deployed v45 puzzle size.
+- One phone screenshot proving the deployed v46 puzzle size.
 - One screenshot for any expression whose background or puzzle scale is incorrect.
 - Exact text and screenshot for any loading, clipping, interaction, progression or persistence failure.
 - Device/browser and whether the page was opened in a new private tab.
@@ -70,7 +81,7 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 
 - The Teddy face is the dominant screen object.
 - The face remains centered and immediately recognizable.
-- The puzzle nearly fills the quiet central panel without overlapping important outer-frame detail.
+- The puzzle fills most of the quiet central panel without overlapping important outer-frame detail.
 - Every arrowhead remains readable at normal phone size.
 - Controls stay outside important face regions and exit lanes.
 - Each expression uses its matching owner-approved environment.
@@ -88,8 +99,8 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 
 ## After this action passes
 
-1. Mark the v45 mobile-size gate verified on the published build.
-2. Mark F-013 and the gameplay-background visual gate verified.
+1. Mark the v46 mobile-size gate verified on the published build.
+2. Mark F-013 and F-014 verified.
 3. Mark issue #29 verified after the complete progression chain passes.
 4. Insert the five owner-approved Toxic Toby reveal images when supplied.
 5. Review reveal crop and readability on target phone sizes.

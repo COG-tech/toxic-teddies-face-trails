@@ -63,9 +63,9 @@
 }
 
 .game-view.has-gameplay-backdrop .game-footer {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 10px;
 }
 
 /* The portrait artwork already contains the quiet gameplay panel and outer frame. */
@@ -74,13 +74,13 @@
 }
 
 /*
- * The compiled Teddy silhouette has deliberate empty grid cells around its outline.
- * A 76% shell made the visible face occupy only about half of a phone screen.
- * The larger transparent shell plus a small SVG overscan keeps every path inside the
- * quiet center panel while making the arrow face the dominant gameplay object.
+ * The 57 x 57 compiled SVG contains deliberate empty grid cells around the Teddy.
+ * A normal 100% SVG therefore makes the visible face much smaller than the board.
+ * Keep the interaction geometry unchanged, but use a measured centered overscan so
+ * the face dominates the phone panel without clipping ears, chin, paths, or exits.
  */
 .game-view.has-gameplay-backdrop .board-shell {
-  width: 92%;
+  width: 96%;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -89,9 +89,9 @@
 
 .game-view.has-gameplay-backdrop .board,
 .game-view.has-gameplay-backdrop .preview-layer {
-  inset: -4%;
-  width: 108%;
-  height: 108%;
+  inset: -11%;
+  width: 122%;
+  height: 122%;
 }
 
 .game-view.has-gameplay-backdrop .board-shell::before {
@@ -134,6 +134,6 @@
   }
 
   .game-view.has-gameplay-backdrop .board-shell {
-    width: 92%;
+    width: 96%;
   }
 }
