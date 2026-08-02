@@ -28,7 +28,7 @@
     if (version !== requestVersion) return;
     gameView.style.backgroundImage = `url(${JSON.stringify(absoluteUrl)})`;
     gameView.style.backgroundPosition = boardBackdrop.style.backgroundPosition || '50% 50%';
-    gameView.style.backgroundSize = '100% 100%';
+    gameView.style.backgroundSize = 'cover';
     gameView.style.backgroundRepeat = 'no-repeat';
     gameView.classList.add('has-gameplay-backdrop');
     gameView.dataset.gameplayBackdropStatus = 'loaded';
