@@ -1,44 +1,59 @@
 # Single Canonical Next Action
 
 Updated: 2026-08-02
-Status: **ACTIVE — VERIFY THE PUBLISHED V48 GAMEPLAY-FIRST MOBILE LAYOUT**
+Status: **ACTIVE — VERIFY THE PUBLISHED V49 ENGINE-FITTED MOBILE MAZE**
 
 ## Action
 
-Publish and test the v48 gameplay-first mobile composition on a real phone. The oversized persistent gameplay cards have been removed from the visible layout, the maze has been enlarged, the background now crops without stretching, and only compact floating controls remain.
+Publish and test the v49 gameplay engine fit on a real phone. The phone view now uses the full dynamic viewport rather than shrinking into a strict 9:16 box, and the engine measures each rendered Teddy path group to calculate its own centered SVG viewBox instead of relying on a fixed overscan percentage.
 
 Playable owner-review route after merge:
 
 ```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=48
+https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=49
 ```
 
-## V48 owner verification gate
+## Automated v49 evidence
+
+The successful production-browser audit at 430×764 measured:
+
+- gameplay width: 430 pixels, full viewport width;
+- board width: 430 pixels;
+- rendered Neutral puzzle width: 404.95 pixels;
+- rendered puzzle width ratio: **94.17%** of gameplay width;
+- rendered puzzle height ratio: **53.00%** of gameplay height;
+- rendered puzzle-to-board ratio: **94.17%**;
+- path count: 122;
+- all rendered puzzle bounds inside the gameplay canvas;
+- background size: `cover`;
+- no runtime exceptions or gameplay-background console errors.
+
+## V49 owner verification gate
 
 1. Close every old Toxic Teddies browser tab.
-2. Open the cache-busted v48 route in a new private/incognito tab.
-3. Confirm there is no large top title card.
-4. Confirm `Level 1` is a small secondary label.
-5. Confirm the large progress card and instruction strip are gone.
-6. Confirm the bottom `Open arrow trails` text bar and five-expression tray are gone.
+2. Open the cache-busted v49 route in a new private/incognito tab.
+3. Confirm there are no wide black side gutters around the gameplay frame.
+4. Confirm the maze comes close to both side edges while retaining a narrow safety margin.
+5. Confirm `Level 1` remains a small secondary label.
+6. Confirm there is no large top title card, progress card, instruction strip, bottom arrow-trails bar, or expression tray.
 7. Confirm only compact 44-pixel floating controls remain.
-8. Confirm the maze is the dominant screen object.
-9. Confirm the visible Teddy paths occupy approximately 90–94% of gameplay width and at least 52% of portrait gameplay height.
-10. Confirm the laboratory background is cropped rather than stretched.
-11. Confirm no ear, chin path, arrowhead, face-critical feature, or exit lane is clipped or covered.
-12. Remove at least one valid trail and confirm selection, blockers, and head-first removal still work.
-13. Complete the `1 → 2 → 3 → 4 → 5 → feed` sequence and refresh to verify persistence.
+8. Confirm the laboratory background is cropped rather than stretched.
+9. Confirm no ear, chin path, arrowhead, face-critical feature, or exit lane is clipped or covered.
+10. Remove several valid trails and confirm the puzzle does not zoom or jump after each removal.
+11. Rotate or resize the phone view and confirm the engine refits the puzzle cleanly.
+12. Confirm selection, blockers, head-first removal, saves, and progression still work.
 
-## Locked v48 implementation
+## Locked v49 implementation
 
-- Full-width board shell inside the 9:16 gameplay frame.
-- Centered 125% SVG presentation with `inset: -12.5%`.
-- Compact 44-pixel back, hint, restart, and open-trails controls.
-- Tiny level and progress labels only.
-- Persistent instruction copy visually hidden while live accessibility announcements remain.
-- Expression controls hidden during normal play.
+- Full dynamic phone viewport width and height.
+- Engine-measured puzzle bounds using `getBBox`, including stroke and markers where supported.
+- A centered per-expression SVG viewBox targeting approximately 94% visual fill.
+- The same viewBox applied to puzzle and preview layers.
+- Refit after level rendering, board resize, orientation change, and page restoration.
+- No refit caused by normal path-state changes during play.
+- Compact floating controls and visually hidden persistent instruction copy.
 - Background uses `cover`; stretching is forbidden.
-- Compiled coordinates, viewBox data, hit testing, blocker calculations, trail removal, saves, progression, and reveal logic remain unchanged.
+- Compiled coordinates, puzzle content, hit testing, blocker calculations, trail removal, saves, progression, and reveal logic remain unchanged.
 
 ## Do not start yet
 
@@ -46,12 +61,12 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 - Do not insert final reveal artwork.
 - Do not restore the removed menu cards.
 - Do not reduce the maze to show more background.
-- Do not alter compiled level geometry merely to gain screen size.
-- Do not approve the layout without a real-phone screenshot and no-clipping check.
+- Do not return to a fixed overscan percentage as the primary fitting system.
+- Do not approve the layout without a real-phone screenshot and no-clipping interaction check.
 
 ## Completion rule
 
-The gameplay-first composition gate is complete only after the owner approves the published v48 phone result and confirms that the maze dominates the screen without clipping or broken interaction.
+The v49 engine-fit gate is complete only after the owner approves the published phone result and confirms that the maze uses the available width without clipping, jumping, or broken interaction.
 
 ## Replacement rule
 
