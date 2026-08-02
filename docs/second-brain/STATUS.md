@@ -1,7 +1,7 @@
 # Canonical Project Status
 
-Updated: 2026-07-30
-Last merged source baseline: `83231811ed6653f7d5da03c7da1c5265136621b7`
+Updated: 2026-08-02
+Last merged source baseline: `2a3de7bc62da2efe97c011f5c8e47452db6cf8a8`
 
 ## Product identity
 
@@ -15,184 +15,155 @@ Last merged source baseline: `83231811ed6653f7d5da03c7da1c5265136621b7`
 - Browser demo: `https://cog-tech.github.io/toxic-teddies-face-trails/play/`
 - Visual design system: `1.0.0`, July 2026
 
-## What is implemented
+## Current release state
+
+PR #47 was merged on 2026-08-02 as commit `2a3de7bc62da2efe97c011f5c8e47452db6cf8a8`.
+
+The release:
+
+- replaces the previous opening image with the owner-approved full-screen portrait Toxic Teddies intro;
+- removes the static `LOADING` text from the artwork;
+- keeps the illustrated loading trough dark, empty, and colorless before progress advances;
+- overlays the existing real-stage green progress fill inside the artwork's trough;
+- preserves the existing startup duration, monotonic progress, reduced-motion behavior, and handoff;
+- preserves the existing approved Toxic Teddies home-logo source;
+- changes no puzzle geometry, input, blockers, trail removal, save state, expression progression, reveal state, or gameplay layout;
+- advances browser and service-worker presentation caching to `v47`.
+
+The published v47 phone result is **pending owner verification**. The cache-busted review route is:
+
+```text
+https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=47
+```
+
+## Canonical v47 intro state
+
+- Approved artwork: full-screen portrait Toxic Teddies Arrow Escape intro with Toxic Toby in the radioactive laboratory.
+- Source modules: `src/app/intro-art.js` and `src/app/intro-art/part-00.js` through `part-03.js`.
+- Runtime presentation: `#bootSplashImage` receives the approved WebP data URI before the splash transition completes.
+- Display frame: portrait 9:16, fitted to the full mobile game frame without stretching.
+- Illustrated trough: dark and colorless in the static artwork.
+- Runtime fill: the only green loading color inside the trough; moves left to right using actual startup-stage targets.
+- Static `LOADING` word: forbidden.
+- `ENTER THE LAB`: part of the intro artwork, not a second progress control and not a required startup tap.
+- Full-motion minimum: 1,800 ms.
+- Reduced-motion minimum: 700 ms.
+- Splash leaves only after visible progress completion and app readiness.
+- Startup failure still removes the splash and exposes the actionable error screen.
+- Browser/service-worker presentation cache: `v47`.
+- Owner verification pending: crop, empty trough, moving fill, 100% completion, and handoff on a real phone.
+
+The older static WebP at `public/assets/branding/loading/toxic-teddies-loading.webp` remains the approved home-logo source and historical fallback asset. It is not the new full-screen v47 intro composition.
+
+## Implemented gameplay and product systems
 
 - Five deterministic Toxic Toby expression puzzles.
 - Expression order: Neutral, Evil Grin, Gross, Angry, Maniacal Laugh.
-- Verified pointer selection, blocking feedback, head-first removal, hints, accessibility controls, and exact save restoration.
-- Native iOS and Android projects with offline bundled content.
-- Versioning, save migrations, content-integrity verification, local privacy-preserving research analytics, and store-release infrastructure.
-- Browser demo built through Vite and published under `/play/`.
-- Completion reveal screen with five manifest-driven placeholder artwork slots.
-- Toxic Toby 5/5 completion state and locked private Toxic Feed.
-- Feed unlock, viewed/unread post persistence, and direct-route protection.
+- Verified screen-space pointer selection and mobile tap/pan discrimination.
+- Visible blocker feedback with no hidden life penalty.
+- Head-first trail removal and reduced-motion support.
+- Exact unfinished-state restoration by removed path IDs.
 - Manifest-validated completion destinations for `1 → 2 → 3 → 4 → 5 → feed`.
-- Exact next-level loading with duplicate-tap protection, loaded-level verification, preserved completion state, and visible retry behavior.
-- Owner-approved Toxic Teddies opening artwork prepared as a real WebP file at `public/assets/branding/loading/toxic-teddies-loading.webp`.
-- The splash HTML preloads and references the WebP directly, so the first visual no longer depends on JavaScript or a data URI.
-- The same approved artwork provides the exact Toxic Teddies logo crop on the home screen; a hidden semantic H1 remains for accessibility.
-- The owner confirmed that the complete loading artwork appears.
-- Loading progress is tied to real startup stages and uses a dark unfilled lane plus a bright left-to-right fill.
-- Full-motion loading remains visible for at least 1,800 ms and reaches visible 100 percent before handoff; reduced-motion uses 700 ms.
-- Runtime design tokens contain the exact Design System 1.0.0 palette.
-- Home collection, game chrome, feed and accessibility controls use the dark Grime 900 / Ink 900 shell with Toxic Green, Slime Green, Mold Olive and Patch Purple accents.
-- Parchment is reserved for puzzle and modal readability instead of being used as the entire app background.
-- Five owner-approved 9:16 Toxic Toby gameplay environments are stored as local WebP files and mapped in expression order.
-- Gameplay backdrop paths are resolved against `document.baseURI`, preloaded with a real `Image`, and applied as absolute inline backgrounds directly to the game view after successful loading.
-- The gameplay element exposes `loading`, `loaded`, `invalid-url`, and `load-error` diagnostics.
-- The old square backdrop layer is suppressed and the arrow board remains transparent over the artwork's quiet central panel.
-- High-contrast mode removes decorative background art and restores a solid readable board surface.
-- Browser runtime/service-worker cache v46 includes the five Toxic Toby WebP gameplay environments.
-- The current v46 transparent board shell occupies 96 percent of gameplay width.
-- The current v46 compiled board and preview SVG layers use a centered 122 percent presentation with `inset: -11%`.
-- The current v46 actual rendered Neutral Teddy paths measure 87.1 percent of gameplay width, 49.0 percent of portrait height, and 90.7 percent of board width.
-- All 122 Neutral paths remain inside the gameplay canvas.
-- Automated unit tests validate manifest order, WebP signatures, absolute URL resolution, successful load state, 9:16 layout, transparent board treatment, and the v46 122 percent scale.
-- A dedicated Chrome production-browser audit measures the actual rendered path bounds with `getBBox()` and `getScreenCTM()` rather than inferring size from the SVG rectangle.
-- The successful v46 audit builds and serves the real Vite bundle, validates all five WebPs over HTTP, waits for intro handoff, verifies computed background state and 122 Neutral paths, and captures mobile and desktop gameplay screenshots.
-- The audited viewports are 430×764 mobile and 1365×768 desktop.
-- No runtime exceptions or gameplay-background console errors occurred in the successful rendered audit.
-- Quality checks, browser build, native Android/iOS validation, store validation, Android AAB, and iOS archive passed on the audited implementation.
-- `BRAND_ASSET_PIPELINE.md` records the proven static-image, Vite public-file, HTML preload, native-bundle, service-worker, logo-crop and replacement process.
+- Duplicate-tap protection, destination verification, preserved completion state, and visible retry behavior.
+- Toxic Toby 5/5 completion state and private Toxic Feed unlock.
+- Feed viewed/unread persistence and direct-route protection.
+- Native iOS and Android Capacitor projects with offline bundled content.
+- Versioned save migrations, bundled-content integrity checks, privacy-preserving local analytics, and store-release infrastructure.
+- Browser demo built through Vite and published under `/play/`.
+- Five owner-approved 9:16 Toxic Toby gameplay environments mapped in expression order.
+- Absolute backdrop URL resolution, successful image-load diagnostics, transparent board presentation, and high-contrast fallback.
+- Five manifest-driven placeholder reveal slots pending owner-supplied final reveal art.
 
 ## Owner-reported defect and direction state
 
 ### Completion progression
 
-- The first published completion implementation advanced Neutral to Evil Grin.
-- Evil Grin completed, but **Next Expression** did not open Gross.
-- Issue #29 records this defect.
-- The all-level repair is implemented and automated checks validate the complete manifest chain.
-- The defect remains **pending owner verification** until the published browser build is played through all five expressions and the final feed.
+- The original completion flow stopped after Evil Grin.
+- Issue #29 records the defect.
+- The all-level repair is implemented and automated tests validate the complete manifest chain.
+- Owner verification of the published `1 → 2 → 3 → 4 → 5 → feed` sequence remains pending.
 
-### Runtime visual mismatch
+### Runtime palette
 
-- The owner reported that the collection screen used a cream background, white cards and brown text that did not match the locked Toxic Teddies design system.
-- Failure F-009 records the mismatch.
-- The runtime palette and shared surfaces are aligned in code.
-- Final approval remains pending a published phone screenshot showing the revised home, game and feed screens.
+- Failure F-009 records the retired cream interface that contradicted the locked design system.
+- Runtime palette and shared surfaces are aligned in code with Grime 900, Ink 900, Toxic Green, Slime Green, Mold Olive, Patch Purple, and parchment readability surfaces.
+- Published phone approval of home, gameplay, and feed readability remains pending.
 
-### Loading artwork, logo and progress
+### Intro and loading progress
 
-- The owner reported a black loading card with broken-image text after the first two loading-screen attempts.
-- Failures F-010 and F-011 record the script-module and data-URI architecture problems.
-- The image is now materialized as a normal WebP during every build and referenced directly from HTML.
-- The owner has confirmed that the complete radioactive-laboratory artwork appears.
-- Failure F-012 records that the painted bar looked permanently full and did not visibly progress.
-- The loading lane is darkened and revealed by a monotonic real-stage fill with cache v46.
-- Published confirmation of the repaired bar and home logo remains pending.
+- Failures F-010 and F-011 record the earlier broken-image and data-delivery failures.
+- Failure F-012 records the earlier painted bar that looked permanently full.
+- The owner approved a replacement intro on 2026-08-02 with no static loading color or `LOADING` text inside the trough.
+- PR #47 merged that approved v47 presentation.
+- Published phone verification remains pending.
 
-### Gameplay background rendering
+### Gameplay backgrounds
 
-- The owner reported that v42 and v43 showed a flat dark gameplay surface with no visible laboratory environment.
-- Failure F-013 records that class, layout and source-string tests passed without proving the production browser painted the image.
-- The v44 repair loads the exact WebP to the real game view with an absolute URL and does not activate the visual state until the image load event succeeds.
-- The owner subsequently confirmed that the background rendered on a real phone.
+- Failure F-013 records the earlier state where tests passed but the laboratory background did not paint in the production browser.
+- The production runtime now preloads and applies the selected local WebP to the real game view.
+- The owner confirmed that the background renders on a real phone.
 
 ### Mobile puzzle size
 
-- The owner reported that the v45 real-phone puzzle was substantially smaller than the reference.
-- Failure F-014 records that the 57×57 compiled SVG has deliberate empty cells around the actual Teddy paths, so the visible face remained undersized even after enlarging the shell.
-- A 160 percent test scale was rendered and rejected because the measured face became 114.2 percent of gameplay width and clipped side paths.
-- The accepted v46 scale is 122 percent with `inset: -11%`.
-- The v46 measured face is 87.1 percent of gameplay width and remains fully inside the canvas.
-- The owner supplied a new direct side-by-side phone comparison on 2026-07-30 and made a broader layout directive: maximize arrow gameplay even if background art must be cropped and the top and bottom menus must be compressed.
-- The v46 measured puzzle is now an **intermediate baseline**, not the final approved mobile composition.
+- Failure F-014 records the undersized visible Teddy caused by empty cells around the compiled 57×57 path geometry.
+- The current safe v46 presentation uses a 96% board shell and centered 122% SVG presentation with `inset: -11%`.
+- Measured Neutral paths occupy 87.1% of gameplay width and 49.0% of portrait height.
+- All 122 Neutral paths remain inside the gameplay canvas.
+- A 160% scale was rejected because the measured puzzle reached 114.2% of width and clipped side paths.
+- The owner rejected v46 as the final composition and required compressed menus, background cropping, and larger arrow gameplay.
 
-### Gameplay-first mobile composition directive
+## Locked gameplay-first mobile target
 
-The owner has explicitly locked the following priority:
+The intro release does not replace or weaken the gameplay-first directive.
 
-1. Arrow gameplay receives the largest safe area.
-2. Top and bottom menus must be compact.
-3. Background art may be cropped or trimmed before the arrow puzzle is reduced.
-4. The quiet central panel and enough perimeter laboratory identity must remain.
-5. No path, arrowhead, ear, chin, face-critical feature, or exit lane may be clipped.
-6. Accessibility touch targets must remain usable even when visual controls are compact.
-
-The next implementation must target approximately 90–94 percent actual rendered path width, at least 52 percent portrait path height when the silhouette permits it, and no more than approximately 24 percent combined persistent top/status/bottom chrome height.
-
-## Canonical loading-screen state
-
-- Approved artwork: Toxic Teddies Arrow Escape with Toxic Toby in the radioactive laboratory.
-- Runtime file: `assets/branding/loading/toxic-teddies-loading.webp` in browser and native bundles.
-- Build preparation file: `public/assets/branding/loading/toxic-teddies-loading.webp`, generated from five approved source parts before each build.
-- Expected image size: 64,450 bytes.
-- Expected SHA-256: `a0a6a06e34b538027b755427d0a24026b988d69705468dff1bf075e2286198ed`.
-- The artwork is local and works offline.
-- The loading bar advances only toward real startup-stage targets and visibly completes before the splash leaves.
-- Minimum presentation: 1,800 ms for full motion and 700 ms for reduced motion.
-- The home/game interface is inert and hidden while startup is incomplete.
-- Startup failure removes the splash and shows the existing actionable failure screen.
-- The full method and replacement procedure are locked in `BRAND_ASSET_PIPELINE.md`.
-
-## Current v46 mobile scale baseline
-
-- Gameplay canvas: exact 9:16.
-- Board shell width: 96 percent of game width.
-- SVG/preview presentation: 122 percent, centered with `inset: -11%`.
-- Measured visible path width: 87.1 percent of gameplay width.
-- Measured visible path height: 49.0 percent of portrait height.
-- Measured visible path width relative to board: 90.7 percent.
-- Path count: 122.
-- No clipped ears, chin, arrowheads or exit paths in the production audit.
-- The input controller, compiled coordinates, viewBox, blocker logic, solver data, exit animation, saves and progression are unchanged.
-- This baseline is safe but does not satisfy the owner's final gameplay-first composition directive.
-
-## Locked next mobile composition target
-
-- Actual rendered path width: approximately 90–94 percent of gameplay width.
-- Actual rendered path height: at least 52 percent of portrait gameplay height when the silhouette permits it.
-- Combined persistent top header, status/feedback, and bottom controls: no more than approximately 24 percent of gameplay height.
-- Background may be center-cropped or trimmed without stretching.
-- Persistent controls remain outside path and exit regions.
+- Actual rendered path width: approximately **90–94%** of gameplay width.
+- Actual rendered path height: at least **52%** of portrait gameplay height when the silhouette permits it.
+- Combined persistent top, status, and bottom chrome: no more than approximately **24%** of gameplay height.
+- Background may be center-cropped or trimmed before the puzzle is reduced.
+- Background must never be stretched.
 - Compact controls retain at least 44 CSS-pixel touch targets.
-- Future scale changes must measure rendered path bounds and enforce both minimum size and no-clipping assertions.
+- No ear, chin path, arrowhead, face-critical feature, or exit lane may be clipped or covered.
+- Approval requires actual rendered path bounds from `getBBox()` and `getScreenCTM()`, a no-clipping assertion, production-browser screenshots, and real-phone review.
 
-## Canonical design-system implementation
+The large stacked title, progress, status, accessibility, and expression cards shown in the v46 phone screenshot are not the final approved gameplay layout.
 
-The owner-supplied design-system board is recorded in `DESIGN_SYSTEM.md` and reflected in runtime CSS:
+## Current v46 gameplay baseline
 
-- exact primary, secondary and neutral color tokens;
-- approved gradients;
-- the approved illustrated Toxic Teddies logo for display branding;
-- Inter/system typography for readable interface copy;
-- four-pixel spacing scale, twelve-column grid and breakpoints;
-- dark distressed app shell and cards;
-- toxic green active states and patch-purple secondary actions;
-- parchment puzzle/modal readability surfaces;
-- responsive and accessibility requirements.
-
-No custom Toxic Head font file is currently bundled. The approved logo artwork must be used where exact brand lettering is required rather than imitating it with a generic font.
+- Gameplay canvas: portrait 9:16.
+- Board shell width: 96% of gameplay width.
+- SVG/preview presentation: 122%, centered with `inset: -11%`.
+- Visible path width: 87.1% of gameplay width.
+- Visible path height: 49.0% of portrait gameplay height.
+- Visible path width relative to board: 90.7%.
+- Neutral path count: 122.
+- No clipping in the audited baseline.
+- Compiled coordinates, viewBox, selection geometry, blocker logic, solver data, trail removal, saves, and progression remain unchanged.
+- This is an intermediate safe baseline only.
 
 ## What is not complete
 
-- The gameplay-first mobile composition with compressed chrome and background cropping has not yet been implemented.
-- Owner verification of the final enlarged puzzle size on the published real-phone build remains pending.
-- Owner verification that no ears, chin, arrowheads or exit lanes are clipped remains pending.
-- Owner visual approval of the dark runtime palette on the published phone build remains pending.
-- Owner verification that all five Toxic Toby gameplay backgrounds align with the board and preserve arrow readability remains pending.
-- Owner verification of the repaired animated loading bar and approved home logo remains pending.
-- Owner verification of every repaired completion transition and final feed remains pending.
-- The five owner-produced clean Toxic Toby reveal images have not been inserted.
-- Full physical iPhone lifecycle and accessibility testing has not been completed.
-- Full physical Android lifecycle and accessibility testing has not been completed.
-- Airplane-mode, force-close, reboot, low-memory, VoiceOver, and TalkBack evidence remains pending.
-- The 12-person Toxic Toby UX study has not occurred.
-- Signed TestFlight and Google Play internal-test uploads remain pending.
-- Moldy Molly and the remaining Founding 12 are not playable.
-- Design-board concepts such as star ratings, completion times, achievements and difficulty selectors must not be described as implemented unless separately developed and verified.
+- Owner verification of the published v47 intro on a real phone.
+- Gameplay-first mobile composition with compressed persistent menus and cropped background.
+- Owner approval of final enlarged arrow size and no-clipping evidence.
+- Owner approval of the published dark home, gameplay, and feed palette.
+- Owner verification of all five gameplay-background mappings and arrow readability.
+- Owner verification of every completion transition and final feed.
+- Five owner-approved clean Toxic Toby reveal images.
+- Full physical iPhone lifecycle and accessibility testing.
+- Full physical Android lifecycle and accessibility testing.
+- Airplane-mode, force-close, reboot, low-memory, VoiceOver, and TalkBack evidence.
+- Twelve-person Toxic Toby UX study.
+- Signed TestFlight and Google Play internal-test uploads.
+- Moldy Molly and the remaining Founding 12 playable packages.
 
 ## Playable content
 
 - Playable Teddy: `tt01` Toxic Toby / Radioactive Ricky.
 - Playable expressions: 5.
 - Founding 12 target: 60 total levels.
-- All other Teddy cards must remain honest **COMING SOON** states.
+- All other Teddy cards remain honest **COMING SOON** states.
 
-## Gameplay backdrop state
-
-Owner-approved gameplay environment files:
+## Gameplay backdrop files
 
 ```text
 assets/backdrops/tt01/neutral.webp
@@ -202,25 +173,9 @@ assets/backdrops/tt01/angry.webp
 assets/backdrops/tt01/maniacal-laugh.webp
 ```
 
-These files are environment-only gameplay backgrounds. They are separate from the clean expression reveal artwork.
+These are environment-only gameplay backgrounds. They are separate from final expression reveal artwork.
 
-Required rendering evidence for any future backdrop, chrome, crop, or scale change:
-
-- valid local WebP signature;
-- HTTP 200 from the built production bundle;
-- absolute resolved runtime URL;
-- computed background image on the visible game view;
-- successful image-load diagnostic;
-- actual rendered SVG path bounds;
-- minimum face-size thresholds;
-- persistent chrome height budget;
-- no-clipping assertion;
-- proof that background crop does not distort the image;
-- clean mobile and desktop gameplay screenshots inspected before merge.
-
-## Reveal artwork state
-
-Expected owner-supplied reveal files:
+## Expected reveal files
 
 ```text
 assets/reveals/tt01/neutral.webp
@@ -230,4 +185,4 @@ assets/reveals/tt01/angry.webp
 assets/reveals/tt01/maniacal-laugh.webp
 ```
 
-Until those reveal files are approved, the app must use the existing neutral placeholders and must not invent replacement character art.
+Until those reveal files are approved, the app must retain the existing non-final placeholders and must not invent replacement character art.
