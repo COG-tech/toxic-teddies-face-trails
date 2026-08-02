@@ -1,5 +1,7 @@
 import './loading-screen.js';
 import './gameplay-backdrops.js';
+import './gameplay-fit.js';
+import '../design-system/gameplay-fit.css';
 import { createAccessibilityController } from '../accessibility/accessibility.js';
 import { createAnalytics } from '../analytics/analytics.js';
 import { createContentRegistry } from '../content/content-registry.js';
@@ -88,7 +90,7 @@ async function bootstrap() {
   window.addEventListener('pageshow', () => window.__toxicInputController?.refresh?.());
 
   if (!bridge.native && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=48').catch(error => {
+    navigator.serviceWorker.register('./sw.js?v=49').catch(error => {
       console.warn('Browser prototype service worker registration failed', error);
     });
   }

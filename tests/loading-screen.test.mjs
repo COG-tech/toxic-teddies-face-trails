@@ -38,14 +38,16 @@ test('approved full-screen intro is bundled through the Vite module entry', asyn
     readFile(new URL('../src/design-system/dark-theme-overrides.css', import.meta.url), 'utf8'),
   ]);
 
+  const bootImageTag = index.match(/<img[\s\S]*?id="bootSplashImage"[\s\S]*?\/>/)?.[0] || '';
   assert.match(index, /id="bootSplash"/);
-  assert.match(index, /id="bootSplashImage"[\s\S]*width="480"[\s\S]*height="853"/);
-  assert.doesNotMatch(index, /id="bootSplashImage"[\s\S]*src="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp"/);
+  assert.match(bootImageTag, /width="480"[\s\S]*height="853"/);
+  assert.doesNotMatch(bootImageTag, /\ssrc=/);
   assert.match(index, /<script type="module" src="\.\/src\/app\/bootstrap\.js\?v=48"><\/script>/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/loading-screen\.js/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/loading-screen\.js';/m);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
+  assert.match(bootstrap, /^import '\.\/gameplay-fit\.js';/m);
   assert.match(loader, /^import \{ TOXIC_TEDDIES_INTRO_ART \} from '\.\/intro-art\.js';/m);
   assert.match(loader, /image\.src = TOXIC_TEDDIES_INTRO_ART/);
   assert.match(introArt, /data:image\/webp;base64/);
@@ -54,8 +56,8 @@ test('approved full-screen intro is bundled through the Vite module entry', asyn
   assert.match(theme, /\.home-brand-logo img/);
   assert.match(bootstrap, /ToxicLoadingScreen\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=48/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v48/);
+  assert.match(bootstrap, /sw\.js\?v=49/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v49/);
   assert.doesNotMatch(serviceWorker, /src\/app\/gameplay-backdrops\.js/);
   assert.doesNotMatch(serviceWorker, /src\/design-system\/gameplay-backdrops\.css/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
