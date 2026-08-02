@@ -1,15 +1,32 @@
 # Single Canonical Next Action
 
-Updated: 2026-07-30
-Status: **ACTIVE — IMPLEMENT GAMEPLAY-FIRST MOBILE COMPOSITION BEFORE FURTHER OWNER RETEST**
+Updated: 2026-08-02
+Status: **ACTIVE — OWNER VERIFY THE PUBLISHED V47 INTRO, THEN RESUME GAMEPLAY-FIRST MOBILE IMPLEMENTATION**
 
 ## Action
 
-Replace the current v46 mobile presentation with a gameplay-first layout that maximizes the actual rendered Toxic Toby arrow paths, compresses the persistent top and bottom menus, and crops the environment when necessary instead of shrinking the puzzle.
+Open the published cache-busted v47 build on a real phone and verify the newly approved full-screen intro. After the intro gate is confirmed, continue the already locked gameplay-first mobile composition work: remove the oversized persistent menu cards, compress the remaining controls, crop the laboratory background when necessary, and maximize the actual rendered Toxic Toby arrows without clipping.
 
-This owner directive supersedes the prior instruction to stop at the v46 layout.
+Playable owner-review route:
 
-## Locked implementation target
+```text
+https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=47
+```
+
+## V47 intro verification gate
+
+1. Close every old Toxic Teddies browser tab.
+2. Open the cache-busted v47 route in a new private/incognito tab.
+3. Confirm the approved intro artwork fills the complete mobile game frame.
+4. Confirm the illustrated loading trough begins dark, empty, and colorless.
+5. Confirm no static `LOADING` word appears in the artwork or trough.
+6. Confirm only the runtime green progress fill adds color as it moves left to right.
+7. Confirm the progress reaches 100 percent and then hands off to the app.
+8. Confirm the `ENTER THE LAB` plate remains part of the intro artwork and is not presented as a second loading control.
+9. Confirm no broken-image icon, alt text, white gap, stretched artwork, or clipped title appears.
+10. Confirm the existing home logo and gameplay behavior remain unchanged.
+
+## Locked gameplay-first implementation target after the intro gate
 
 - Keep the gameplay viewport portrait-first and full-width on phones.
 - Target actual rendered path bounds of approximately **90–94% of usable gameplay width**.
@@ -18,75 +35,26 @@ This owner directive supersedes the prior instruction to stop at the v46 layout.
 - Keep the top header compact, with title and utility controls in one short row.
 - Compress progress and feedback into a short row or overlay instead of a large separate card stack.
 - Compress the bottom accessibility trigger and five expression controls into one compact control region.
-- Keep the combined persistent top, status, and bottom chrome at or below approximately **24% of usable gameplay height**.
+- Keep combined persistent top, status, and bottom chrome at or below approximately **24% of usable gameplay height**.
 - Retain accessible 44 CSS-pixel touch targets through visible or invisible hit areas.
 - Allow the owner-approved environment to be center-cropped or trimmed at the top, bottom, or sides.
 - Never stretch the environment.
-- Preserve the calm central board panel and enough perimeter machinery to retain the Toxic Toby laboratory identity.
+- Preserve the quiet central board panel and enough perimeter machinery to retain the Toxic Toby laboratory identity.
 - Preserve all compiled path coordinates, viewBox data, input geometry, blocker calculations, head-first removal, save state, progression, and reveal logic.
-
-## Required engineering sequence
-
-1. Create a dedicated gameplay-layout branch from current `main`.
-2. Measure the current production mobile layout as the baseline.
-3. Compress the top header, progress/feedback area, and bottom controls without removing required actions.
-4. Change background sizing/positioning to crop decorative frame art when needed.
-5. Increase the rendered puzzle scale only as far as the no-clipping gate permits.
-6. Keep the accessibility move list opt-in rather than persistently expanded.
-7. Build the real Vite production bundle.
-8. Serve the production bundle locally.
-9. Capture clean Chrome screenshots at 430×764 and at least one taller real-phone-like viewport.
-10. Measure actual rendered path bounds with `getBBox()` and `getScreenCTM()`.
-11. Fail the audit if the puzzle is below the locked size target, if any path is clipped, or if persistent chrome exceeds the locked height budget.
-12. Verify `neutral.webp` loads with HTTP 200 and remains visible around the puzzle.
-13. Verify all 122 Neutral paths render and at least one valid path can still be removed.
-14. Run full quality, browser, native Android/iOS, and store validation before merge.
-15. Inspect the screenshots manually before merge.
-
-## Automated acceptance gates
-
-- Actual visible path width ratio: target `0.90–0.94` of gameplay width.
-- Actual visible path height ratio: minimum `0.52` of gameplay height when the silhouette permits it.
-- All rendered paths inside gameplay bounds.
-- Persistent top/status/bottom chrome height ratio: maximum approximately `0.24` of gameplay height.
-- Background image successfully loaded and computed on the visible game view.
-- Background is cropped without distortion when needed.
-- Quiet central panel remains behind the arrow puzzle.
-- No duplicate square backdrop appears.
-- No runtime exceptions or gameplay-background errors.
-- Pointer selection, blocker feedback, and head-first removal remain functional.
-
-## Owner retest after implementation
-
-1. Close all old game tabs.
-2. Open the new cache-busted build on a real phone.
-3. Confirm the arrows are the dominant screen object.
-4. Confirm the puzzle is substantially larger than the phone screenshot supplied on 2026-07-30.
-5. Confirm the top and bottom menus are compact.
-6. Confirm background cropping does not remove the Toxic Toby laboratory identity.
-7. Confirm no arrowhead or exit lane is clipped.
-8. Remove at least one valid trail.
-9. Complete the full `1 → 2 → 3 → 4 → 5 → feed` chain.
-10. Refresh and verify persistence.
 
 ## Do not start yet
 
 - Do not begin Moldy Molly.
 - Do not insert final reveal artwork.
 - Do not alter compiled level geometry merely to gain screen size.
-- Do not weaken the rendered-path or no-clipping audits.
-- Do not keep large decorative menu cards because they show more branding.
+- Do not weaken rendered-path or no-clipping audits.
+- Do not restore the old intro artwork or a permanently colored loading trough.
+- Do not keep large decorative gameplay menu cards because they show more branding.
 - Do not prioritize full background visibility over arrow gameplay.
 
-## After this action passes
+## Completion rule
 
-1. Lock the approved mobile chrome dimensions and rendered puzzle ratios.
-2. Mark the gameplay-first composition gate verified.
-3. Mark F-014 verified only after the owner approves the published real-phone layout.
-4. Complete the progression-chain owner verification.
-5. Insert the five owner-approved Toxic Toby reveal images when supplied.
-6. Complete remaining physical-device accessibility and lifecycle validation.
-7. Only then begin Moldy Molly's complete five-expression package.
+The v47 intro gate is complete only after the owner confirms the published phone result. The gameplay-first composition gate remains separate and incomplete until the compressed-menu layout is implemented, measured, published, and approved.
 
 ## Replacement rule
 

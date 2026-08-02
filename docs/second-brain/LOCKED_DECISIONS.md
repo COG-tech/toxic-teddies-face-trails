@@ -92,3 +92,22 @@ The locked mobile rules are:
 - Scale and layout approval must use actual rendered path bounds from `getBBox()` plus `getScreenCTM()`, a no-clipping assertion, and inspected production-browser screenshots at phone size.
 
 A layout that shows more background but makes the arrow puzzle materially smaller is a failed layout.
+
+## D-016 — Approved full-screen v47 intro composition
+
+The owner-approved portrait intro created on 2026-08-02 is the canonical mobile opening composition for the current release. It replaces the previous opening artwork while preserving the existing startup lifecycle and home logo.
+
+The locked intro rules are:
+
+- The artwork fills the complete portrait mobile game frame without a separate browser-style card, white margin, or stretched aspect ratio.
+- The illustrated loading trough begins dark, empty, and colorless.
+- The static artwork must not contain the word `LOADING` inside or above the trough.
+- The only green color inside the loading trough comes from the real runtime progress fill moving left to right.
+- The runtime fill remains tied to actual startup stages, moves monotonically, reaches visible completion, and then hands off to the app.
+- The `ENTER THE LAB` plate remains part of the artwork; it is not a second loading bar and must not be treated as a required tap during startup.
+- The approved home-logo treatment remains unchanged by this intro replacement.
+- No puzzle geometry, input, blockers, removal, progression, saves, reveal state, or gameplay-layout rules are changed by the intro replacement.
+- Browser and service-worker cache version `v47` identifies this intro release.
+- Any later replacement requires a new owner-approved image, a new locked decision, updated cache identifiers, and a published phone review.
+
+The published v47 intro remains pending owner verification until the real-phone loading trough, animated fill, crop, and handoff are confirmed.
