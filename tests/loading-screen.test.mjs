@@ -15,44 +15,47 @@ async function readApprovedArtwork() {
   return Buffer.from(parts.map(part => part.trim()).join(''), 'base64');
 }
 
-test('approved Toxic Teddies loading artwork materializes as the exact real WebP file', async () => {
+test('approved Toxic Teddies home-logo source remains the exact real WebP file', async () => {
   await import(`../scripts/materialize-brand-assets.mjs?test=${Date.now()}`);
   const [expected, actual] = await Promise.all([
     readApprovedArtwork(),
     readFile(staticArtworkUrl),
   ]);
-  assert.equal(actual.length, expectedByteLength, 'loading artwork byte length changed');
-  assert.equal(createHash('sha256').update(actual).digest('hex'), expectedSha256, 'loading artwork checksum changed');
+  assert.equal(actual.length, expectedByteLength, 'home-logo artwork byte length changed');
+  assert.equal(createHash('sha256').update(actual).digest('hex'), expectedSha256, 'home-logo artwork checksum changed');
   assert.equal(actual.subarray(0, 4).toString('ascii'), 'RIFF');
   assert.equal(actual.subarray(8, 12).toString('ascii'), 'WEBP');
-  assert.deepEqual(actual, expected, 'materialized artwork differs from the approved source chunks');
+  assert.deepEqual(actual, expected, 'materialized home-logo source differs from the approved source chunks');
 });
 
-test('startup controller is bundled through the Vite module entry', async () => {
-  const [index, loader, bootstrap, serviceWorker, theme] = await Promise.all([
+test('approved full-screen intro is bundled through the Vite module entry', async () => {
+  const [index, loader, introArt, bootstrap, serviceWorker, theme] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../src/app/loading-screen.js', import.meta.url), 'utf8'),
+    readFile(new URL('../src/app/intro-art.js', import.meta.url), 'utf8'),
     readFile(new URL('../src/app/bootstrap.js', import.meta.url), 'utf8'),
     readFile(new URL('../sw.js', import.meta.url), 'utf8'),
     readFile(new URL('../src/design-system/dark-theme-overrides.css', import.meta.url), 'utf8'),
   ]);
 
   assert.match(index, /id="bootSplash"/);
-  assert.match(index, /id="bootSplashImage"[\s\S]*src="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp"/);
-  assert.match(index, /<link rel="preload" as="image" type="image\/webp" href="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp" \/>/);
-  assert.match(index, /<script type="module" src="\.\/src\/app\/bootstrap\.js\?v=42"><\/script>/);
+  assert.match(index, /id="bootSplashImage"[\s\S]*width="480"[\s\S]*height="853"/);
+  assert.doesNotMatch(index, /id="bootSplashImage"[\s\S]*src="\.\/assets\/branding\/loading\/toxic-teddies-loading\.webp"/);
+  assert.match(index, /<script type="module" src="\.\/src\/app\/bootstrap\.js\?v=48"><\/script>/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/loading-screen\.js/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/loading-screen\.js';/m);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
-  assert.doesNotMatch(loader, /loading-image-part-a|data:image\/webp;base64/);
+  assert.match(loader, /^import \{ TOXIC_TEDDIES_INTRO_ART \} from '\.\/intro-art\.js';/m);
+  assert.match(loader, /image\.src = TOXIC_TEDDIES_INTRO_ART/);
+  assert.match(introArt, /data:image\/webp;base64/);
   assert.match(index, /class="home-brand-logo"[\s\S]*toxic-teddies-loading\.webp/);
   assert.match(theme, /\.home-brand-logo/);
   assert.match(theme, /\.home-brand-logo img/);
   assert.match(bootstrap, /ToxicLoadingScreen\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=46/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v46/);
+  assert.match(bootstrap, /sw\.js\?v=48/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v48/);
   assert.doesNotMatch(serviceWorker, /src\/app\/gameplay-backdrops\.js/);
   assert.doesNotMatch(serviceWorker, /src\/design-system\/gameplay-backdrops\.css/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
