@@ -1,0 +1,29 @@
+/* Engine-fitted gameplay: remove fixed overscan and let the measured Teddy bounds drive the SVG viewBox. */
+.game-view.has-gameplay-backdrop .board,
+.game-view.has-gameplay-backdrop .preview-layer {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.game-view.has-gameplay-backdrop .board-shell {
+  width: 100%;
+  max-width: none;
+}
+
+/* Phones use the entire browser viewport instead of shrinking to a strict 9:16 box. */
+@media (max-width: 620px) {
+  .game-view {
+    width: 100%;
+    max-width: none;
+    height: calc(100dvh - var(--safe-top, 0px) - var(--safe-bottom, 0px));
+    min-height: 0;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+
+  .game-view.has-gameplay-backdrop .board-shell {
+    left: 0;
+    width: 100%;
+  }
+}
