@@ -58,14 +58,15 @@ test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => 
 });
 
 test('gameplay backdrop presentation is bundled without replacing puzzle input code', () => {
-  assert.match(index, /gameplay-backdrops\.css/);
+  assert.match(index, /gameplay-backdrops\.css\?v=48/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
-  assert.match(bootstrap, /sw\.js\?v=46/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v46/);
+  assert.match(bootstrap, /sw\.js\?v=48/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v48/);
   assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
   assert.match(runtime, /new Image\(\)/);
   assert.match(runtime, /gameView\.style\.backgroundImage/);
+  assert.match(runtime, /gameView\.style\.backgroundSize = 'cover'/);
   assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
   assert.doesNotMatch(runtime, /--gameplay-backdrop-image/);
 });
@@ -129,7 +130,7 @@ test('relative manifest paths become absolute loaded URLs on the real game-view 
     assert.equal(gameView.dataset.gameplayBackdropStatus, 'loaded');
     assert.equal(gameView.dataset.gameplayBackdropUrl, expectedUrl);
     assert.equal(gameView.style.backgroundImage, `url(${JSON.stringify(expectedUrl)})`);
-    assert.equal(gameView.style.backgroundSize, '100% 100%');
+    assert.equal(gameView.style.backgroundSize, 'cover');
     assert.equal(gameView.classList.contains('has-gameplay-backdrop'), true);
   } finally {
     globalThis.document = originals.document;
@@ -138,14 +139,20 @@ test('relative manifest paths become absolute loaded URLs on the real game-view 
   }
 });
 
-test('portrait environment is visible and the Teddy face dominates the mobile play area', () => {
+test('gameplay-first portrait presentation removes menu cards and maximizes the Teddy maze', () => {
   assert.match(styles, /\.game-view\s*\{[\s\S]*width:\s*min\(100%, 56\.25dvh, 560px\);/);
   assert.match(styles, /\.game-view\s*\{[\s\S]*aspect-ratio:\s*9 \/ 16;/);
-  assert.match(styles, /\.game-view\s*\{[\s\S]*background-size:\s*100% 100%;/);
+  assert.match(styles, /\.game-view\s*\{[\s\S]*background-size:\s*cover;/);
   assert.doesNotMatch(styles, /z-index:\s*-[0-9]+;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*1;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*width:\s*96%;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-11%;[\s\S]*width:\s*122%;[\s\S]*height:\s*122%;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-topbar\s*\{[\s\S]*position:\s*absolute;[\s\S]*height:\s*44px;[\s\S]*background:\s*transparent;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-title h2\s*\{[\s\S]*font-size:\s*\.72rem;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.status-text\s*\{[\s\S]*clip-path:\s*inset\(50%\)/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-footer\s*\{[\s\S]*position:\s*absolute;[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.accessible-moves-trigger\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;[\s\S]*font-size:\s*0;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.level-buttons\s*\{[\s\S]*display:\s*none !important;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*50%;[\s\S]*width:\s*100%;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-12\.5%;[\s\S]*width:\s*125%;[\s\S]*height:\s*125%;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*background:\s*transparent;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::before\s*\{[\s\S]*display:\s*none;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::after\s*\{[\s\S]*background:\s*none;/);
