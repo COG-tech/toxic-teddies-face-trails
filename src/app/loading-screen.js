@@ -1,3 +1,5 @@
+import { TOXIC_TEDDIES_INTRO_ART } from './intro-art.js';
+
 const FULL_MOTION_MINIMUM_VISIBLE_MS = 1800;
 const REDUCED_MOTION_MINIMUM_VISIBLE_MS = 700;
 const startedAt = performance.now();
@@ -24,6 +26,7 @@ if (image) {
     splash?.classList.add('boot-splash-art-error');
     if (status) status.textContent = 'Loading artwork unavailable. Preparing the game…';
   }, {once: true});
+  image.src = TOXIC_TEDDIES_INTRO_ART;
   if (image.complete && image.naturalWidth > 0) splash?.classList.add('boot-splash-art-ready');
 }
 
