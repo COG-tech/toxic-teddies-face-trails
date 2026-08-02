@@ -6,7 +6,9 @@ const manifest = JSON.parse(await readFile('src/content/backdrop-manifest.json',
 const index = await readFile('index.html', 'utf8');
 const bootstrap = await readFile('src/app/bootstrap.js', 'utf8');
 const runtime = await readFile('src/app/gameplay-backdrops.js', 'utf8');
+const fitRuntime = await readFile('src/app/gameplay-fit.js', 'utf8');
 const styles = await readFile('src/design-system/gameplay-backdrops.css', 'utf8');
+const fitStyles = await readFile('src/design-system/gameplay-fit.css', 'utf8');
 const serviceWorker = await readFile('sw.js', 'utf8');
 const visualAudit = await readFile('scripts/capture-gameplay-backdrop-audit.mjs', 'utf8');
 
@@ -57,12 +59,14 @@ test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => 
   }
 });
 
-test('gameplay backdrop presentation is bundled without replacing puzzle input code', () => {
+test('gameplay backdrop and measured fit are bundled without replacing puzzle input code', () => {
   assert.match(index, /gameplay-backdrops\.css\?v=48/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
-  assert.match(bootstrap, /sw\.js\?v=48/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v48/);
+  assert.match(bootstrap, /^import '\.\/gameplay-fit\.js';/m);
+  assert.match(bootstrap, /^import '\.\.\/design-system\/gameplay-fit\.css';/m);
+  assert.match(bootstrap, /sw\.js\?v=49/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v49/);
   assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
   assert.match(runtime, /new Image\(\)/);
   assert.match(runtime, /gameView\.style\.backgroundImage/);
@@ -139,9 +143,7 @@ test('relative manifest paths become absolute loaded URLs on the real game-view 
   }
 });
 
-test('gameplay-first portrait presentation removes menu cards and maximizes the Teddy maze', () => {
-  assert.match(styles, /\.game-view\s*\{[\s\S]*width:\s*min\(100%, 56\.25dvh, 560px\);/);
-  assert.match(styles, /\.game-view\s*\{[\s\S]*aspect-ratio:\s*9 \/ 16;/);
+test('gameplay-first presentation removes wide edges and fits each rendered Teddy from real path bounds', () => {
   assert.match(styles, /\.game-view\s*\{[\s\S]*background-size:\s*cover;/);
   assert.doesNotMatch(styles, /z-index:\s*-[0-9]+;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*1;/);
@@ -152,12 +154,19 @@ test('gameplay-first portrait presentation removes menu cards and maximizes the 
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.accessible-moves-trigger\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;[\s\S]*font-size:\s*0;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.level-buttons\s*\{[\s\S]*display:\s*none !important;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*50%;[\s\S]*width:\s*100%;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*-12\.5%;[\s\S]*width:\s*125%;[\s\S]*height:\s*125%;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*background:\s*transparent;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::before\s*\{[\s\S]*display:\s*none;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell::after\s*\{[\s\S]*background:\s*none;/);
-  assert.match(visualAudit, /puzzleWidthRatio >= 0\.76/);
-  assert.match(visualAudit, /puzzleHeightRatio >= 0\.38/);
-  assert.match(visualAudit, /puzzleToBoardWidthRatio >= 0\.78/);
+
+  assert.match(fitStyles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*0;[\s\S]*width:\s*100%;[\s\S]*height:\s*100%;/);
+  assert.match(fitStyles, /@media \(max-width: 620px\)[\s\S]*\.game-view\s*\{[\s\S]*width:\s*100%;[\s\S]*height:\s*calc\(100dvh - var\(--safe-top, 0px\) - var\(--safe-bottom, 0px\)\);[\s\S]*aspect-ratio:\s*auto;/);
+  assert.doesNotMatch(fitStyles, /125%|-12\.5%/);
+
+  assert.match(fitRuntime, /TARGET_VISUAL_FILL = 0\.94/);
+  assert.match(fitRuntime, /getBBox\(\{fill: true, stroke: true, markers: true\}\)/);
+  assert.match(fitRuntime, /board\.setAttribute\('viewBox', viewBox\)/);
+  assert.match(fitRuntime, /preview\?\.setAttribute\('viewBox', viewBox\)/);
+  assert.match(fitRuntime, /new MutationObserver\(scheduleFit\)\.observe\(board, \{[\s\S]*childList: true,[\s\S]*subtree: true/);
+  assert.match(fitRuntime, /gameView\.dataset\.puzzleFitStatus = 'fitted'/);
+  assert.match(fitRuntime, /widthFill = bounds\.width \/ squareSize/);
+
   assert.match(visualAudit, /transformedSvgRect/);
+  assert.match(visualAudit, /puzzleInsideGame/);
 });
