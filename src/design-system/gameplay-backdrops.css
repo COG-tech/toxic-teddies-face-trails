@@ -11,7 +11,7 @@
   background-color: var(--tt-grime-900, #0F0C08);
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  background-size: 100% 100%;
+  background-size: cover;
 }
 
 .game-view::before {
@@ -21,8 +21,8 @@
   z-index: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(15,12,8,.28) 0%, rgba(15,12,8,.04) 17%, rgba(15,12,8,.01) 77%, rgba(15,12,8,.32) 100%),
-    linear-gradient(90deg, rgba(15,12,8,.11), transparent 9% 91%, rgba(15,12,8,.11));
+    linear-gradient(180deg, rgba(15,12,8,.30) 0%, rgba(15,12,8,.02) 14%, rgba(15,12,8,.01) 82%, rgba(15,12,8,.28) 100%),
+    linear-gradient(90deg, rgba(15,12,8,.12), transparent 8% 92%, rgba(15,12,8,.12));
   opacity: 0;
   transition: opacity .18s ease;
 }
@@ -36,36 +36,164 @@
   z-index: 1;
 }
 
-.game-view.has-gameplay-backdrop .game-topbar,
-.game-view.has-gameplay-backdrop .status-row,
-.game-view.has-gameplay-backdrop .status-text,
-.game-view.has-gameplay-backdrop .game-footer {
-  margin-inline: 10px;
-  border-radius: 14px;
-  background: rgba(15,12,8,.52);
-  box-shadow: inset 0 0 0 1px rgba(183,226,75,.08);
-  backdrop-filter: blur(4px);
+/*
+ * Gameplay-first mobile HUD.
+ * There are no persistent title, status, instruction, or bottom menu cards.
+ * Required actions remain as compact 44px floating controls over decorative frame areas.
+ */
+.game-view.has-gameplay-backdrop .game-topbar {
+  position: absolute;
+  top: max(6px, var(--safe-top, 0px));
+  left: 6px;
+  right: 6px;
+  z-index: 7;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 92px;
+  align-items: center;
+  min-height: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
-.game-view.has-gameplay-backdrop .game-topbar {
-  margin-top: 10px;
-  padding-inline: 8px;
+.game-view.has-gameplay-backdrop .top-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-color: rgba(183,226,75,.28);
+  border-radius: 999px;
+  background: rgba(15,12,8,.70);
+  box-shadow: 0 3px 12px rgba(0,0,0,.28);
+  font-size: 1.12rem;
+}
+
+.game-view.has-gameplay-backdrop .game-title {
+  align-self: start;
+  padding-top: 2px;
+  pointer-events: none;
+}
+
+.game-view.has-gameplay-backdrop .game-title h2 {
+  display: inline-block;
+  margin: 0;
+  padding: 3px 8px;
+  border: 1px solid rgba(183,226,75,.14);
+  border-radius: 999px;
+  background: rgba(15,12,8,.62);
+  color: var(--tt-slime-green, #B7E24B);
+  font-size: .72rem;
+  line-height: 1;
+  letter-spacing: .02em;
+  box-shadow: 0 2px 10px rgba(0,0,0,.22);
+}
+
+.game-view.has-gameplay-backdrop .game-title p {
+  display: none;
+}
+
+.game-view.has-gameplay-backdrop .top-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
 }
 
 .game-view.has-gameplay-backdrop .status-row {
-  margin-top: 8px;
+  position: absolute;
+  top: max(52px, calc(var(--safe-top, 0px) + 48px));
+  left: 50%;
+  z-index: 7;
+  display: block;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  transform: translateX(-50%);
+}
+
+.game-view.has-gameplay-backdrop .progress {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border: 1px solid rgba(183,226,75,.12);
+  border-radius: 999px;
+  background: rgba(15,12,8,.60);
+  color: var(--tt-parchment-300, #D8BF8A);
+  font-size: .54rem;
+  line-height: 1;
+  box-shadow: 0 2px 10px rgba(0,0,0,.20);
+}
+
+.game-view.has-gameplay-backdrop .progress strong {
+  color: var(--tt-slime-green, #B7E24B);
+  font-size: .62rem;
 }
 
 .game-view.has-gameplay-backdrop .status-text {
-  margin-top: 6px;
-  margin-bottom: 8px;
-  padding: 8px 10px;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
 
+/* Move the optional open-trails control out of the bottom and into the compact top HUD. */
 .game-view.has-gameplay-backdrop .game-footer {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  padding: 10px;
+  position: absolute;
+  top: max(6px, var(--safe-top, 0px));
+  right: 102px;
+  z-index: 8;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.game-view.has-gameplay-backdrop .accessible-moves-trigger {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid rgba(62,124,123,.58);
+  border-radius: 999px;
+  background: rgba(15,12,8,.70);
+  color: var(--tt-parchment-100, #F3E4BD);
+  box-shadow: 0 3px 12px rgba(0,0,0,.28);
+  font-size: 0;
+  line-height: 1;
+}
+
+.game-view.has-gameplay-backdrop .accessible-moves-trigger::before {
+  content: "☷";
+  font-size: 1.08rem;
+}
+
+.game-view.has-gameplay-backdrop .level-buttons {
+  display: none !important;
 }
 
 /* The portrait artwork already contains the quiet gameplay panel and outer frame. */
@@ -74,24 +202,30 @@
 }
 
 /*
- * The 57 x 57 compiled SVG contains deliberate empty grid cells around the Teddy.
- * A normal 100% SVG therefore makes the visible face much smaller than the board.
- * Keep the interaction geometry unchanged, but use a measured centered overscan so
- * the face dominates the phone panel without clipping ears, chin, paths, or exits.
+ * The compiled SVG contains deliberate empty cells around the Teddy.
+ * A full-width board plus measured 125% SVG presentation produces roughly
+ * 90-94% visible path width and at least 52% portrait path height without
+ * changing compiled coordinates, viewBox data, hit testing, or solver logic.
  */
 .game-view.has-gameplay-backdrop .board-shell {
-  width: 96%;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  margin: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+  transform: translateY(-50%);
 }
 
 .game-view.has-gameplay-backdrop .board,
 .game-view.has-gameplay-backdrop .preview-layer {
-  inset: -11%;
-  width: 122%;
-  height: 122%;
+  inset: -12.5%;
+  width: 125%;
+  height: 125%;
 }
 
 .game-view.has-gameplay-backdrop .board-shell::before {
@@ -124,16 +258,5 @@
   .game-view {
     width: min(100%, 56.25dvh);
     border-radius: 0;
-  }
-
-  .game-view.has-gameplay-backdrop .game-topbar,
-  .game-view.has-gameplay-backdrop .status-row,
-  .game-view.has-gameplay-backdrop .status-text,
-  .game-view.has-gameplay-backdrop .game-footer {
-    margin-inline: 6px;
-  }
-
-  .game-view.has-gameplay-backdrop .board-shell {
-    width: 96%;
   }
 }

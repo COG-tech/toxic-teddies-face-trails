@@ -1,60 +1,57 @@
 # Single Canonical Next Action
 
 Updated: 2026-08-02
-Status: **ACTIVE — OWNER VERIFY THE PUBLISHED V47 INTRO, THEN RESUME GAMEPLAY-FIRST MOBILE IMPLEMENTATION**
+Status: **ACTIVE — VERIFY THE PUBLISHED V48 GAMEPLAY-FIRST MOBILE LAYOUT**
 
 ## Action
 
-Open the published cache-busted v47 build on a real phone and verify the newly approved full-screen intro. After the intro gate is confirmed, continue the already locked gameplay-first mobile composition work: remove the oversized persistent menu cards, compress the remaining controls, crop the laboratory background when necessary, and maximize the actual rendered Toxic Toby arrows without clipping.
+Publish and test the v48 gameplay-first mobile composition on a real phone. The oversized persistent gameplay cards have been removed from the visible layout, the maze has been enlarged, the background now crops without stretching, and only compact floating controls remain.
 
-Playable owner-review route:
+Playable owner-review route after merge:
 
 ```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=47
+https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=48
 ```
 
-## V47 intro verification gate
+## V48 owner verification gate
 
 1. Close every old Toxic Teddies browser tab.
-2. Open the cache-busted v47 route in a new private/incognito tab.
-3. Confirm the approved intro artwork fills the complete mobile game frame.
-4. Confirm the illustrated loading trough begins dark, empty, and colorless.
-5. Confirm no static `LOADING` word appears in the artwork or trough.
-6. Confirm only the runtime green progress fill adds color as it moves left to right.
-7. Confirm the progress reaches 100 percent and then hands off to the app.
-8. Confirm the `ENTER THE LAB` plate remains part of the intro artwork and is not presented as a second loading control.
-9. Confirm no broken-image icon, alt text, white gap, stretched artwork, or clipped title appears.
-10. Confirm the existing home logo and gameplay behavior remain unchanged.
+2. Open the cache-busted v48 route in a new private/incognito tab.
+3. Confirm there is no large top title card.
+4. Confirm `Level 1` is a small secondary label.
+5. Confirm the large progress card and instruction strip are gone.
+6. Confirm the bottom `Open arrow trails` text bar and five-expression tray are gone.
+7. Confirm only compact 44-pixel floating controls remain.
+8. Confirm the maze is the dominant screen object.
+9. Confirm the visible Teddy paths occupy approximately 90–94% of gameplay width and at least 52% of portrait gameplay height.
+10. Confirm the laboratory background is cropped rather than stretched.
+11. Confirm no ear, chin path, arrowhead, face-critical feature, or exit lane is clipped or covered.
+12. Remove at least one valid trail and confirm selection, blockers, and head-first removal still work.
+13. Complete the `1 → 2 → 3 → 4 → 5 → feed` sequence and refresh to verify persistence.
 
-## Locked gameplay-first implementation target after the intro gate
+## Locked v48 implementation
 
-- Keep the gameplay viewport portrait-first and full-width on phones.
-- Target actual rendered path bounds of approximately **90–94% of usable gameplay width**.
-- Target actual rendered path bounds of at least **52% of usable portrait gameplay height** when the Toxic Toby silhouette permits it.
-- Keep every ear, chin path, arrowhead, and exit lane inside the gameplay canvas.
-- Keep the top header compact, with title and utility controls in one short row.
-- Compress progress and feedback into a short row or overlay instead of a large separate card stack.
-- Compress the bottom accessibility trigger and five expression controls into one compact control region.
-- Keep combined persistent top, status, and bottom chrome at or below approximately **24% of usable gameplay height**.
-- Retain accessible 44 CSS-pixel touch targets through visible or invisible hit areas.
-- Allow the owner-approved environment to be center-cropped or trimmed at the top, bottom, or sides.
-- Never stretch the environment.
-- Preserve the quiet central board panel and enough perimeter machinery to retain the Toxic Toby laboratory identity.
-- Preserve all compiled path coordinates, viewBox data, input geometry, blocker calculations, head-first removal, save state, progression, and reveal logic.
+- Full-width board shell inside the 9:16 gameplay frame.
+- Centered 125% SVG presentation with `inset: -12.5%`.
+- Compact 44-pixel back, hint, restart, and open-trails controls.
+- Tiny level and progress labels only.
+- Persistent instruction copy visually hidden while live accessibility announcements remain.
+- Expression controls hidden during normal play.
+- Background uses `cover`; stretching is forbidden.
+- Compiled coordinates, viewBox data, hit testing, blocker calculations, trail removal, saves, progression, and reveal logic remain unchanged.
 
 ## Do not start yet
 
 - Do not begin Moldy Molly.
 - Do not insert final reveal artwork.
+- Do not restore the removed menu cards.
+- Do not reduce the maze to show more background.
 - Do not alter compiled level geometry merely to gain screen size.
-- Do not weaken rendered-path or no-clipping audits.
-- Do not restore the old intro artwork or a permanently colored loading trough.
-- Do not keep large decorative gameplay menu cards because they show more branding.
-- Do not prioritize full background visibility over arrow gameplay.
+- Do not approve the layout without a real-phone screenshot and no-clipping check.
 
 ## Completion rule
 
-The v47 intro gate is complete only after the owner confirms the published phone result. The gameplay-first composition gate remains separate and incomplete until the compressed-menu layout is implemented, measured, published, and approved.
+The gameplay-first composition gate is complete only after the owner approves the published v48 phone result and confirms that the maze dominates the screen without clipping or broken interaction.
 
 ## Replacement rule
 
