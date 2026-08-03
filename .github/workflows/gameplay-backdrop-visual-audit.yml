@@ -93,12 +93,15 @@ jobs:
             if (!d?.puzzleInsideGame) throw new Error(`${name}: puzzle is clipped`);
             if (!(d?.boardWidthRatio >= 0.98)) throw new Error(`${name}: board width ratio ${d?.boardWidthRatio}`);
             if (Math.abs(d.puzzleAspectRatio - d.lockedAspectRatio) > 0.03) throw new Error(`${name}: Teddy is stretched`);
-            if (!(d.lockedAspectRatio >= 1.42 && d.lockedAspectRatio <= 1.65)) {
-              throw new Error(`${name}: authored Teddy aspect ${d.lockedAspectRatio} is outside the portrait-native range`);
+            if (!(d.lockedTallnessRatio >= 1.42 && d.lockedTallnessRatio <= 1.65)) {
+              throw new Error(`${name}: authored Teddy tallness ${d.lockedTallnessRatio} is outside the portrait-native range`);
             }
             if (name === 'mobile') {
               if (!(d.puzzleWidthRatio >= 0.86)) throw new Error(`mobile: puzzle width ratio ${d.puzzleWidthRatio}`);
               if (!(d.puzzleHeightRatio >= 0.72)) throw new Error(`mobile: puzzle height ratio ${d.puzzleHeightRatio}`);
+            } else {
+              if (!(d.puzzleHeightRatio >= 0.82)) throw new Error(`desktop: puzzle height ratio ${d.puzzleHeightRatio}`);
+              if (!(d.puzzleWidthRatio >= 0.28)) throw new Error(`desktop: puzzle width ratio ${d.puzzleWidthRatio}`);
             }
           }
           NODE
