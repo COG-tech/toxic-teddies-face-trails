@@ -8,9 +8,13 @@ on:
       - 'src/design-system/gameplay-backdrops.css'
       - 'src/design-system/gameplay-fit.css'
       - 'src/content/backdrop-manifest.json'
+      - 'src/content/level-manifest.json'
+      - 'scripts/extract-dense-levels.mjs'
+      - 'scripts/validate-compiled-levels.mjs'
       - 'mobile-enhancements.js'
       - 'sw.js'
       - 'tests/gameplay-backdrops.test.mjs'
+      - 'tests/portrait-geometry.test.mjs'
       - 'scripts/capture-gameplay-backdrop-audit.mjs'
       - 'docs/second-brain/NEXT_ACTION.md'
       - '.github/workflows/gameplay-backdrop-visual-audit.yml'
@@ -61,25 +65,25 @@ jobs:
           cat /tmp/toxic-teddies-server.log
           exit 1
 
-      - name: Render and audit adaptive gameplay
+      - name: Render and audit portrait-native gameplay
         shell: bash
         run: |
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME"
-          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=52'
+          URL='http://127.0.0.1:4173/?teddy=tt01&level=1&v=53'
 
           CHROME_BIN="$CHROME" node scripts/capture-gameplay-backdrop-audit.mjs \
-            "$URL" audit/toxic-toby-adaptive-mobile.png 430 764
+            "$URL" audit/toxic-toby-portrait-mobile.png 430 764
 
           CHROME_BIN="$CHROME" node scripts/capture-gameplay-backdrop-audit.mjs \
-            "$URL" audit/toxic-toby-adaptive-desktop.png 1365 768
+            "$URL" audit/toxic-toby-portrait-desktop.png 1365 768
 
       - name: Verify captured runtime diagnostics
         run: |
           node --input-type=module <<'NODE'
           import {readFile} from 'node:fs/promises';
           for (const name of ['mobile', 'desktop']) {
-            const report = JSON.parse(await readFile(`audit/toxic-toby-adaptive-${name}.json`, 'utf8'));
+            const report = JSON.parse(await readFile(`audit/toxic-toby-portrait-${name}.json`, 'utf8'));
             if (report.error) throw new Error(`${name} audit failed: ${report.error.message}`);
             const d = report.diagnostics;
             if (!d?.splashHidden || !d?.gameVisible) throw new Error(`${name}: gameplay did not load cleanly`);
@@ -89,21 +93,28 @@ jobs:
             if (!d?.puzzleInsideGame) throw new Error(`${name}: puzzle is clipped`);
             if (!(d?.boardWidthRatio >= 0.98)) throw new Error(`${name}: board width ratio ${d?.boardWidthRatio}`);
             if (Math.abs(d.puzzleAspectRatio - d.lockedAspectRatio) > 0.03) throw new Error(`${name}: Teddy is stretched`);
+            if (!(d.lockedAspectRatio >= 1.42 && d.lockedAspectRatio <= 1.65)) {
+              throw new Error(`${name}: authored Teddy aspect ${d.lockedAspectRatio} is outside the portrait-native range`);
+            }
+            if (name === 'mobile') {
+              if (!(d.puzzleWidthRatio >= 0.86)) throw new Error(`mobile: puzzle width ratio ${d.puzzleWidthRatio}`);
+              if (!(d.puzzleHeightRatio >= 0.72)) throw new Error(`mobile: puzzle height ratio ${d.puzzleHeightRatio}`);
+            }
           }
           NODE
 
       - name: Record screenshot metadata
         shell: bash
         run: |
-          file audit/toxic-toby-adaptive-mobile.png audit/toxic-toby-adaptive-desktop.png | tee audit/screenshot-metadata.txt
-          stat -c '%n %s bytes' audit/toxic-toby-adaptive-mobile.png audit/toxic-toby-adaptive-desktop.png | tee -a audit/screenshot-metadata.txt
+          file audit/toxic-toby-portrait-mobile.png audit/toxic-toby-portrait-desktop.png | tee audit/screenshot-metadata.txt
+          stat -c '%n %s bytes' audit/toxic-toby-portrait-mobile.png audit/toxic-toby-portrait-desktop.png | tee -a audit/screenshot-metadata.txt
           cat /tmp/toxic-teddies-server.log > audit/server.log
 
       - name: Upload rendered audit evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: toxic-toby-adaptive-canvas-audit-v52
+          name: toxic-toby-portrait-native-audit-v53
           path: audit/
           if-no-files-found: warn
           retention-days: 14
