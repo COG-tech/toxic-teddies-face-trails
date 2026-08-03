@@ -100,7 +100,9 @@ const diagnosticExpression = `(() => {
   const splashStyle=splash?getComputedStyle(splash):null; const gameStyle=game?getComputedStyle(game):null;
   const metrics=window.ToxicPuzzleFit?.getMetrics?.()||null;
   const puzzleAspectRatio=puzzleRect?.height ? puzzleRect.width/puzzleRect.height : null;
+  const puzzleTallnessRatio=puzzleRect?.width ? puzzleRect.height/puzzleRect.width : null;
   const lockedAspectRatio=metrics?.aspectRatio||null;
+  const lockedTallnessRatio=lockedAspectRatio ? 1/lockedAspectRatio : null;
   return {
     splashHidden: !splash || splash.classList.contains('boot-splash-hidden') || splashStyle?.display==='none' || splashStyle?.visibility==='hidden',
     gameVisible: Boolean(game && !game.classList.contains('hidden') && gameStyle?.display!=='none'),
@@ -114,7 +116,7 @@ const diagnosticExpression = `(() => {
     boardWidthRatio: gameRect?.width&&boardRect?boardRect.width/gameRect.width:null,
     puzzleWidthRatio: gameRect?.width&&puzzleRect?puzzleRect.width/gameRect.width:null,
     puzzleHeightRatio: gameRect?.height&&puzzleRect?puzzleRect.height/gameRect.height:null,
-    puzzleAspectRatio, lockedAspectRatio,
+    puzzleAspectRatio, puzzleTallnessRatio, lockedAspectRatio, lockedTallnessRatio,
     puzzleInsideGame: Boolean(gameRect&&puzzleRect&&puzzleRect.x>=gameRect.x-6&&puzzleRect.right<=gameRect.right+6&&puzzleRect.y>=gameRect.y-6&&puzzleRect.bottom<=gameRect.bottom+6),
     pathCount: document.querySelectorAll('.dense-path, .path-piece').length,
   };
@@ -137,10 +139,31 @@ try {
   if(diagnostics?.computedBackgroundImage?.includes('/assets/backdrops/')) throw new Error('Raster gameplay backdrop is still active');
   if(!(diagnostics?.pathCount>0)) throw new Error('No puzzle paths rendered');
   if(!(diagnostics?.boardWidthRatio>=0.98)) throw new Error(`Board is too narrow: ${diagnostics?.boardWidthRatio}`);
-  if(!(Math.max(diagnostics?.puzzleWidthRatio||0,diagnostics?.puzzleHeightRatio||0)>=0.82)) throw new Error('Puzzle does not use the dominant viewport dimension');
-  if(!(Math.min(diagnostics?.puzzleWidthRatio||0,diagnostics?.puzzleHeightRatio||0)>=0.40)) throw new Error('Puzzle is too small on the secondary viewport dimension');
+
+  const portraitViewport = height > width;
+  if (portraitViewport) {
+    if (!(diagnostics?.puzzleWidthRatio >= 0.86)) {
+      throw new Error(`Portrait puzzle is too narrow: ${diagnostics?.puzzleWidthRatio}`);
+    }
+    if (!(diagnostics?.puzzleHeightRatio >= 0.72)) {
+      throw new Error(`Portrait puzzle is too short: ${diagnostics?.puzzleHeightRatio}`);
+    }
+  } else {
+    // A genuine portrait Teddy is height-limited on a landscape desktop.
+    // Requiring 40% desktop width would force the exact distortion v52 forbids.
+    if (!(diagnostics?.puzzleHeightRatio >= 0.82)) {
+      throw new Error(`Landscape puzzle is too short: ${diagnostics?.puzzleHeightRatio}`);
+    }
+    if (!(diagnostics?.puzzleWidthRatio >= 0.28)) {
+      throw new Error(`Landscape puzzle is implausibly narrow: ${diagnostics?.puzzleWidthRatio}`);
+    }
+  }
+
   if(!diagnostics?.puzzleInsideGame) throw new Error('Puzzle is clipped');
   if(!diagnostics?.lockedAspectRatio||Math.abs(diagnostics.puzzleAspectRatio-diagnostics.lockedAspectRatio)>0.03) throw new Error('Teddy aspect ratio changed');
+  if(!(diagnostics?.lockedTallnessRatio>=1.42&&diagnostics?.lockedTallnessRatio<=1.65)) {
+    throw new Error(`Authored Teddy tallness is outside the portrait-native range: ${diagnostics?.lockedTallnessRatio}`);
+  }
   if(runtimeExceptions.length) throw new Error(`Runtime exceptions: ${JSON.stringify(runtimeExceptions)}`);
 } catch (error) { auditError = error; }
 
