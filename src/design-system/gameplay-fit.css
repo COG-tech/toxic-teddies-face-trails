@@ -1,20 +1,29 @@
 /*
- * Engine-fitted gameplay.
- * The board now uses almost the entire portrait length, while the SVG mapping
- * deliberately presents the square compiled Teddy as a taller mobile face.
- * Puzzle rules and coordinates remain unchanged; only the presentation matrix
- * changes.
+ * Adaptive full-viewport gameplay.
+ * The canvas follows the real browser viewport while the SVG preserves the
+ * Teddy's original proportions. No 9:16 card and no non-uniform stretching.
  */
+.game-view.has-gameplay-backdrop {
+  width: 100vw;
+  max-width: none;
+  height: calc(100dvh - var(--safe-top, 0px) - var(--safe-bottom, 0px));
+  min-height: 0;
+  aspect-ratio: auto;
+  margin: 0 0 0 calc(50% - 50vw);
+  border-radius: 0;
+}
+
 .game-view.has-gameplay-backdrop .board-shell {
   position: absolute;
-  top: 32px;
+  top: max(24px, var(--safe-top, 0px));
   right: 0;
-  bottom: 2px;
+  bottom: 0;
   left: 0;
   width: 100%;
   max-width: none;
   height: auto;
   aspect-ratio: auto;
+  margin: 0;
   transform: none;
 }
 
@@ -23,21 +32,22 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
-/* Phones use the complete dynamic viewport instead of a smaller 9:16 card. */
+html:has(.game-view:not(.hidden)),
+body:has(.game-view:not(.hidden)) {
+  overflow: hidden;
+}
+
 @media (max-width: 620px) {
-  .game-view {
-    width: 100%;
-    max-width: none;
+  .game-view.has-gameplay-backdrop {
+    width: 100vw;
     height: calc(100dvh - var(--safe-top, 0px) - var(--safe-bottom, 0px));
-    min-height: 0;
-    aspect-ratio: auto;
-    margin: 0;
+    margin-left: calc(50% - 50vw);
   }
 
   .game-view.has-gameplay-backdrop .board-shell {
-    top: 30px;
-    bottom: 0;
+    top: max(22px, var(--safe-top, 0px));
   }
 }
