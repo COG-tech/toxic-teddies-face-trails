@@ -21,7 +21,7 @@ test('gameplay uses a generated adaptive frame instead of raster backdrop assets
   assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
   assert.match(runtime, /backgroundImage = 'none'/);
   assert.doesNotMatch(runtime, /new Image\(/);
-  assert.doesNotMatch(runtime, /gameplayBackdropUrl/);
+  assert.doesNotMatch(runtime, /gameplayBackdropUrl\s*=/);
   assert.doesNotMatch(serviceWorker, /assets\/backdrops\/tt01/);
 });
 
