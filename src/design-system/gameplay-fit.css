@@ -1,4 +1,23 @@
-/* Engine-fitted gameplay: remove fixed overscan and let the measured Teddy bounds drive the SVG viewBox. */
+/*
+ * Engine-fitted gameplay.
+ * The board now uses almost the entire portrait length, while the SVG mapping
+ * deliberately presents the square compiled Teddy as a taller mobile face.
+ * Puzzle rules and coordinates remain unchanged; only the presentation matrix
+ * changes.
+ */
+.game-view.has-gameplay-backdrop .board-shell {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  aspect-ratio: auto;
+  transform: none;
+}
+
 .game-view.has-gameplay-backdrop .board,
 .game-view.has-gameplay-backdrop .preview-layer {
   inset: 0;
@@ -6,12 +25,7 @@
   height: 100%;
 }
 
-.game-view.has-gameplay-backdrop .board-shell {
-  width: 100%;
-  max-width: none;
-}
-
-/* Phones use the entire browser viewport instead of shrinking to a strict 9:16 box. */
+/* Phones use the complete dynamic viewport instead of a smaller 9:16 card. */
 @media (max-width: 620px) {
   .game-view {
     width: 100%;
@@ -23,7 +37,7 @@
   }
 
   .game-view.has-gameplay-backdrop .board-shell {
-    left: 0;
-    width: 100%;
+    top: 30px;
+    bottom: 0;
   }
 }
