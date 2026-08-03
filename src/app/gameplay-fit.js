@@ -1,6 +1,5 @@
 const TARGET_VISUAL_FILL = 0.94;
-const SAFE_FRAME_FILL = 0.97;
-const EXTRA_BOUNDS_RATIO = 0.015;
+const EXTRA_BOUNDS_RATIO = 0.02;
 const MAX_RETRIES = 24;
 
 const gameView = document.getElementById('gameView');
@@ -47,9 +46,9 @@ function applyLockedFit() {
   if (!lockedFit || !board) return null;
 
   board.setAttribute('viewBox', lockedFit.viewBox);
-  board.setAttribute('preserveAspectRatio', 'none');
+  board.setAttribute('preserveAspectRatio', 'xMidYMid meet');
   preview?.setAttribute('viewBox', lockedFit.viewBox);
-  preview?.setAttribute('preserveAspectRatio', 'none');
+  preview?.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
   if (gameView) {
     gameView.dataset.puzzleFitStatus = 'fitted';
@@ -58,6 +57,7 @@ function applyLockedFit() {
     gameView.dataset.puzzleHeightFill = lockedFit.heightFill.toFixed(4);
     gameView.dataset.puzzleInitialPathCount = String(lockedFit.initialPathCount);
     gameView.dataset.puzzleScaleLocked = 'true';
+    gameView.dataset.puzzleAspectPreserved = 'true';
   }
 
   return lockedFit;
@@ -81,21 +81,21 @@ function captureFullPuzzleFit() {
   retryCount = 0;
   const largestDimension = Math.max(bounds.width, bounds.height);
   const safety = largestDimension * EXTRA_BOUNDS_RATIO;
-  const paddedWidth = bounds.width + (safety * 2);
-  const paddedHeight = bounds.height + (safety * 2);
-  const squareSize = Math.max(paddedWidth, paddedHeight) / SAFE_FRAME_FILL;
+  const paddedWidth = (bounds.width + (safety * 2)) / TARGET_VISUAL_FILL;
+  const paddedHeight = (bounds.height + (safety * 2)) / TARGET_VISUAL_FILL;
   const centerX = bounds.x + (bounds.width / 2);
   const centerY = bounds.y + (bounds.height / 2);
-  const viewBoxX = centerX - (squareSize / 2);
-  const viewBoxY = centerY - (squareSize / 2);
-  const viewBox = `${viewBoxX.toFixed(4)} ${viewBoxY.toFixed(4)} ${squareSize.toFixed(4)} ${squareSize.toFixed(4)}`;
+  const viewBoxX = centerX - (paddedWidth / 2);
+  const viewBoxY = centerY - (paddedHeight / 2);
+  const viewBox = `${viewBoxX.toFixed(4)} ${viewBoxY.toFixed(4)} ${paddedWidth.toFixed(4)} ${paddedHeight.toFixed(4)}`;
 
   lockedFit = Object.freeze({
     initialPathCount: pathCount,
     viewBox,
-    widthFill: bounds.width / squareSize,
-    heightFill: bounds.height / squareSize,
+    widthFill: bounds.width / paddedWidth,
+    heightFill: bounds.height / paddedHeight,
     targetVisualFill: TARGET_VISUAL_FILL,
+    aspectRatio: bounds.width / bounds.height,
     bounds: Object.freeze({
       x: bounds.x,
       y: bounds.y,
@@ -118,6 +118,7 @@ function resetForNewPuzzle() {
   if (gameView) {
     gameView.dataset.puzzleFitStatus = 'waiting';
     gameView.dataset.puzzleScaleLocked = 'false';
+    gameView.dataset.puzzleAspectPreserved = 'false';
   }
   scheduleInitialFit();
 }
@@ -131,10 +132,9 @@ function reapplyFit() {
 }
 
 if (board && boardShell) {
-  // The compiled renderer resets the board viewBox once per newly rendered
-  // expression. Observe only that reset. Do not observe path removals, because
-  // normal gameplay must never recalculate the face from the shrinking set of
-  // remaining arrows.
+  // The renderer resets the board viewBox once for a genuinely new expression.
+  // Normal path removals do not change the viewBox, so the original full Teddy
+  // scale remains locked for the complete play session.
   new MutationObserver(() => {
     const currentViewBox = board.getAttribute('viewBox');
     if (lockedFit && currentViewBox === lockedFit.viewBox) return;

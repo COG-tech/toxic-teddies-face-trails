@@ -111,3 +111,23 @@ The locked intro rules are:
 - Any later replacement requires a new owner-approved image, a new locked decision, updated cache identifiers, and a published phone review.
 
 The published v47 intro remains pending owner verification until the real-phone loading trough, animated fill, crop, and handoff are confirmed.
+
+## D-017 — Adaptive gameplay canvas and preserved Teddy proportions
+
+The v51 tall-board presentation is rejected because non-uniform SVG scaling distorted the Teddy face. Gameplay must use a viewport-adaptive canvas without stretching the compiled Teddy geometry.
+
+The locked adaptive-canvas rules are:
+
+- The gameplay canvas follows the complete available viewport rather than a fixed 9:16 gameplay picture.
+- The former expression-specific raster gameplay backgrounds are retired from active runtime presentation.
+- The laboratory environment is generated responsively from CSS surfaces and may adapt independently from the puzzle.
+- The SVG must use uniform scaling with `preserveAspectRatio="xMidYMid meet"` or an equivalent non-distorting transform.
+- `preserveAspectRatio="none"` is forbidden for Teddy gameplay.
+- The engine measures the complete rendered Teddy once per newly rendered expression, adds a clipping-safe margin, and locks that full-level viewBox for the entire expression.
+- Removing arrows must never change the Teddy scale, center, aspect ratio, or viewBox.
+- Resize and rotation may reapply the locked viewBox but must not remeasure only the remaining arrows.
+- The puzzle should use the largest safe uniform scale permitted by the current viewport. Empty space caused by aspect-ratio mismatch is preferable to distorting the Teddy.
+- The generated frame must not block startup and must not require a raster image request.
+- Browser and service-worker presentation cache `v52` identifies this adaptive-canvas release.
+
+Any later attempt to fill more portrait height must change the authored Teddy geometry itself through the controlled level-generation pipeline. It may not be achieved by stretching the rendered puzzle.
