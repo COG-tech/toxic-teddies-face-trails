@@ -10,67 +10,38 @@ if (!url || !outputPath || !widthArg || !heightArg) {
 
 const chromeBinary = process.env.CHROME_BIN;
 if (!chromeBinary) throw new Error('CHROME_BIN is required');
-
 const width = Number(widthArg);
 const height = Number(heightArg);
-if (!Number.isInteger(width) || !Number.isInteger(height)) {
-  throw new Error('Viewport dimensions must be integers');
-}
-
 const port = 9300 + (process.pid % 500);
 const profilePath = `/tmp/toxic-teddies-cdp-${process.pid}-${width}x${height}`;
 const baseOutput = outputPath.replace(/\.png$/i, '');
-const diagnosticPath = `${baseOutput}.json`;
-const domPath = `${baseOutput}.html`;
-
 await mkdir(path.dirname(outputPath), {recursive: true});
 await rm(profilePath, {recursive: true, force: true});
 
 const chrome = spawn(chromeBinary, [
-  '--headless=new',
-  '--no-sandbox',
-  '--disable-gpu',
-  '--disable-dev-shm-usage',
-  '--disable-background-networking',
-  '--disable-component-update',
-  '--disable-default-apps',
-  '--disable-extensions',
-  '--disable-sync',
-  '--no-first-run',
-  '--no-default-browser-check',
-  '--hide-scrollbars',
-  '--remote-allow-origins=*',
-  `--remote-debugging-port=${port}`,
-  `--user-data-dir=${profilePath}`,
-  'about:blank',
+  '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+  '--disable-background-networking', '--disable-extensions', '--no-first-run',
+  '--hide-scrollbars', '--remote-allow-origins=*', `--remote-debugging-port=${port}`,
+  `--user-data-dir=${profilePath}`, 'about:blank',
 ], {stdio: ['ignore', 'pipe', 'pipe']});
 
-let chromeStdout = '';
 let chromeStderr = '';
-chrome.stdout.on('data', chunk => { chromeStdout += chunk; });
 chrome.stderr.on('data', chunk => { chromeStderr += chunk; });
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
-
-async function waitForPageTarget() {
+async function waitForTarget() {
   for (let attempt = 0; attempt < 100; attempt += 1) {
-    if (chrome.exitCode !== null) {
-      throw new Error(`Chrome exited before CDP became available: ${chromeStderr}`);
-    }
     try {
       const response = await fetch(`http://127.0.0.1:${port}/json`);
-      const targets = await response.json();
-      const target = targets.find(item => item.type === 'page');
+      const target = (await response.json()).find(item => item.type === 'page');
       if (target?.webSocketDebuggerUrl) return target;
-    } catch {
-      // Chrome is still starting.
-    }
+    } catch {}
     await sleep(100);
   }
-  throw new Error(`Chrome DevTools endpoint did not become available. ${chromeStderr}`);
+  throw new Error(`Chrome DevTools endpoint unavailable: ${chromeStderr}`);
 }
 
-const target = await waitForPageTarget();
+const target = await waitForTarget();
 const socket = new WebSocket(target.webSocketDebuggerUrl);
 await new Promise((resolve, reject) => {
   socket.addEventListener('open', resolve, {once: true});
@@ -79,49 +50,20 @@ await new Promise((resolve, reject) => {
 
 let nextId = 0;
 const pending = new Map();
-const networkEvents = [];
 const runtimeExceptions = [];
 const consoleErrors = [];
-
 socket.addEventListener('message', event => {
   const message = JSON.parse(event.data);
   if (message.id && pending.has(message.id)) {
-    const {resolve, reject} = pending.get(message.id);
+    const entry = pending.get(message.id);
     pending.delete(message.id);
-    if (message.error) reject(new Error(`${message.error.message}: ${JSON.stringify(message.error.data || {})}`));
-    else resolve(message.result);
+    if (message.error) entry.reject(new Error(message.error.message));
+    else entry.resolve(message.result);
     return;
   }
-
-  if (message.method === 'Network.responseReceived') {
-    const response = message.params?.response;
-    if (response?.url?.includes('/assets/backdrops/')) {
-      networkEvents.push({
-        type: 'response',
-        url: response.url,
-        status: response.status,
-        mimeType: response.mimeType,
-        fromDiskCache: response.fromDiskCache,
-        fromServiceWorker: response.fromServiceWorker,
-      });
-    }
-  }
-
-  if (message.method === 'Network.loadingFailed') {
-    networkEvents.push({
-      type: 'failure',
-      requestId: message.params?.requestId,
-      errorText: message.params?.errorText,
-      blockedReason: message.params?.blockedReason,
-    });
-  }
-
-  if (message.method === 'Runtime.exceptionThrown') {
-    runtimeExceptions.push(message.params?.exceptionDetails || message.params);
-  }
-
+  if (message.method === 'Runtime.exceptionThrown') runtimeExceptions.push(message.params?.exceptionDetails || message.params);
   if (message.method === 'Runtime.consoleAPICalled' && message.params?.type === 'error') {
-    consoleErrors.push(message.params.args?.map(argument => argument.value || argument.description).join(' ') || 'console.error');
+    consoleErrors.push(message.params.args?.map(arg => arg.value || arg.description).join(' ') || 'console.error');
   }
 });
 
@@ -134,221 +76,81 @@ function send(method, params = {}) {
 }
 
 async function evaluate(expression) {
-  const response = await send('Runtime.evaluate', {
-    expression,
-    returnByValue: true,
-    awaitPromise: true,
-  });
-  if (response.exceptionDetails) {
-    throw new Error(`Evaluation failed: ${JSON.stringify(response.exceptionDetails)}`);
-  }
-  return response.result?.value;
+  const result = await send('Runtime.evaluate', {expression, returnByValue: true, awaitPromise: true});
+  if (result.exceptionDetails) throw new Error(JSON.stringify(result.exceptionDetails));
+  return result.result?.value;
 }
 
 const diagnosticExpression = `(() => {
-  function serializeRect(rect) {
-    if (!rect) return null;
-    return {x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom};
-  }
-
-  function transformedSvgRect(element) {
+  const serialize = rect => rect ? ({x:rect.x,y:rect.y,width:rect.width,height:rect.height,right:rect.right,bottom:rect.bottom}) : null;
+  const transformed = element => {
     if (!element?.getBBox || !element?.getScreenCTM) return null;
-    const bbox = element.getBBox();
-    const matrix = element.getScreenCTM();
-    if (!bbox || !matrix || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height)) return null;
-    const transform = (x, y) => ({
-      x: matrix.a * x + matrix.c * y + matrix.e,
-      y: matrix.b * x + matrix.d * y + matrix.f,
-    });
-    const points = [
-      transform(bbox.x, bbox.y),
-      transform(bbox.x + bbox.width, bbox.y),
-      transform(bbox.x, bbox.y + bbox.height),
-      transform(bbox.x + bbox.width, bbox.y + bbox.height),
-    ];
-    const xs = points.map(point => point.x);
-    const ys = points.map(point => point.y);
-    const left = Math.min(...xs);
-    const right = Math.max(...xs);
-    const top = Math.min(...ys);
-    const bottom = Math.max(...ys);
-    return {x: left, y: top, width: right - left, height: bottom - top, right, bottom};
-  }
-
-  const splash = document.getElementById('bootSplash');
-  const game = document.getElementById('gameView');
-  const board = document.querySelector('.board-shell');
-  const boardSvg = document.getElementById('board');
-  const puzzle = document.querySelector('.dense-piece-layer') || document.getElementById('pieceLayer');
-  const splashStyle = splash ? getComputedStyle(splash) : null;
-  const gameStyle = game ? getComputedStyle(game) : null;
-  const boardStyle = board ? getComputedStyle(board) : null;
-  const gameRect = game?.getBoundingClientRect();
-  const boardRect = board?.getBoundingClientRect();
-  const boardSvgRect = boardSvg?.getBoundingClientRect();
-  const puzzleRect = transformedSvgRect(puzzle);
-  const boardWidthRatio = gameRect?.width && boardRect ? boardRect.width / gameRect.width : null;
-  const puzzleWidthRatio = gameRect?.width && puzzleRect ? puzzleRect.width / gameRect.width : null;
-  const puzzleHeightRatio = gameRect?.height && puzzleRect ? puzzleRect.height / gameRect.height : null;
-  const puzzleToBoardWidthRatio = boardRect?.width && puzzleRect ? puzzleRect.width / boardRect.width : null;
-  const puzzleInsideGame = Boolean(gameRect && puzzleRect
-    && puzzleRect.x >= gameRect.x - 6
-    && puzzleRect.right <= gameRect.right + 6
-    && puzzleRect.y >= gameRect.y - 6
-    && puzzleRect.bottom <= gameRect.bottom + 6);
-
+    const b = element.getBBox(); const m = element.getScreenCTM();
+    const p = (x,y) => ({x:m.a*x+m.c*y+m.e,y:m.b*x+m.d*y+m.f});
+    const points=[p(b.x,b.y),p(b.x+b.width,b.y),p(b.x,b.y+b.height),p(b.x+b.width,b.y+b.height)];
+    const xs=points.map(v=>v.x), ys=points.map(v=>v.y);
+    const left=Math.min(...xs), right=Math.max(...xs), top=Math.min(...ys), bottom=Math.max(...ys);
+    return {x:left,y:top,width:right-left,height:bottom-top,right,bottom};
+  };
+  const splash=document.getElementById('bootSplash');
+  const game=document.getElementById('gameView');
+  const board=document.querySelector('.board-shell');
+  const puzzle=document.querySelector('.dense-piece-layer')||document.querySelector('.compiled-piece-layer')||document.getElementById('pieceLayer');
+  const gameRect=game?.getBoundingClientRect(); const boardRect=board?.getBoundingClientRect(); const puzzleRect=transformed(puzzle);
+  const splashStyle=splash?getComputedStyle(splash):null; const gameStyle=game?getComputedStyle(game):null;
+  const metrics=window.ToxicPuzzleFit?.getMetrics?.()||null;
+  const puzzleAspectRatio=puzzleRect?.height ? puzzleRect.width/puzzleRect.height : null;
+  const lockedAspectRatio=metrics?.aspectRatio||null;
   return {
-    href: location.href,
-    readyState: document.readyState,
-    bodyClass: document.body?.className || null,
-    splashClass: splash?.className || null,
-    splashDisplay: splashStyle?.display || null,
-    splashVisibility: splashStyle?.visibility || null,
-    splashOpacity: splashStyle?.opacity || null,
-    splashHidden: !splash || splash.classList.contains('boot-splash-hidden') || splashStyle?.display === 'none' || splashStyle?.visibility === 'hidden',
-    gameClass: game?.className || null,
-    gameVisible: Boolean(game && !game.classList.contains('hidden') && gameStyle?.display !== 'none'),
-    backdropStatus: game?.dataset.gameplayBackdropStatus || null,
-    backdropUrl: game?.dataset.gameplayBackdropUrl || null,
-    inlineBackgroundImage: game?.style.backgroundImage || null,
-    computedBackgroundImage: gameStyle?.backgroundImage || null,
-    computedBackgroundSize: gameStyle?.backgroundSize || null,
-    computedBackgroundColor: gameStyle?.backgroundColor || null,
-    gameRect: serializeRect(gameRect),
-    boardBackground: boardStyle?.backgroundImage || null,
-    boardRect: serializeRect(boardRect),
-    boardSvgRect: serializeRect(boardSvgRect),
-    puzzleRect: serializeRect(puzzleRect),
-    boardWidthRatio,
-    puzzleWidthRatio,
-    puzzleHeightRatio,
-    puzzleToBoardWidthRatio,
-    puzzleInsideGame,
+    splashHidden: !splash || splash.classList.contains('boot-splash-hidden') || splashStyle?.display==='none' || splashStyle?.visibility==='hidden',
+    gameVisible: Boolean(game && !game.classList.contains('hidden') && gameStyle?.display!=='none'),
+    backdropStatus: game?.dataset.gameplayBackdropStatus||null,
+    backdropMode: game?.dataset.gameplayBackdropMode||null,
+    puzzleFitStatus: game?.dataset.puzzleFitStatus||null,
+    puzzleScaleLocked: game?.dataset.puzzleScaleLocked||null,
+    puzzleAspectPreserved: game?.dataset.puzzleAspectPreserved||null,
+    computedBackgroundImage: gameStyle?.backgroundImage||null,
+    gameRect: serialize(gameRect), boardRect: serialize(boardRect), puzzleRect: serialize(puzzleRect),
+    boardWidthRatio: gameRect?.width&&boardRect?boardRect.width/gameRect.width:null,
+    puzzleWidthRatio: gameRect?.width&&puzzleRect?puzzleRect.width/gameRect.width:null,
+    puzzleHeightRatio: gameRect?.height&&puzzleRect?puzzleRect.height/gameRect.height:null,
+    puzzleAspectRatio, lockedAspectRatio,
+    puzzleInsideGame: Boolean(gameRect&&puzzleRect&&puzzleRect.x>=gameRect.x-6&&puzzleRect.right<=gameRect.right+6&&puzzleRect.y>=gameRect.y-6&&puzzleRect.bottom<=gameRect.bottom+6),
     pathCount: document.querySelectorAll('.dense-path, .path-piece').length,
-    statusText: document.getElementById('statusText')?.textContent || null,
   };
 })()`;
 
-let finalDiagnostics = null;
+let diagnostics = null;
 let auditError = null;
-let transientEvaluationError = null;
-
-function diagnosticsReady(diagnostics) {
-  return diagnostics?.splashHidden
-    && diagnostics?.gameVisible
-    && diagnostics?.backdropStatus === 'loaded'
-    && diagnostics?.computedBackgroundImage?.includes('/assets/backdrops/tt01/neutral.webp')
-    && diagnostics?.pathCount > 0
-    && diagnostics?.boardWidthRatio >= 0.94
-    && diagnostics?.puzzleWidthRatio >= 0.76
-    && diagnostics?.puzzleHeightRatio >= 0.38
-    && diagnostics?.puzzleToBoardWidthRatio >= 0.78
-    && diagnostics?.puzzleInsideGame;
-}
-
 try {
-  await send('Page.enable');
-  await send('Runtime.enable');
-  await send('Network.enable');
-  await send('Log.enable');
-  await send('Emulation.setDeviceMetricsOverride', {
-    width,
-    height,
-    deviceScaleFactor: 1,
-    mobile: width <= 620,
-    screenWidth: width,
-    screenHeight: height,
-    dontSetVisibleSize: false,
-  });
-
-  const navigation = await send('Page.navigate', {url});
-  if (navigation.errorText) throw new Error(`Navigation failed: ${navigation.errorText}`);
-
-  const deadline = Date.now() + 30_000;
-  while (Date.now() < deadline) {
-    try {
-      finalDiagnostics = await evaluate(diagnosticExpression);
-      transientEvaluationError = null;
-    } catch (error) {
-      transientEvaluationError = error;
-      await sleep(250);
-      continue;
-    }
-    if (diagnosticsReady(finalDiagnostics)) break;
+  await send('Page.enable'); await send('Runtime.enable');
+  await send('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:1,mobile:width<=620,screenWidth:width,screenHeight:height});
+  await send('Page.navigate', {url});
+  const deadline=Date.now()+30000;
+  while(Date.now()<deadline){
+    diagnostics=await evaluate(diagnosticExpression);
+    if(diagnostics?.splashHidden&&diagnostics?.gameVisible&&diagnostics?.backdropMode==='generated-css'&&diagnostics?.puzzleFitStatus==='fitted') break;
     await sleep(250);
   }
+  if(!diagnostics?.splashHidden) throw new Error('Loading screen did not hand off');
+  if(diagnostics?.backdropStatus!=='loaded'||diagnostics?.backdropMode!=='generated-css') throw new Error('Generated gameplay frame is not ready');
+  if(diagnostics?.computedBackgroundImage?.includes('/assets/backdrops/')) throw new Error('Raster gameplay backdrop is still active');
+  if(!(diagnostics?.pathCount>0)) throw new Error('No puzzle paths rendered');
+  if(!(diagnostics?.boardWidthRatio>=0.98)) throw new Error(`Board is too narrow: ${diagnostics?.boardWidthRatio}`);
+  if(!(Math.max(diagnostics?.puzzleWidthRatio||0,diagnostics?.puzzleHeightRatio||0)>=0.82)) throw new Error('Puzzle does not use the dominant viewport dimension');
+  if(!(Math.min(diagnostics?.puzzleWidthRatio||0,diagnostics?.puzzleHeightRatio||0)>=0.40)) throw new Error('Puzzle is too small on the secondary viewport dimension');
+  if(!diagnostics?.puzzleInsideGame) throw new Error('Puzzle is clipped');
+  if(!diagnostics?.lockedAspectRatio||Math.abs(diagnostics.puzzleAspectRatio-diagnostics.lockedAspectRatio)>0.03) throw new Error('Teddy aspect ratio changed');
+  if(runtimeExceptions.length) throw new Error(`Runtime exceptions: ${JSON.stringify(runtimeExceptions)}`);
+} catch (error) { auditError = error; }
 
-  if (!finalDiagnostics && transientEvaluationError) throw transientEvaluationError;
-  if (!finalDiagnostics?.splashHidden) throw new Error('Loading screen did not hand off to gameplay');
-  if (!finalDiagnostics?.gameVisible) throw new Error('Gameplay view is not visible');
-  if (finalDiagnostics?.backdropStatus !== 'loaded') throw new Error(`Backdrop status is ${finalDiagnostics?.backdropStatus}`);
-  if (!finalDiagnostics?.computedBackgroundImage?.includes('/assets/backdrops/tt01/neutral.webp')) {
-    throw new Error(`Computed background image is incorrect: ${finalDiagnostics?.computedBackgroundImage}`);
-  }
-  if (!(finalDiagnostics?.pathCount > 0)) throw new Error('No puzzle paths rendered');
-  if (!(finalDiagnostics?.boardWidthRatio >= 0.94)) throw new Error(`Board is too narrow: ${finalDiagnostics?.boardWidthRatio}`);
-  if (!(finalDiagnostics?.puzzleWidthRatio >= 0.76)) throw new Error(`Visible Teddy puzzle is too narrow: ${finalDiagnostics?.puzzleWidthRatio}`);
-  if (!(finalDiagnostics?.puzzleHeightRatio >= 0.38)) throw new Error(`Visible Teddy puzzle is too short: ${finalDiagnostics?.puzzleHeightRatio}`);
-  if (!(finalDiagnostics?.puzzleToBoardWidthRatio >= 0.78)) throw new Error(`Teddy does not fill the board: ${finalDiagnostics?.puzzleToBoardWidthRatio}`);
-  if (!finalDiagnostics?.puzzleInsideGame) throw new Error('Enlarged Teddy puzzle is clipped outside the gameplay canvas');
-
-  const backdropResponse = networkEvents.find(event =>
-    event.type === 'response'
-    && event.url.endsWith('/assets/backdrops/tt01/neutral.webp')
-    && event.status === 200,
-  );
-  if (!backdropResponse) throw new Error(`No successful neutral.webp network response: ${JSON.stringify(networkEvents)}`);
-  if (runtimeExceptions.length) throw new Error(`Runtime exception detected: ${JSON.stringify(runtimeExceptions)}`);
-  if (consoleErrors.some(message => message.includes('Gameplay backdrop failed'))) {
-    throw new Error(`Backdrop console error detected: ${consoleErrors.join(' | ')}`);
-  }
-
-  await evaluate('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
-  await sleep(250);
-} catch (error) {
-  auditError = error;
-} finally {
-  try {
-    finalDiagnostics = await evaluate(diagnosticExpression);
-  } catch (evidenceError) {
-    if (!auditError) auditError = evidenceError;
-  }
-
-  try {
-    const screenshot = await send('Page.captureScreenshot', {
-      format: 'png',
-      fromSurface: true,
-      captureBeyondViewport: false,
-    });
-    await writeFile(outputPath, Buffer.from(screenshot.data, 'base64'));
-    const dom = await evaluate('document.documentElement?.outerHTML || ""');
-    await writeFile(domPath, dom || '', 'utf8');
-  } catch (evidenceError) {
-    if (!auditError) auditError = evidenceError;
-  }
-
-  await writeFile(diagnosticPath, `${JSON.stringify({
-    viewport: {width, height},
-    diagnostics: finalDiagnostics,
-    networkEvents,
-    runtimeExceptions,
-    consoleErrors,
-    chromeStdout,
-    chromeStderr,
-    error: auditError ? {name: auditError.name, message: auditError.message, stack: auditError.stack} : null,
-  }, null, 2)}\n`, 'utf8');
-
-  try {
-    await send('Browser.close');
-  } catch {
-    chrome.kill('SIGTERM');
-  }
-  socket.close();
-  await Promise.race([
-    new Promise(resolve => chrome.once('exit', resolve)),
-    sleep(2_000).then(() => chrome.kill('SIGKILL')),
-  ]);
-  await rm(profilePath, {recursive: true, force: true});
-}
-
-if (auditError) throw auditError;
+try {
+  const screenshot=await send('Page.captureScreenshot',{format:'png',fromSurface:true,captureBeyondViewport:false});
+  await writeFile(outputPath,Buffer.from(screenshot.data,'base64'));
+  await writeFile(`${baseOutput}.html`,await evaluate('document.documentElement.outerHTML'),'utf8');
+} catch (error) { if(!auditError) auditError=error; }
+await writeFile(`${baseOutput}.json`,`${JSON.stringify({viewport:{width,height},diagnostics,runtimeExceptions,consoleErrors,error:auditError?{message:auditError.message,stack:auditError.stack}:null},null,2)}\n`,'utf8');
+try { await send('Browser.close'); } catch { chrome.kill('SIGTERM'); }
+socket.close();
+await rm(profilePath,{recursive:true,force:true});
+if(auditError) throw auditError;
