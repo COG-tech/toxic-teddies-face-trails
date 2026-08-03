@@ -42,7 +42,7 @@ test('approved full-screen intro is bundled through the Vite module entry', asyn
   assert.match(index, /id="bootSplash"/);
   assert.match(bootImageTag, /width="480"[\s\S]*height="853"/);
   assert.doesNotMatch(bootImageTag, /\ssrc=/);
-  assert.match(index, /<script type="module" src="\.\/src\/app\/bootstrap\.js\?v=52"><\/script>/);
+  assert.match(index, /<script type="module" src="\.\/src\/app\/bootstrap\.js\?v=53"><\/script>/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/loading-screen\.js/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/loading-screen\.js';/m);
@@ -56,8 +56,8 @@ test('approved full-screen intro is bundled through the Vite module entry', asyn
   assert.match(theme, /\.home-brand-logo img/);
   assert.match(bootstrap, /ToxicLoadingScreen\.hide/);
   assert.match(bootstrap, /Loading the face puzzles/);
-  assert.match(bootstrap, /sw\.js\?v=52/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v52/);
+  assert.match(bootstrap, /sw\.js\?v=53/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v53/);
   assert.doesNotMatch(serviceWorker, /src\/app\/gameplay-backdrops\.js/);
   assert.doesNotMatch(serviceWorker, /src\/design-system\/gameplay-backdrops\.css/);
   assert.match(serviceWorker, /assets\/branding\/loading\/toxic-teddies-loading\.webp/);
