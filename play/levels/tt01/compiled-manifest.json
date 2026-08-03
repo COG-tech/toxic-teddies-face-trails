@@ -1,51 +1,67 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "teddy": "tt01",
+  "geometryMode": "portrait_native",
   "levels": [
     {
       "level": 1,
       "expression": "neutral",
-      "gridSize": 57,
-      "pieceCount": 122,
+      "gridSize": 87,
+      "gridRows": 87,
+      "gridCols": 57,
+      "pieceCount": 120,
+      "geometryMode": "portrait_native",
       "file": "level-1.json",
-      "compilerVersion": "toxic-toby-deterministic-v1",
-      "levelVersion": 1
+      "compilerVersion": "toxic-toby-portrait-v2",
+      "levelVersion": 2
     },
     {
       "level": 2,
       "expression": "evil_grin",
-      "gridSize": 59,
-      "pieceCount": 124,
+      "gridSize": 89,
+      "gridRows": 89,
+      "gridCols": 59,
+      "pieceCount": 133,
+      "geometryMode": "portrait_native",
       "file": "level-2.json",
-      "compilerVersion": "toxic-toby-deterministic-v1",
-      "levelVersion": 1
+      "compilerVersion": "toxic-toby-portrait-v2",
+      "levelVersion": 2
     },
     {
       "level": 3,
       "expression": "gross",
-      "gridSize": 61,
-      "pieceCount": 130,
+      "gridSize": 91,
+      "gridRows": 91,
+      "gridCols": 61,
+      "pieceCount": 121,
+      "geometryMode": "portrait_native",
       "file": "level-3.json",
-      "compilerVersion": "toxic-toby-deterministic-v1",
-      "levelVersion": 1
+      "compilerVersion": "toxic-toby-portrait-v2",
+      "levelVersion": 2
     },
     {
       "level": 4,
       "expression": "angry",
-      "gridSize": 63,
-      "pieceCount": 152,
+      "gridSize": 93,
+      "gridRows": 93,
+      "gridCols": 63,
+      "pieceCount": 150,
+      "geometryMode": "portrait_native",
       "file": "level-4.json",
-      "compilerVersion": "toxic-toby-deterministic-v1",
-      "levelVersion": 1
+      "compilerVersion": "toxic-toby-portrait-v2",
+      "levelVersion": 2
     },
     {
       "level": 5,
       "expression": "maniacal_laugh",
-      "gridSize": 65,
-      "pieceCount": 150,
+      "gridSize": 95,
+      "gridRows": 95,
+      "gridCols": 65,
+      "pieceCount": 145,
+      "geometryMode": "portrait_native",
       "file": "level-5.json",
-      "compilerVersion": "toxic-toby-deterministic-v1",
-      "levelVersion": 1
+      "compilerVersion": "toxic-toby-portrait-v2",
+      "levelVersion": 2
     }
   ]
 }

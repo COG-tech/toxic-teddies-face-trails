@@ -131,3 +131,23 @@ The locked adaptive-canvas rules are:
 - Browser and service-worker presentation cache `v52` identifies this adaptive-canvas release.
 
 Any later attempt to fill more portrait height must change the authored Teddy geometry itself through the controlled level-generation pipeline. It may not be achieved by stretching the rendered puzzle.
+
+## D-018 — Portrait-native Toxic Toby geometry
+
+The owner rejected the v52 square-authored face because uniform scaling preserved the shape but left excessive empty portrait space. Toxic Toby must therefore use genuinely portrait-authored coordinates rather than presentation stretching.
+
+The locked portrait-geometry rules are:
+
+- All five Toxic Toby expressions use rectangular portrait grids with more rows than columns.
+- Cells remain square and every path remains orthogonal. No path may be transformed with a non-uniform presentation matrix.
+- The face silhouette, ears, eyes, muzzle, nose, mouth, cheeks, and chin are authored directly for the taller coordinate field.
+- Level grids are 87×57, 89×59, 91×61, 93×63, and 95×65 for expressions 1–5.
+- The actual rendered path-bounds aspect ratio must remain approximately **1.42–1.65** so the face uses substantially more phone height while remaining recognizably Teddy-shaped.
+- Compiler version is `toxic-toby-portrait-v2`; level version is `2`; content version is `tt01-portrait-2026.08.03.1`.
+- A level-version change invalidates incompatible unfinished sessions safely. Completed expressions and feed unlocks must remain intact.
+- Path IDs remain deterministic and unique within each expression, and the reverse-construction head-ray solver must verify every complete removal order.
+- The full-level viewBox is captured once and locked for the expression. Removing arrows must never change scale, center, aspect ratio, or viewBox.
+- The adaptive full-viewport canvas and generated CSS laboratory frame from D-017 remain active.
+- Browser and service-worker cache `v53` identifies this portrait-native release.
+
+Automated geometry and browser audits are required, but the owner must still approve the recognizable face and portrait use on a real phone.
