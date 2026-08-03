@@ -10,7 +10,7 @@ const boardShell = document.querySelector('.board-shell');
 
 let fitFrame = 0;
 let retryCount = 0;
-let lastMetrics = null;
+let lockedFit = null;
 
 function visualBounds(element) {
   if (!element?.getBBox) return null;
@@ -28,6 +28,7 @@ function visualBounds(element) {
 
 function puzzleLayer() {
   return board?.querySelector('.dense-piece-layer')
+    || board?.querySelector('.compiled-piece-layer')
     || board?.querySelector('#pieceLayer')
     || document.querySelector('.dense-piece-layer');
 }
@@ -42,7 +43,27 @@ function finiteBox(box) {
     && box.height > 0;
 }
 
-function fitPuzzle() {
+function applyLockedFit() {
+  if (!lockedFit || !board) return null;
+
+  board.setAttribute('viewBox', lockedFit.viewBox);
+  board.setAttribute('preserveAspectRatio', 'none');
+  preview?.setAttribute('viewBox', lockedFit.viewBox);
+  preview?.setAttribute('preserveAspectRatio', 'none');
+
+  if (gameView) {
+    gameView.dataset.puzzleFitStatus = 'fitted';
+    gameView.dataset.puzzleViewBox = lockedFit.viewBox;
+    gameView.dataset.puzzleWidthFill = lockedFit.widthFill.toFixed(4);
+    gameView.dataset.puzzleHeightFill = lockedFit.heightFill.toFixed(4);
+    gameView.dataset.puzzleInitialPathCount = String(lockedFit.initialPathCount);
+    gameView.dataset.puzzleScaleLocked = 'true';
+  }
+
+  return lockedFit;
+}
+
+function captureFullPuzzleFit() {
   fitFrame = 0;
   const layer = puzzleLayer();
   const pathCount = layer?.querySelectorAll?.('.dense-path, .path-piece')?.length || 0;
@@ -52,7 +73,7 @@ function fitPuzzle() {
     gameView?.setAttribute('data-puzzle-fit-status', 'waiting');
     if (retryCount < MAX_RETRIES) {
       retryCount += 1;
-      fitFrame = requestAnimationFrame(fitPuzzle);
+      fitFrame = requestAnimationFrame(captureFullPuzzleFit);
     }
     return null;
   }
@@ -69,18 +90,11 @@ function fitPuzzle() {
   const viewBoxY = centerY - (squareSize / 2);
   const viewBox = `${viewBoxX.toFixed(4)} ${viewBoxY.toFixed(4)} ${squareSize.toFixed(4)} ${squareSize.toFixed(4)}`;
 
-  board.setAttribute('viewBox', viewBox);
-  board.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-  preview?.setAttribute('viewBox', viewBox);
-  preview?.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-
-  const widthFill = bounds.width / squareSize;
-  const heightFill = bounds.height / squareSize;
-  lastMetrics = Object.freeze({
-    pathCount,
+  lockedFit = Object.freeze({
+    initialPathCount: pathCount,
     viewBox,
-    widthFill,
-    heightFill,
+    widthFill: bounds.width / squareSize,
+    heightFill: bounds.height / squareSize,
     targetVisualFill: TARGET_VISUAL_FILL,
     bounds: Object.freeze({
       x: bounds.x,
@@ -90,40 +104,59 @@ function fitPuzzle() {
     }),
   });
 
-  if (gameView) {
-    gameView.dataset.puzzleFitStatus = 'fitted';
-    gameView.dataset.puzzleViewBox = viewBox;
-    gameView.dataset.puzzleWidthFill = widthFill.toFixed(4);
-    gameView.dataset.puzzleHeightFill = heightFill.toFixed(4);
-  }
-
-  return lastMetrics;
+  return applyLockedFit();
 }
 
-function scheduleFit() {
+function scheduleInitialFit() {
   if (fitFrame) cancelAnimationFrame(fitFrame);
   retryCount = 0;
-  fitFrame = requestAnimationFrame(() => requestAnimationFrame(fitPuzzle));
+  fitFrame = requestAnimationFrame(() => requestAnimationFrame(captureFullPuzzleFit));
+}
+
+function resetForNewPuzzle() {
+  lockedFit = null;
+  if (gameView) {
+    gameView.dataset.puzzleFitStatus = 'waiting';
+    gameView.dataset.puzzleScaleLocked = 'false';
+  }
+  scheduleInitialFit();
+}
+
+function reapplyFit() {
+  if (lockedFit) {
+    requestAnimationFrame(applyLockedFit);
+    return;
+  }
+  scheduleInitialFit();
 }
 
 if (board && boardShell) {
-  new MutationObserver(scheduleFit).observe(board, {
-    childList: true,
-    subtree: true,
+  // The compiled renderer resets the board viewBox once per newly rendered
+  // expression. Observe only that reset. Do not observe path removals, because
+  // normal gameplay must never recalculate the face from the shrinking set of
+  // remaining arrows.
+  new MutationObserver(() => {
+    const currentViewBox = board.getAttribute('viewBox');
+    if (lockedFit && currentViewBox === lockedFit.viewBox) return;
+    resetForNewPuzzle();
+  }).observe(board, {
+    attributes: true,
+    attributeFilter: ['viewBox'],
   });
 
   if ('ResizeObserver' in window) {
-    new ResizeObserver(scheduleFit).observe(boardShell);
+    new ResizeObserver(reapplyFit).observe(boardShell);
   }
 
-  window.addEventListener('resize', scheduleFit, {passive: true});
-  window.addEventListener('orientationchange', scheduleFit, {passive: true});
-  window.addEventListener('pageshow', scheduleFit, {passive: true});
-  scheduleFit();
+  window.addEventListener('resize', reapplyFit, {passive: true});
+  window.addEventListener('orientationchange', reapplyFit, {passive: true});
+  window.addEventListener('pageshow', reapplyFit, {passive: true});
+  scheduleInitialFit();
 }
 
 window.ToxicPuzzleFit = Object.freeze({
-  refit: scheduleFit,
-  getMetrics: () => lastMetrics,
+  refit: resetForNewPuzzle,
+  reapply: reapplyFit,
+  getMetrics: () => lockedFit,
   targetVisualFill: TARGET_VISUAL_FILL,
 });
