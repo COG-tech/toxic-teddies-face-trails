@@ -27,12 +27,17 @@
   function applyLoadedBackdrop(absoluteUrl, version) {
     if (version !== requestVersion) return;
     gameView.style.backgroundImage = `url(${JSON.stringify(absoluteUrl)})`;
-    gameView.style.backgroundPosition = boardBackdrop.style.backgroundPosition || '50% 50%';
-    gameView.style.backgroundSize = 'cover';
+
+    // Preserve the artwork's aspect ratio while deliberately cropping away
+    // more of the decorative side machinery and oversized lower frame.
+    gameView.style.backgroundPosition = '50% 42%';
+    gameView.style.backgroundSize = 'auto 122%';
     gameView.style.backgroundRepeat = 'no-repeat';
+
     gameView.classList.add('has-gameplay-backdrop');
     gameView.dataset.gameplayBackdropStatus = 'loaded';
     gameView.dataset.gameplayBackdropUrl = absoluteUrl;
+    gameView.dataset.gameplayBackdropCrop = '122%-at-42%';
   }
 
   function syncGameplayBackdrop() {
