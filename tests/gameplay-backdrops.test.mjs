@@ -5,6 +5,7 @@ import test from 'node:test';
 const manifest = JSON.parse(await readFile('src/content/backdrop-manifest.json', 'utf8'));
 const index = await readFile('index.html', 'utf8');
 const bootstrap = await readFile('src/app/bootstrap.js', 'utf8');
+const loader = await readFile('dense-loader.js', 'utf8');
 const runtime = await readFile('src/app/gameplay-backdrops.js', 'utf8');
 const fitRuntime = await readFile('src/app/gameplay-fit.js', 'utf8');
 const styles = await readFile('src/design-system/gameplay-backdrops.css', 'utf8');
@@ -65,17 +66,19 @@ test('gameplay backdrop and measured fit are bundled without replacing puzzle in
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
   assert.match(bootstrap, /^import '\.\/gameplay-fit\.js';/m);
   assert.match(bootstrap, /^import '\.\.\/design-system\/gameplay-fit\.css';/m);
-  assert.match(bootstrap, /sw\.js\?v=49/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v49/);
+  assert.match(bootstrap, /sw\.js\?v=50/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v50/);
   assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
   assert.match(runtime, /new Image\(\)/);
   assert.match(runtime, /gameView\.style\.backgroundImage/);
-  assert.match(runtime, /gameView\.style\.backgroundSize = 'cover'/);
+  assert.match(runtime, /gameView\.style\.backgroundPosition = '50% 42%'/);
+  assert.match(runtime, /gameView\.style\.backgroundSize = 'auto 122%'/);
+  assert.match(runtime, /gameplayBackdropCrop = '122%-at-42%'/);
   assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
   assert.doesNotMatch(runtime, /--gameplay-backdrop-image/);
 });
 
-test('relative manifest paths become absolute loaded URLs on the real game-view element', async () => {
+test('relative manifest paths become absolute loaded URLs and use the cropped undistorted presentation', async () => {
   const gameView = {style: fakeStyle(), classList: fakeClassList(), dataset: {}};
   const boardBackdrop = {style: fakeStyle(), dataset: {}};
   boardBackdrop.style.backgroundImage = "url('./assets/backdrops/tt01/neutral.webp')";
@@ -133,14 +136,24 @@ test('relative manifest paths become absolute loaded URLs on the real game-view 
     const expectedUrl = 'https://example.test/toxic-teddies-face-trails/play/assets/backdrops/tt01/neutral.webp';
     assert.equal(gameView.dataset.gameplayBackdropStatus, 'loaded');
     assert.equal(gameView.dataset.gameplayBackdropUrl, expectedUrl);
+    assert.equal(gameView.dataset.gameplayBackdropCrop, '122%-at-42%');
     assert.equal(gameView.style.backgroundImage, `url(${JSON.stringify(expectedUrl)})`);
-    assert.equal(gameView.style.backgroundSize, 'cover');
+    assert.equal(gameView.style.backgroundPosition, '50% 42%');
+    assert.equal(gameView.style.backgroundSize, 'auto 122%');
     assert.equal(gameView.classList.contains('has-gameplay-backdrop'), true);
   } finally {
     globalThis.document = originals.document;
     globalThis.Image = originals.Image;
     globalThis.MutationObserver = originals.MutationObserver;
   }
+});
+
+test('the intro remains visible until the requested route, backdrop and measured puzzle are ready', () => {
+  assert.match(loader, /waitForInitialRouteReady/);
+  assert.match(loader, /renderedPathCount > 0/);
+  assert.match(loader, /gameplayBackdropStatus === 'loaded'/);
+  assert.match(loader, /puzzleFitStatus === 'fitted'/);
+  assert.match(loader, /await waitForInitialRouteReady\(\)/);
 });
 
 test('gameplay-first presentation removes wide edges and fits each rendered Teddy from real path bounds', () => {
