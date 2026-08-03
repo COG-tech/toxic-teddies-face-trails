@@ -1,39 +1,60 @@
-/* Owner-approved gameplay environments. Puzzle geometry and input stay untouched. */
+/*
+ * Adaptive generated laboratory frame.
+ * No raster gameplay backdrop is used. The canvas can grow to any viewport
+ * while the Teddy SVG keeps its original proportions.
+ */
 .game-view {
   position: relative;
   isolation: isolate;
-  width: min(100%, 56.25dvh, 560px);
   min-height: 0;
-  aspect-ratio: 9 / 16;
-  margin-inline: auto;
   overflow: hidden;
-  border-radius: var(--tt-radius-lg, 22px);
-  background-color: var(--tt-grime-900, #0F0C08);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: cover;
+  background-color: #73765b;
 }
 
-.game-view::before {
+.game-view.has-generated-gameplay-frame {
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(218,207,158,.30) 0 18%, transparent 60%),
+    radial-gradient(circle at 18% 22%, rgba(65,82,22,.13) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 68%, rgba(37,45,18,.10) 0 1px, transparent 2px),
+    repeating-linear-gradient(17deg, rgba(56,45,31,.025) 0 1px, transparent 1px 13px),
+    linear-gradient(180deg, #8d8d6e 0%, #777a5e 48%, #686b52 100%);
+}
+
+/* Narrow generated rails and a thin hazard lip replace the fixed artwork. */
+.game-view.has-generated-gameplay-frame::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(15,12,8,.22) 0%, rgba(15,12,8,.01) 10%, rgba(15,12,8,.01) 88%, rgba(15,12,8,.18) 100%),
-    linear-gradient(90deg, rgba(15,12,8,.08), transparent 5% 95%, rgba(15,12,8,.08));
-  opacity: 0;
-  transition: opacity .18s ease;
+    linear-gradient(90deg, #12160d 0%, #33421d 26%, #788a38 50%, #263318 76%, #0c1009 100%) left / clamp(10px, 2.2vw, 24px) 100% no-repeat,
+    linear-gradient(270deg, #12160d 0%, #33421d 26%, #788a38 50%, #263318 76%, #0c1009 100%) right / clamp(10px, 2.2vw, 24px) 100% no-repeat,
+    repeating-linear-gradient(135deg, rgba(35,31,20,.95) 0 9px, rgba(127,104,26,.82) 9px 18px) bottom / 100% clamp(5px, .9vh, 10px) no-repeat;
+  box-shadow:
+    inset clamp(10px, 2.2vw, 24px) 0 14px rgba(8,12,5,.22),
+    inset calc(clamp(10px, 2.2vw, 24px) * -1) 0 14px rgba(8,12,5,.22),
+    inset 0 0 0 1px rgba(183,226,75,.10);
 }
 
-.game-view.has-gameplay-backdrop::before { opacity: 1; }
-.game-view.has-gameplay-backdrop > * { position: relative; z-index: 1; }
+.game-view.has-generated-gameplay-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(15,12,8,.22), transparent 8% 91%, rgba(15,12,8,.18)),
+    repeating-linear-gradient(90deg, transparent 0 54px, rgba(28,31,18,.035) 54px 55px);
+  opacity: .72;
+}
 
-/*
- * Tiny visual HUD, full-size invisible hit areas.
- * Every action keeps a 44px target, but the visible circles are only 28px.
- */
+.game-view.has-gameplay-backdrop > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tiny visible HUD with full 44px interaction targets. */
 .game-view.has-gameplay-backdrop .game-topbar {
   position: absolute;
   top: max(0px, var(--safe-top, 0px));
@@ -74,14 +95,14 @@
 .game-view.has-gameplay-backdrop .top-icon::before {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid rgba(183,226,75,.25);
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(183,226,75,.24);
   border-radius: 999px;
   background: rgba(15,12,8,.68);
   color: var(--tt-slime-green, #B7E24B);
-  box-shadow: 0 2px 8px rgba(0,0,0,.25);
-  font-size: .82rem;
+  box-shadow: 0 2px 7px rgba(0,0,0,.24);
+  font-size: .72rem;
   line-height: 1;
 }
 
@@ -99,15 +120,15 @@
 .game-view.has-gameplay-backdrop .game-title h2 {
   display: inline-block;
   margin: 0;
-  padding: 2px 5px;
-  border: 1px solid rgba(183,226,75,.10);
+  padding: 2px 4px;
+  border: 0;
   border-radius: 999px;
-  background: rgba(15,12,8,.50);
+  background: rgba(15,12,8,.46);
   color: var(--tt-slime-green, #B7E24B);
-  font-size: .54rem;
+  font-size: .48rem;
   line-height: 1;
-  letter-spacing: .01em;
-  box-shadow: 0 1px 6px rgba(0,0,0,.18);
+  letter-spacing: 0;
+  box-shadow: 0 1px 5px rgba(0,0,0,.16);
 }
 
 .game-view.has-gameplay-backdrop .game-title p { display: none; }
@@ -120,7 +141,7 @@
 
 .game-view.has-gameplay-backdrop .status-row {
   position: absolute;
-  top: max(23px, calc(var(--safe-top, 0px) + 23px));
+  top: max(20px, calc(var(--safe-top, 0px) + 20px));
   left: 50%;
   z-index: 9;
   display: block;
@@ -138,20 +159,20 @@
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 3px;
-  padding: 1px 4px;
+  gap: 2px;
+  padding: 1px 3px;
   border: 0;
   border-radius: 999px;
-  background: rgba(15,12,8,.48);
+  background: rgba(15,12,8,.44);
   color: var(--tt-parchment-300, #D8BF8A);
-  font-size: .42rem;
+  font-size: .36rem;
   line-height: 1;
-  box-shadow: 0 1px 5px rgba(0,0,0,.15);
+  box-shadow: 0 1px 4px rgba(0,0,0,.14);
 }
 
 .game-view.has-gameplay-backdrop .progress strong {
   color: var(--tt-slime-green, #B7E24B);
-  font-size: .46rem;
+  font-size: .40rem;
 }
 
 .game-view.has-gameplay-backdrop .status-text {
@@ -167,7 +188,6 @@
   border: 0 !important;
 }
 
-/* Optional trail list stays in the top HUD, visually tiny. */
 .game-view.has-gameplay-backdrop .game-footer {
   position: absolute;
   top: max(0px, var(--safe-top, 0px));
@@ -202,23 +222,22 @@
   content: "☷";
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid rgba(62,124,123,.45);
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(62,124,123,.42);
   border-radius: 999px;
   background: rgba(15,12,8,.68);
   color: var(--tt-parchment-100, #F3E4BD);
-  box-shadow: 0 2px 8px rgba(0,0,0,.25);
-  font-size: .78rem;
+  box-shadow: 0 2px 7px rgba(0,0,0,.24);
+  font-size: .68rem;
   line-height: 1;
 }
 
 .game-view.has-gameplay-backdrop .level-buttons { display: none !important; }
-.game-view.has-gameplay-backdrop .board-backdrop { opacity: 0 !important; }
+.game-view.has-gameplay-backdrop .board-backdrop { display: none !important; }
 
 .game-view.has-gameplay-backdrop .board-shell {
   z-index: 2;
-  margin: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -228,17 +247,12 @@
 .game-view.has-gameplay-backdrop .board-shell::before { display: none; }
 .game-view.has-gameplay-backdrop .board-shell::after { background: none; }
 
-.high-contrast .game-view.has-gameplay-backdrop { background-image: none !important; }
-.high-contrast .game-view.has-gameplay-backdrop::before { opacity: 0; }
-.high-contrast .game-view.has-gameplay-backdrop .board-shell {
+.high-contrast .game-view.has-generated-gameplay-frame {
   background: var(--tt-parchment-100, #F3E4BD);
 }
-
-.reduced-motion .game-view::before { transition: none; }
+.high-contrast .game-view.has-generated-gameplay-frame::before,
+.high-contrast .game-view.has-generated-gameplay-frame::after { display: none; }
 
 @media (max-width: 620px) {
-  .game-view {
-    width: 100%;
-    border-radius: 0;
-  }
+  .game-view { border-radius: 0; }
 }
