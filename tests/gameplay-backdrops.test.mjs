@@ -61,13 +61,14 @@ test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => 
 });
 
 test('gameplay backdrop and measured fit are bundled without replacing puzzle input code', () => {
-  assert.match(index, /gameplay-backdrops\.css\?v=48/);
+  assert.match(index, /gameplay-backdrops\.css\?v=51/);
+  assert.match(index, /bootstrap\.js\?v=51/);
   assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
   assert.match(bootstrap, /^import '\.\/gameplay-fit\.js';/m);
   assert.match(bootstrap, /^import '\.\.\/design-system\/gameplay-fit\.css';/m);
-  assert.match(bootstrap, /sw\.js\?v=50/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v50/);
+  assert.match(bootstrap, /sw\.js\?v=51/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v51/);
   assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
   assert.match(runtime, /new Image\(\)/);
   assert.match(runtime, /gameView\.style\.backgroundImage/);
@@ -156,29 +157,29 @@ test('the intro remains visible until the requested route, backdrop and measured
   assert.match(loader, /await waitForInitialRouteReady\(\)/);
 });
 
-test('gameplay-first presentation removes wide edges and fits each rendered Teddy from real path bounds', () => {
-  assert.match(styles, /\.game-view\s*\{[\s\S]*background-size:\s*cover;/);
-  assert.doesNotMatch(styles, /z-index:\s*-[0-9]+;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop > \*\s*\{[\s\S]*z-index:\s*1;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-topbar\s*\{[\s\S]*position:\s*absolute;[\s\S]*height:\s*44px;[\s\S]*background:\s*transparent;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-title h2\s*\{[\s\S]*font-size:\s*\.72rem;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.status-text\s*\{[\s\S]*clip-path:\s*inset\(50%\)/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-footer\s*\{[\s\S]*position:\s*absolute;[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.accessible-moves-trigger\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;[\s\S]*font-size:\s*0;/);
+test('the portrait engine uses screen height and locks the full face scale during play', () => {
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.top-icon::before\s*\{[\s\S]*width:\s*28px;[\s\S]*height:\s*28px;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.top-icon\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-title h2\s*\{[\s\S]*font-size:\s*\.54rem;/);
+  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.progress\s*\{[\s\S]*font-size:\s*\.42rem;/);
   assert.match(styles, /\.game-view\.has-gameplay-backdrop \.level-buttons\s*\{[\s\S]*display:\s*none !important;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*50%;[\s\S]*width:\s*100%;/);
 
+  assert.match(fitStyles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*top:\s*32px;[\s\S]*bottom:\s*2px;[\s\S]*height:\s*auto;[\s\S]*aspect-ratio:\s*auto;[\s\S]*transform:\s*none;/);
   assert.match(fitStyles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*0;[\s\S]*width:\s*100%;[\s\S]*height:\s*100%;/);
   assert.match(fitStyles, /@media \(max-width: 620px\)[\s\S]*\.game-view\s*\{[\s\S]*width:\s*100%;[\s\S]*height:\s*calc\(100dvh - var\(--safe-top, 0px\) - var\(--safe-bottom, 0px\)\);[\s\S]*aspect-ratio:\s*auto;/);
   assert.doesNotMatch(fitStyles, /125%|-12\.5%/);
 
   assert.match(fitRuntime, /TARGET_VISUAL_FILL = 0\.94/);
   assert.match(fitRuntime, /getBBox\(\{fill: true, stroke: true, markers: true\}\)/);
-  assert.match(fitRuntime, /board\.setAttribute\('viewBox', viewBox\)/);
-  assert.match(fitRuntime, /preview\?\.setAttribute\('viewBox', viewBox\)/);
-  assert.match(fitRuntime, /new MutationObserver\(scheduleFit\)\.observe\(board, \{[\s\S]*childList: true,[\s\S]*subtree: true/);
-  assert.match(fitRuntime, /gameView\.dataset\.puzzleFitStatus = 'fitted'/);
-  assert.match(fitRuntime, /widthFill = bounds\.width \/ squareSize/);
+  assert.match(fitRuntime, /lockedFit = Object\.freeze/);
+  assert.match(fitRuntime, /initialPathCount: pathCount/);
+  assert.match(fitRuntime, /board\.setAttribute\('preserveAspectRatio', 'none'\)/);
+  assert.match(fitRuntime, /preview\?\.setAttribute\('preserveAspectRatio', 'none'\)/);
+  assert.match(fitRuntime, /attributeFilter: \['viewBox'\]/);
+  assert.doesNotMatch(fitRuntime, /childList:\s*true/);
+  assert.doesNotMatch(fitRuntime, /subtree:\s*true/);
+  assert.match(fitRuntime, /normal gameplay must never recalculate the face/);
+  assert.match(fitRuntime, /puzzleScaleLocked = 'true'/);
 
   assert.match(visualAudit, /transformedSvgRect/);
   assert.match(visualAudit, /puzzleInsideGame/);
