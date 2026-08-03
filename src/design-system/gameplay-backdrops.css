@@ -1,4 +1,4 @@
-/* Owner-approved 9:16 gameplay environments. The arrow geometry and input layers remain untouched. */
+/* Owner-approved gameplay environments. Puzzle geometry and input stay untouched. */
 .game-view {
   position: relative;
   isolation: isolate;
@@ -21,123 +21,137 @@
   z-index: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(15,12,8,.30) 0%, rgba(15,12,8,.02) 14%, rgba(15,12,8,.01) 82%, rgba(15,12,8,.28) 100%),
-    linear-gradient(90deg, rgba(15,12,8,.12), transparent 8% 92%, rgba(15,12,8,.12));
+    linear-gradient(180deg, rgba(15,12,8,.22) 0%, rgba(15,12,8,.01) 10%, rgba(15,12,8,.01) 88%, rgba(15,12,8,.18) 100%),
+    linear-gradient(90deg, rgba(15,12,8,.08), transparent 5% 95%, rgba(15,12,8,.08));
   opacity: 0;
   transition: opacity .18s ease;
 }
 
-.game-view.has-gameplay-backdrop::before {
-  opacity: 1;
-}
-
-.game-view.has-gameplay-backdrop > * {
-  position: relative;
-  z-index: 1;
-}
+.game-view.has-gameplay-backdrop::before { opacity: 1; }
+.game-view.has-gameplay-backdrop > * { position: relative; z-index: 1; }
 
 /*
- * Gameplay-first mobile HUD.
- * There are no persistent title, status, instruction, or bottom menu cards.
- * Required actions remain as compact 44px floating controls over decorative frame areas.
+ * Tiny visual HUD, full-size invisible hit areas.
+ * Every action keeps a 44px target, but the visible circles are only 28px.
  */
 .game-view.has-gameplay-backdrop .game-topbar {
   position: absolute;
-  top: max(6px, var(--safe-top, 0px));
-  left: 6px;
-  right: 6px;
-  z-index: 7;
+  top: max(0px, var(--safe-top, 0px));
+  left: 0;
+  right: 0;
+  z-index: 8;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 92px;
-  align-items: center;
+  grid-template-columns: 44px minmax(0, 1fr) 88px;
+  align-items: start;
   min-height: 44px;
   height: 44px;
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 0;
   background: transparent;
   box-shadow: none;
-  backdrop-filter: none;
+  pointer-events: none;
 }
 
+.game-view.has-gameplay-backdrop .game-topbar > * { pointer-events: auto; }
+
 .game-view.has-gameplay-backdrop .top-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 44px;
   height: 44px;
   min-width: 44px;
   min-height: 44px;
-  border-color: rgba(183,226,75,.28);
-  border-radius: 999px;
-  background: rgba(15,12,8,.70);
-  box-shadow: 0 3px 12px rgba(0,0,0,.28);
-  font-size: 1.12rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  box-shadow: none;
+  font-size: 0;
 }
+
+.game-view.has-gameplay-backdrop .top-icon::before {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(183,226,75,.25);
+  border-radius: 999px;
+  background: rgba(15,12,8,.68);
+  color: var(--tt-slime-green, #B7E24B);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  font-size: .82rem;
+  line-height: 1;
+}
+
+.game-view.has-gameplay-backdrop #backButton::before { content: "←"; }
+.game-view.has-gameplay-backdrop #hintButton::before { content: "◌"; }
+.game-view.has-gameplay-backdrop #resetButton::before { content: "↻"; }
 
 .game-view.has-gameplay-backdrop .game-title {
   align-self: start;
   padding-top: 2px;
+  text-align: center;
   pointer-events: none;
 }
 
 .game-view.has-gameplay-backdrop .game-title h2 {
   display: inline-block;
   margin: 0;
-  padding: 3px 8px;
-  border: 1px solid rgba(183,226,75,.14);
+  padding: 2px 5px;
+  border: 1px solid rgba(183,226,75,.10);
   border-radius: 999px;
-  background: rgba(15,12,8,.62);
+  background: rgba(15,12,8,.50);
   color: var(--tt-slime-green, #B7E24B);
-  font-size: .72rem;
+  font-size: .54rem;
   line-height: 1;
-  letter-spacing: .02em;
-  box-shadow: 0 2px 10px rgba(0,0,0,.22);
+  letter-spacing: .01em;
+  box-shadow: 0 1px 6px rgba(0,0,0,.18);
 }
 
-.game-view.has-gameplay-backdrop .game-title p {
-  display: none;
-}
+.game-view.has-gameplay-backdrop .game-title p { display: none; }
 
 .game-view.has-gameplay-backdrop .top-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 4px;
+  gap: 0;
 }
 
 .game-view.has-gameplay-backdrop .status-row {
   position: absolute;
-  top: max(52px, calc(var(--safe-top, 0px) + 48px));
+  top: max(23px, calc(var(--safe-top, 0px) + 23px));
   left: 50%;
-  z-index: 7;
+  z-index: 9;
   display: block;
   width: auto;
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 0;
   background: transparent;
   box-shadow: none;
-  backdrop-filter: none;
   transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .game-view.has-gameplay-backdrop .progress {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 4px;
-  padding: 2px 7px;
-  border: 1px solid rgba(183,226,75,.12);
+  gap: 3px;
+  padding: 1px 4px;
+  border: 0;
   border-radius: 999px;
-  background: rgba(15,12,8,.60);
+  background: rgba(15,12,8,.48);
   color: var(--tt-parchment-300, #D8BF8A);
-  font-size: .54rem;
+  font-size: .42rem;
   line-height: 1;
-  box-shadow: 0 2px 10px rgba(0,0,0,.20);
+  box-shadow: 0 1px 5px rgba(0,0,0,.15);
 }
 
 .game-view.has-gameplay-backdrop .progress strong {
   color: var(--tt-slime-green, #B7E24B);
-  font-size: .62rem;
+  font-size: .46rem;
 }
 
 .game-view.has-gameplay-backdrop .status-text {
@@ -153,24 +167,23 @@
   border: 0 !important;
 }
 
-/* Move the optional open-trails control out of the bottom and into the compact top HUD. */
+/* Optional trail list stays in the top HUD, visually tiny. */
 .game-view.has-gameplay-backdrop .game-footer {
   position: absolute;
-  top: max(6px, var(--safe-top, 0px));
-  right: 102px;
-  z-index: 8;
+  top: max(0px, var(--safe-top, 0px));
+  right: 88px;
+  z-index: 9;
   width: 44px;
   height: 44px;
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 0;
   background: transparent;
   box-shadow: none;
-  backdrop-filter: none;
 }
 
 .game-view.has-gameplay-backdrop .accessible-moves-trigger {
+  position: relative;
   display: grid;
   place-items: center;
   width: 44px;
@@ -178,85 +191,54 @@
   min-width: 44px;
   min-height: 44px;
   padding: 0;
-  border: 1px solid rgba(62,124,123,.58);
-  border-radius: 999px;
-  background: rgba(15,12,8,.70);
-  color: var(--tt-parchment-100, #F3E4BD);
-  box-shadow: 0 3px 12px rgba(0,0,0,.28);
+  border: 0;
+  background: transparent;
+  color: transparent;
+  box-shadow: none;
   font-size: 0;
-  line-height: 1;
 }
 
 .game-view.has-gameplay-backdrop .accessible-moves-trigger::before {
   content: "☷";
-  font-size: 1.08rem;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(62,124,123,.45);
+  border-radius: 999px;
+  background: rgba(15,12,8,.68);
+  color: var(--tt-parchment-100, #F3E4BD);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  font-size: .78rem;
+  line-height: 1;
 }
 
-.game-view.has-gameplay-backdrop .level-buttons {
-  display: none !important;
-}
+.game-view.has-gameplay-backdrop .level-buttons { display: none !important; }
+.game-view.has-gameplay-backdrop .board-backdrop { opacity: 0 !important; }
 
-/* The portrait artwork already contains the quiet gameplay panel and outer frame. */
-.game-view.has-gameplay-backdrop .board-backdrop {
-  opacity: 0 !important;
-}
-
-/*
- * The compiled SVG contains deliberate empty cells around the Teddy.
- * A full-width board plus measured 125% SVG presentation produces roughly
- * 90-94% visible path width and at least 52% portrait path height without
- * changing compiled coordinates, viewBox data, hit testing, or solver logic.
- */
 .game-view.has-gameplay-backdrop .board-shell {
-  position: absolute;
-  top: 50%;
-  left: 0;
   z-index: 2;
-  width: 100%;
   margin: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  transform: translateY(-50%);
 }
 
-.game-view.has-gameplay-backdrop .board,
-.game-view.has-gameplay-backdrop .preview-layer {
-  inset: -12.5%;
-  width: 125%;
-  height: 125%;
-}
+.game-view.has-gameplay-backdrop .board-shell::before { display: none; }
+.game-view.has-gameplay-backdrop .board-shell::after { background: none; }
 
-.game-view.has-gameplay-backdrop .board-shell::before {
-  display: none;
-}
-
-.game-view.has-gameplay-backdrop .board-shell::after {
-  background: none;
-}
-
-.high-contrast .game-view.has-gameplay-backdrop {
-  background-image: none !important;
-}
-
-.high-contrast .game-view.has-gameplay-backdrop::before {
-  opacity: 0;
-}
-
+.high-contrast .game-view.has-gameplay-backdrop { background-image: none !important; }
+.high-contrast .game-view.has-gameplay-backdrop::before { opacity: 0; }
 .high-contrast .game-view.has-gameplay-backdrop .board-shell {
-  border-radius: var(--tt-radius-lg, 22px);
   background: var(--tt-parchment-100, #F3E4BD);
-  box-shadow: 0 14px 38px rgba(0,0,0,.42);
 }
 
-.reduced-motion .game-view::before {
-  transition: none;
-}
+.reduced-motion .game-view::before { transition: none; }
 
 @media (max-width: 620px) {
   .game-view {
-    width: min(100%, 56.25dvh);
+    width: 100%;
     border-radius: 0;
   }
 }
