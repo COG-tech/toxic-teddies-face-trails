@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02",
+  "updatedAt": "2026-08-03",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "2a3de7bc62da2efe97c011f5c8e47452db6cf8a8",
+  "baselineCommit": "pending-v53-merge",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -12,10 +12,9 @@
     "browserDemo": "https://cog-tech.github.io/toxic-teddies-face-trails/play/"
   },
   "release": {
-    "presentationCacheVersion": 47,
-    "mergedPullRequest": 47,
-    "mergedCommit": "2a3de7bc62da2efe97c011f5c8e47452db6cf8a8",
-    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=47",
+    "presentationCacheVersion": 53,
+    "pullRequest": "pending",
+    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=53",
     "ownerPhoneVerificationPending": true
   },
   "designSystem": {
@@ -80,15 +79,6 @@
       "no information by color alone"
     ]
   },
-  "runtimeDesignImplementation": {
-    "status": "implemented_in_code_pending_gameplay_first_mobile_revision",
-    "appShell": "Grime 900 and Ink 900 dark distressed surfaces",
-    "activeStates": "Toxic Green and Slime Green",
-    "secondaryActions": "Patch Purple",
-    "readabilitySurfaces": "Parchment 100 and Parchment 300",
-    "boardPolicy": "Rendered arrow gameplay receives the largest safe mobile area. Background art crops and persistent chrome compresses before the puzzle is reduced.",
-    "browserCacheVersion": 47
-  },
   "playable": {
     "teddyIds": ["tt01"],
     "expressionsPerTeddy": 5,
@@ -105,100 +95,51 @@
   "loadingScreen": {
     "approved": true,
     "decision": "D-016",
-    "artwork": "Owner-approved full-screen portrait Toxic Teddies Arrow Escape intro with Toxic Toby in the radioactive laboratory",
-    "mergedPullRequest": 47,
-    "mergedCommit": "2a3de7bc62da2efe97c011f5c8e47452db6cf8a8",
-    "sourceModule": "src/app/intro-art.js",
-    "sourceParts": [
-      "src/app/intro-art/part-00.js",
-      "src/app/intro-art/part-01.js",
-      "src/app/intro-art/part-02.js",
-      "src/app/intro-art/part-03.js"
-    ],
-    "delivery": "Approved WebP data URI assembled from committed source parts and assigned to the splash image during bootstrap",
-    "fullScreenPortrait": true,
-    "staticLoadingWordAllowed": false,
     "staticTroughColor": "dark_colorless_empty",
+    "staticLoadingWordAllowed": false,
     "runtimeFill": "green_monotonic_left_to_right_real_stage_progress",
-    "enterTheLabPlate": "artwork_only_not_required_tap",
     "minimumVisibleMs": 1800,
     "reducedMotionMinimumVisibleMs": 700,
-    "browserCacheVersion": 47,
-    "homeLogoPreserved": true,
-    "historicalHomeLogoAsset": "public/assets/branding/loading/toxic-teddies-loading.webp",
-    "ownerPhoneVerificationPending": true
+    "homeLogoPreserved": true
   },
-  "gameplayBackdrops": {
-    "approved": true,
-    "teddyId": "tt01",
-    "files": [
-      "assets/backdrops/tt01/neutral.webp",
-      "assets/backdrops/tt01/evil-grin.webp",
-      "assets/backdrops/tt01/gross.webp",
-      "assets/backdrops/tt01/angry.webp",
-      "assets/backdrops/tt01/maniacal-laugh.webp"
-    ],
-    "presentation": "The selected local WebP is resolved to an absolute URL, preloaded, and applied directly to the gameplay view. Future mobile work may crop but may never stretch it.",
-    "offlineCapable": true,
-    "ownerVisualReviewPending": true
-  },
-  "mobilePuzzleScale": {
-    "status": "v46_intermediate_baseline_superseded_by_gameplay_first_owner_directive",
-    "currentBoardWidthRatio": 0.96,
-    "currentSvgPresentationScale": 1.22,
-    "currentSvgPresentationInset": "-11%",
-    "currentVisiblePuzzleWidthRatio": 0.871,
-    "currentVisiblePuzzleHeightRatio": 0.49,
-    "currentPuzzleToBoardWidthRatio": 0.907,
-    "targetVisiblePuzzleWidthRatioRange": [0.9, 0.94],
-    "targetVisiblePuzzleHeightRatioMinimum": 0.52,
-    "persistentChromeHeightRatioMaximum": 0.24,
-    "backgroundCropAllowed": true,
-    "backgroundStretchAllowed": false,
+  "adaptiveCanvas": {
+    "decision": "D-017",
+    "fullViewport": true,
+    "rasterGameplayBackdropsActive": false,
+    "backgroundMode": "generated_css",
+    "preserveAspectRatio": "xMidYMid meet",
+    "nonUniformScalingAllowed": false,
     "minimumTouchTargetCssPixels": 44,
-    "pathCount": 122,
-    "allPathsInsideGameplayCanvas": true,
-    "rejectedScale": {
-      "svgPresentationScale": 1.6,
-      "visiblePuzzleWidthRatio": 1.142,
-      "reason": "Side paths and ears clipped outside the gameplay canvas"
-    },
-    "lockedRule": "Measure actual rendered path bounds with getBBox and getScreenCTM. Enforce minimum size, maximum persistent-chrome height, accessible touch targets, background crop without distortion, and no clipping."
+    "visibleHudControlPixels": 24,
+    "scaleLockedDuringRemoval": true
+  },
+  "portraitGeometry": {
+    "decision": "D-018",
+    "status": "implemented_pending_owner_phone_verification",
+    "compilerVersion": "toxic-toby-portrait-v2",
+    "contentVersion": "tt01-portrait-2026.08.03.1",
+    "levelVersion": 2,
+    "geometryMode": "portrait_native",
+    "grids": [
+      {"level": 1, "rows": 87, "cols": 57},
+      {"level": 2, "rows": 89, "cols": 59},
+      {"level": 3, "rows": 91, "cols": 61},
+      {"level": 4, "rows": 93, "cols": 63},
+      {"level": 5, "rows": 95, "cols": 65}
+    ],
+    "renderedPathAspectRatioRange": [1.42, 1.65],
+    "squareCells": true,
+    "orthogonalPaths": true,
+    "solver": "reverse_construction_head_ray_portrait_v2",
+    "oldSessionPolicy": "clear incompatible unfinished session while preserving completion and feed state"
   },
   "activeNextAction": {
-    "id": "verify-v47-intro-then-resume-gameplay-first-mobile-composition",
-    "status": "owner_phone_verification_required_then_engineering_continues",
-    "summary": "Verify the published full-screen v47 intro, dark colorless trough, moving green fill and handoff on a real phone; then resume compressed-menu gameplay-first mobile implementation.",
-    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=47",
+    "id": "verify-v53-portrait-native-teddy-geometry",
+    "status": "owner_phone_verification_required",
+    "summary": "Verify that the newly authored portrait-native Toxic Toby face is recognizable, uses substantially more phone height, remains undistorted, and never changes size while arrows are removed.",
+    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=53",
     "blockNewTeddyProduction": true
   },
-  "knownDefects": [
-    {
-      "issue": 29,
-      "title": "Completion progression stopped after Evil Grin",
-      "status": "fixed_in_code_pending_owner_retest"
-    },
-    {
-      "ledger": "F-009",
-      "title": "Runtime interface drifted away from the locked design system",
-      "status": "fixed_in_code_pending_owner_visual_review"
-    },
-    {
-      "ledger": "F-012",
-      "title": "Illustrated loading bar looked permanently full",
-      "status": "replacement_v47_merged_pending_owner_phone_review"
-    },
-    {
-      "ledger": "F-013",
-      "title": "Gameplay backdrop class activated but the image did not render",
-      "status": "fixed_and_owner_confirmed_background_visible"
-    },
-    {
-      "ledger": "F-014",
-      "title": "Gameplay background rendered but the Teddy puzzle remained undersized",
-      "status": "partially_fixed_v46_but_gameplay_first_layout_revision_required"
-    }
-  ],
   "artwork": {
     "finalRevealImagesApproved": false,
     "expectedFiles": [
@@ -210,48 +151,32 @@
     ],
     "placeholderPolicy": "Use clearly non-final placeholders only. Do not generate or substitute final character art without owner approval."
   },
-  "visualReference": {
-    "purpose": "Composition and readability only",
-    "requirements": [
-      "The arrow puzzle is the dominant screen object",
-      "The Teddy silhouette is immediately recognizable",
-      "Rendered paths target approximately 90 to 94 percent of usable gameplay width",
-      "Rendered paths target at least 52 percent of portrait gameplay height when the silhouette permits it",
-      "Persistent top status and bottom chrome stays at or below approximately 24 percent of gameplay height",
-      "Background art may crop before the puzzle is reduced and may never stretch",
-      "Compact controls retain at least 44 CSS-pixel touch targets",
-      "No path arrowhead face-critical feature or exit lane is clipped or covered"
-    ]
-  },
   "lockedSystems": [
     "deterministic precompiled levels",
     "screen-space pointer selection",
     "blocker detection and feedback",
     "head-first trail removal",
-    "exact save restoration",
+    "exact save restoration when content versions match",
     "manifest-validated expression progression",
     "feed unlock protection",
-    "approved full-screen v47 intro composition",
+    "approved full-screen intro composition",
     "real-stage monotonic loading progress",
-    "canonical runtime design-system palette",
-    "manifest-driven gameplay backdrops",
-    "gameplay-first mobile hierarchy",
-    "measured rendered-path mobile scaling",
-    "background crop before puzzle reduction",
-    "browser Vite publication under play",
+    "adaptive full-viewport gameplay canvas",
+    "generated CSS laboratory frame",
+    "uniform SVG aspect preservation",
+    "full-level fit locked during arrow removal",
+    "portrait-native Toxic Toby geometry",
+    "rectangular-grid solver validation",
     "native offline bundling",
     "content integrity verification"
   ],
   "humanGatesPending": [
-    "owner verifies the published v47 full-screen intro on a real phone",
-    "owner verifies the intro trough begins dark empty and colorless",
-    "owner verifies the green runtime fill moves to 100 percent and hands off",
-    "owner verifies the gameplay-first mobile arrow size",
-    "owner verifies top and bottom gameplay menus are compact",
-    "owner verifies background cropping preserves laboratory identity",
-    "owner verifies no ears chin arrowheads or exit lanes are clipped",
-    "owner verifies dark home game and feed palette alignment",
-    "owner verifies all five completion transitions and final feed",
+    "owner verifies the published v53 face is recognizably Teddy-shaped",
+    "owner verifies v53 uses materially more portrait height than v52",
+    "owner verifies ears eyes muzzle and chin retain natural proportions",
+    "owner removes at least ten arrows and confirms scale remains fixed",
+    "owner confirms no path arrowhead ear chin or exit lane is clipped",
+    "owner verifies all five expressions and the full progression chain",
     "five approved Toxic Toby reveal images",
     "physical Android lifecycle and accessibility validation",
     "physical iPhone lifecycle and accessibility validation",
