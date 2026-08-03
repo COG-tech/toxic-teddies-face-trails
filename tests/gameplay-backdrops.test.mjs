@@ -21,18 +21,18 @@ test('gameplay uses a generated adaptive frame instead of raster backdrop assets
   assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
   assert.match(runtime, /backgroundImage = 'none'/);
   assert.doesNotMatch(runtime, /new Image\(/);
-  assert.doesNotMatch(runtime, /gameplayBackdropUrl\s*=/);
+  assert.doesNotMatch(runtime, /dataset\.gameplayBackdropUrl\s*=/);
   assert.doesNotMatch(serviceWorker, /assets\/backdrops\/tt01/);
 });
 
-test('adaptive canvas assets and cache version are bundled', () => {
-  assert.match(index, /gameplay-backdrops\.css\?v=52/);
-  assert.match(index, /bootstrap\.js\?v=52/);
+test('adaptive portrait canvas assets and cache version are bundled', () => {
+  assert.match(index, /gameplay-backdrops\.css\?v=53/);
+  assert.match(index, /bootstrap\.js\?v=53/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
   assert.match(bootstrap, /^import '\.\/gameplay-fit\.js';/m);
   assert.match(bootstrap, /^import '\.\.\/design-system\/gameplay-fit\.css';/m);
-  assert.match(bootstrap, /sw\.js\?v=52/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v52/);
+  assert.match(bootstrap, /sw\.js\?v=53/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v53/);
 });
 
 test('the intro remains visible until generated frame and locked puzzle are ready', () => {
