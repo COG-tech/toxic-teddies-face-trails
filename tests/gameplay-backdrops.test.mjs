@@ -13,143 +13,29 @@ const fitStyles = await readFile('src/design-system/gameplay-fit.css', 'utf8');
 const serviceWorker = await readFile('sw.js', 'utf8');
 const visualAudit = await readFile('scripts/capture-gameplay-backdrop-audit.mjs', 'utf8');
 
-const expected = [
-  './assets/backdrops/tt01/neutral.webp',
-  './assets/backdrops/tt01/evil-grin.webp',
-  './assets/backdrops/tt01/gross.webp',
-  './assets/backdrops/tt01/angry.webp',
-  './assets/backdrops/tt01/maniacal-laugh.webp',
-];
-
-function fakeStyle() {
-  return {
-    backgroundImage: '',
-    backgroundPosition: '',
-    backgroundSize: '',
-    backgroundRepeat: '',
-    setProperty(name, value) {
-      this[name] = value;
-    },
-    removeProperty(name) {
-      const camel = name.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-      this[camel] = '';
-      delete this[name];
-    },
-  };
-}
-
-function fakeClassList() {
-  const values = new Set();
-  return {
-    add: (...names) => names.forEach(name => values.add(name)),
-    remove: (...names) => names.forEach(name => values.delete(name)),
-    contains: name => values.has(name),
-  };
-}
-
-test('Toxic Toby uses five owner-approved WebP gameplay backdrops', async () => {
-  assert.deepEqual(manifest.backdrops.map(item => item.src), expected);
-  assert.ok(manifest.backdrops.every(item => item.status === 'owner_approved'));
-  assert.ok(manifest.backdrops.every(item => item.version === 2));
-
-  for (const src of expected) {
-    const bytes = await readFile(src.replace('./', ''));
-    assert.equal(bytes.subarray(0, 4).toString('ascii'), 'RIFF');
-    assert.equal(bytes.subarray(8, 12).toString('ascii'), 'WEBP');
-    assert.match(serviceWorker, new RegExp(src.replaceAll('.', '\\.')));
-  }
+test('gameplay uses a generated adaptive frame instead of raster backdrop assets', () => {
+  assert.equal(manifest.presentation_mode, 'generated_css');
+  assert.deepEqual(manifest.backdrops, []);
+  assert.match(runtime, /has-generated-gameplay-frame/);
+  assert.match(runtime, /gameplayBackdropMode = 'generated-css'/);
+  assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
+  assert.match(runtime, /backgroundImage = 'none'/);
+  assert.doesNotMatch(runtime, /new Image\(/);
+  assert.doesNotMatch(runtime, /gameplayBackdropUrl/);
+  assert.doesNotMatch(serviceWorker, /assets\/backdrops\/tt01/);
 });
 
-test('gameplay backdrop and measured fit are bundled without replacing puzzle input code', () => {
-  assert.match(index, /gameplay-backdrops\.css\?v=51/);
-  assert.match(index, /bootstrap\.js\?v=51/);
-  assert.doesNotMatch(index, /<script src="\.\/src\/app\/gameplay-backdrops\.js/);
+test('adaptive canvas assets and cache version are bundled', () => {
+  assert.match(index, /gameplay-backdrops\.css\?v=52/);
+  assert.match(index, /bootstrap\.js\?v=52/);
   assert.match(bootstrap, /^import '\.\/gameplay-backdrops\.js';/m);
   assert.match(bootstrap, /^import '\.\/gameplay-fit\.js';/m);
   assert.match(bootstrap, /^import '\.\.\/design-system\/gameplay-fit\.css';/m);
-  assert.match(bootstrap, /sw\.js\?v=51/);
-  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v51/);
-  assert.match(runtime, /new URL\(source, document\.baseURI\)\.href/);
-  assert.match(runtime, /new Image\(\)/);
-  assert.match(runtime, /gameView\.style\.backgroundImage/);
-  assert.match(runtime, /gameView\.style\.backgroundPosition = '50% 42%'/);
-  assert.match(runtime, /gameView\.style\.backgroundSize = 'auto 122%'/);
-  assert.match(runtime, /gameplayBackdropCrop = '122%-at-42%'/);
-  assert.match(runtime, /gameplayBackdropStatus = 'loaded'/);
-  assert.doesNotMatch(runtime, /--gameplay-backdrop-image/);
+  assert.match(bootstrap, /sw\.js\?v=52/);
+  assert.match(serviceWorker, /toxic-teddies-arrow-escape-v52/);
 });
 
-test('relative manifest paths become absolute loaded URLs and use the cropped undistorted presentation', async () => {
-  const gameView = {style: fakeStyle(), classList: fakeClassList(), dataset: {}};
-  const boardBackdrop = {style: fakeStyle(), dataset: {}};
-  boardBackdrop.style.backgroundImage = "url('./assets/backdrops/tt01/neutral.webp')";
-  boardBackdrop.style.backgroundPosition = '50% 50%';
-
-  const originals = {
-    document: globalThis.document,
-    Image: globalThis.Image,
-    MutationObserver: globalThis.MutationObserver,
-  };
-
-  class FakeImage {
-    constructor() {
-      this.listeners = new Map();
-      this.complete = false;
-      this.naturalWidth = 0;
-    }
-
-    addEventListener(type, listener) {
-      this.listeners.set(type, listener);
-    }
-
-    set src(value) {
-      this.value = value;
-      this.complete = true;
-      this.naturalWidth = 1080;
-      queueMicrotask(() => this.listeners.get('load')?.());
-    }
-
-    get src() {
-      return this.value;
-    }
-  }
-
-  try {
-    globalThis.document = {
-      baseURI: 'https://example.test/toxic-teddies-face-trails/play/',
-      getElementById(id) {
-        if (id === 'gameView') return gameView;
-        if (id === 'boardBackdrop') return boardBackdrop;
-        return null;
-      },
-    };
-    globalThis.Image = FakeImage;
-    globalThis.MutationObserver = class {
-      constructor(callback) {
-        this.callback = callback;
-      }
-      observe() {}
-    };
-
-    await import(`../src/app/gameplay-backdrops.js?test=${Date.now()}`);
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    const expectedUrl = 'https://example.test/toxic-teddies-face-trails/play/assets/backdrops/tt01/neutral.webp';
-    assert.equal(gameView.dataset.gameplayBackdropStatus, 'loaded');
-    assert.equal(gameView.dataset.gameplayBackdropUrl, expectedUrl);
-    assert.equal(gameView.dataset.gameplayBackdropCrop, '122%-at-42%');
-    assert.equal(gameView.style.backgroundImage, `url(${JSON.stringify(expectedUrl)})`);
-    assert.equal(gameView.style.backgroundPosition, '50% 42%');
-    assert.equal(gameView.style.backgroundSize, 'auto 122%');
-    assert.equal(gameView.classList.contains('has-gameplay-backdrop'), true);
-  } finally {
-    globalThis.document = originals.document;
-    globalThis.Image = originals.Image;
-    globalThis.MutationObserver = originals.MutationObserver;
-  }
-});
-
-test('the intro remains visible until the requested route, backdrop and measured puzzle are ready', () => {
+test('the intro remains visible until generated frame and locked puzzle are ready', () => {
   assert.match(loader, /waitForInitialRouteReady/);
   assert.match(loader, /renderedPathCount > 0/);
   assert.match(loader, /gameplayBackdropStatus === 'loaded'/);
@@ -157,30 +43,28 @@ test('the intro remains visible until the requested route, backdrop and measured
   assert.match(loader, /await waitForInitialRouteReady\(\)/);
 });
 
-test('the portrait engine uses screen height and locks the full face scale during play', () => {
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.top-icon::before\s*\{[\s\S]*width:\s*28px;[\s\S]*height:\s*28px;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.top-icon\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.game-title h2\s*\{[\s\S]*font-size:\s*\.54rem;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.progress\s*\{[\s\S]*font-size:\s*\.42rem;/);
-  assert.match(styles, /\.game-view\.has-gameplay-backdrop \.level-buttons\s*\{[\s\S]*display:\s*none !important;/);
-
-  assert.match(fitStyles, /\.game-view\.has-gameplay-backdrop \.board-shell\s*\{[\s\S]*top:\s*32px;[\s\S]*bottom:\s*2px;[\s\S]*height:\s*auto;[\s\S]*aspect-ratio:\s*auto;[\s\S]*transform:\s*none;/);
-  assert.match(fitStyles, /\.game-view\.has-gameplay-backdrop \.board,[\s\S]*\.preview-layer\s*\{[\s\S]*inset:\s*0;[\s\S]*width:\s*100%;[\s\S]*height:\s*100%;/);
-  assert.match(fitStyles, /@media \(max-width: 620px\)[\s\S]*\.game-view\s*\{[\s\S]*width:\s*100%;[\s\S]*height:\s*calc\(100dvh - var\(--safe-top, 0px\) - var\(--safe-bottom, 0px\)\);[\s\S]*aspect-ratio:\s*auto;/);
-  assert.doesNotMatch(fitStyles, /125%|-12\.5%/);
-
+test('the engine preserves the Teddy aspect ratio and locks scale during play', () => {
   assert.match(fitRuntime, /TARGET_VISUAL_FILL = 0\.94/);
   assert.match(fitRuntime, /getBBox\(\{fill: true, stroke: true, markers: true\}\)/);
   assert.match(fitRuntime, /lockedFit = Object\.freeze/);
   assert.match(fitRuntime, /initialPathCount: pathCount/);
-  assert.match(fitRuntime, /board\.setAttribute\('preserveAspectRatio', 'none'\)/);
-  assert.match(fitRuntime, /preview\?\.setAttribute\('preserveAspectRatio', 'none'\)/);
+  assert.match(fitRuntime, /preserveAspectRatio', 'xMidYMid meet'/);
+  assert.doesNotMatch(fitRuntime, /preserveAspectRatio', 'none'/);
+  assert.match(fitRuntime, /puzzleAspectPreserved = 'true'/);
   assert.match(fitRuntime, /attributeFilter: \['viewBox'\]/);
   assert.doesNotMatch(fitRuntime, /childList:\s*true/);
   assert.doesNotMatch(fitRuntime, /subtree:\s*true/);
-  assert.match(fitRuntime, /normal gameplay must never recalculate the face/);
-  assert.match(fitRuntime, /puzzleScaleLocked = 'true'/);
+});
 
-  assert.match(visualAudit, /transformedSvgRect/);
+test('the game canvas follows the full viewport and the visible HUD stays tiny', () => {
+  assert.match(fitStyles, /\.game-view\.has-gameplay-backdrop\s*\{[\s\S]*width:\s*100vw;[\s\S]*height:\s*calc\(100dvh/);
+  assert.match(fitStyles, /\.board-shell\s*\{[\s\S]*top:\s*max\(24px/);
+  assert.match(styles, /has-generated-gameplay-frame/);
+  assert.match(styles, /\.top-icon::before\s*\{[\s\S]*width:\s*24px;[\s\S]*height:\s*24px;/);
+  assert.match(styles, /\.top-icon\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;/);
+  assert.match(styles, /\.game-title h2\s*\{[\s\S]*font-size:\s*\.48rem;/);
+  assert.match(styles, /\.progress\s*\{[\s\S]*font-size:\s*\.36rem;/);
+  assert.match(styles, /\.board-backdrop\s*\{[\s\S]*display:\s*none !important;/);
+  assert.match(visualAudit, /puzzleAspectRatio/);
   assert.match(visualAudit, /puzzleInsideGame/);
 });
