@@ -1,0 +1,2 @@
+Temporary Swarm10 source pointer. Delete after retrieval.
+https://data.mendeley.com/public-api/zip/v964pnd26t/download/1
