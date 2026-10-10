@@ -204,3 +204,27 @@ Regression test/evidence:
 Never repeat:
 Status: open | fixed | monitoring
 ```
+
+## F-015 — Portrait coordinates did not by themselves make Toby recognizable
+
+**Observed:** Owner feedback requested round attached ears, a wider head, fuller cheeks, stronger muzzle/nose and shorter rounded chin after v53.
+
+**Cause:** Ear ellipses used normalized x/y radii on a rectangular grid; physical radii were unequal. The head retained a long taper, and long feature-colored paths could spill into neighboring facial regions.
+
+**Candidate resolution:** Equal cell-coordinate ear radii, attached ear/head overlap, fuller cheek mask, shorter round chin, broader muzzle/nose and style-constrained landmark paths. Mouth masks now differ by expression. All five solver orders remain required.
+
+**Status:** Corrected in the v54 draft; subjective recognition and actual browser/phone rendering remain pending. No final character art is introduced.
+
+## F-016 — A duplicate startup load could erase restored paths
+
+**Observed:** The new production-runtime DOM regression removed ten paths, saved, reopened the expression, and found all 138 paths active instead of 128.
+
+**Cause:** `hard-mode-v3.js` scheduled a second `openGame` after the canonical boot. Overlapping loads could clear the loading flag and persist the fresh board before restoration from the previous session completed.
+
+**Candidate resolution:** Remove the redundant delayed load. `dense-loader.js` already installs all wrappers before its single `boot()` call.
+
+**Regression evidence:** `tests/runtime-flow.test.mjs` now restores the ten exact removed paths and the original full-level viewBox; it also solves all five production levels through the real Next handlers and verifies retry, locked routes and feed persistence. Bounds/animation are simulated; browser and native validation remain pending.
+
+**Never repeat:** Do not add a second boot or deferred reopening to initialize a presentation wrapper.
+
+**Status:** Fixed in candidate runtime regression; browser/device confirmation pending.

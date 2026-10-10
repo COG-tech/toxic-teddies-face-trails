@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toxic-teddies-arrow-escape-v53';
+const CACHE_NAME = 'toxic-teddies-arrow-escape-v54';
 const CORE_ASSETS = [
   './',
   './index.html',

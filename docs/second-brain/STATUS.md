@@ -1,7 +1,8 @@
 # Canonical Project Status
 
-Updated: 2026-08-03
-Current source baseline before merge: `fix/portrait-native-teddy-v53`
+Updated: 2026-10-10
+Source baseline: `b03905019be3062042c61bef8beaf8f41d2dcd5f`
+Candidate: v54 draft, not merged or deployed. The public demo still reflects v53.
 
 ## Product identity
 
@@ -16,31 +17,29 @@ Current source baseline before merge: `fix/portrait-native-teddy-v53`
 - Design system: `1.0.0`, July 2026
 - Brand promise: **The face is the puzzle.**
 
-## Current release candidate
+## Current draft candidate
 
-V53 replaces the square-authored Toxic Toby levels with portrait-native geometry while retaining the adaptive full-viewport canvas introduced in v52.
+The owner requested the Toby fixes on 2026-10-10 after the unresolved shape feedback. V54 reauthors the existing five puzzles with round attached ears, a wider head and fuller cheeks, a stronger muzzle/nose, a shorter rounded chin, and distinct mouths. No final character artwork is added or approved.
 
-Owner-review route after merge:
+The ear radii are equal in **cell coordinates**, so rectangular grids cannot elongate them. Landmark-colored paths remain within their authored style regions instead of spilling into neighboring features.
 
-```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=53
-```
-
-## V53 geometry state
-
-- Compiler: `toxic-toby-portrait-v2`
-- Content version: `tt01-portrait-2026.08.03.1`
-- Level version: `2`
+- Compiler: `toxic-toby-teddy-v3`
+- Content version: `tt01-teddy-2026.10.10.1`
+- Level version: `3`
 - Geometry mode: `portrait_native`
-- Level grids: `87×57`, `89×59`, `91×61`, `93×63`, `95×65`
-- Cells remain square and every trail remains orthogonal.
-- The face is made taller by newly authored coordinates, not by SVG stretching.
-- Ears, inner ears, eyes, muzzle, nose, mouth, cheeks, patch, seam, and chin are proportioned for the taller coordinate field.
-- Authored rendered-path aspect ratio is constrained to approximately `1.42–1.65`.
-- The full-level viewBox is captured once and locked for the whole expression.
-- Arrow removal cannot change the face scale, center, aspect ratio, or viewBox.
-- Existing incompatible unfinished sessions are cleared safely through the level-version change.
-- Completed expressions, feed unlocks, and viewed feed posts remain preserved.
+- Level grids remain `87×57`, `89×59`, `91×61`, `93×63`, `95×65`.
+- Cells remain square; paths remain connected, orthogonal and non-overlapping with tangent arrowheads.
+- All five complete removal orders validate: 138, 167, 151, 167 and 168 paths, 791 total.
+- Authored path-bounds height/width remains within `1.42–1.65`.
+- The complete-level fit remains locked during removal and reapplied on resize/rotation.
+- Versioned unfinished v53 sessions restart safely; completion, feed unlocks and viewed posts remain preserved.
+- Removed a redundant delayed startup load that could overwrite restored removed-path state. Regression coverage reproduces the former failure and verifies ten-path restoration.
+
+### Evidence boundary
+
+DOM integration tests execute the production runtime against all five real levels, including repeated Next, blocked moves, locked routes, 2→3 failed-load retry, ten removals, fit reapplication and save/feed reload. SVG bounds and animations are simulated. These are not browser renders or physical-phone tests.
+
+Geometry previews are code-derived diagrams, explicitly labeled as such. Browser screenshots, actual measured phone fit, physical-device playthroughs and owner visual approval remain pending. Local Chromium startup is blocked by this execution environment's Unix-socket restriction. The separate supported cloud browser was also tried, but the temporary local candidate URL returned `ERR_CONNECTION_REFUSED`; no accessible candidate preview route was established. No user computer was accessed and no restriction was bypassed.
 
 ## Adaptive canvas state
 
@@ -77,7 +76,7 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 - Offline browser and Capacitor bundles.
 - Generated content-integrity verification.
 
-## Automated v53 gates
+## Automated candidate gates
 
 - Portrait grids must contain more rows than columns.
 - Every cell must remain inside its rectangular board.
@@ -91,9 +90,9 @@ https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=
 
 ## Owner verification still required
 
-- Confirm the v53 face is immediately recognizable as a Teddy on a real phone.
-- Confirm the face uses materially more portrait height than v52.
-- Confirm the ears remain round and the facial features do not look elongated.
+- Confirm the v54 candidate face is immediately recognizable as a Teddy on a real phone.
+- Confirm the round ears, fuller cheeks, stronger muzzle/nose and short chin read clearly on a real phone.
+- Confirm the ears remain round, visibly attached, and the facial features do not look elongated.
 - Confirm empty space above and below is materially reduced.
 - Remove at least ten arrows and confirm the face never shrinks, zooms, jumps, or recenters.
 - Confirm no ear, chin path, arrowhead, face-critical feature, or exit lane is clipped.
@@ -123,7 +122,7 @@ assets/reveals/tt01/angry.webp
 assets/reveals/tt01/maniacal-laugh.webp
 ```
 
-## Work blocked until v53 approval
+## Work blocked until Toby visual approval
 
 - Moldy Molly production.
 - Remaining Founding 12 playable packages.

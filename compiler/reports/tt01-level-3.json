@@ -2,14 +2,18 @@
   "teddyId": "tt01",
   "level": 3,
   "expressionId": "gross",
-  "gridSize": 61,
-  "pathCount": 130,
-  "initialOpenCount": 39,
+  "gridSize": 91,
+  "gridRows": 91,
+  "gridCols": 61,
+  "authoredAspectRatio": 1.5128,
+  "geometryMode": "portrait_native",
+  "pathCount": 151,
+  "initialOpenCount": 41,
   "verifiedNoOverlap": true,
   "verifiedOrthogonal": true,
   "verifiedEndpointTangents": true,
   "verifiedSolvable": true,
   "movementRule": "arrowhead_ray_clear_to_edge",
-  "compilerVersion": "toxic-toby-deterministic-v1",
-  "levelVersion": 1
+  "compilerVersion": "toxic-toby-teddy-v3",
+  "levelVersion": 3
 }

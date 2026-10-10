@@ -82,9 +82,9 @@ The arrow puzzle is the product. On portrait gameplay screens, the actual render
 
 The locked mobile rules are:
 
-- Target actual rendered path bounds of approximately **88–94% of the usable gameplay width** and at least **52% of the portrait gameplay height** when the Teddy silhouette permits it.
+- Target actual rendered path bounds of approximately **88–94% of the usable gameplay width** and at least **72% of the portrait gameplay height at 430×764**, with a minimum width gate of **86%**. D-017/D-018 supersede the earlier 52% target and raster crop policy.
 - The top header, progress/feedback area, and bottom persistent controls together should consume no more than approximately **24% of usable gameplay height** during normal play.
-- The owner-approved environment may be center-cropped or trimmed at the top, bottom, or sides to protect puzzle size. It must never be stretched or distorted.
+- The current laboratory environment is generated CSS (D-017). It adapts independently; the puzzle must never be stretched or distorted.
 - Decorative perimeter art may be sacrificed before the arrow puzzle is reduced. Preserve the quiet central panel and enough outer machinery to retain the Teddy's environment identity.
 - Top and bottom controls must be compressed into compact rows or edge overlays. They may overlap decorative outer-frame regions, but never cover an arrow path, arrowhead, face-critical feature, or exit lane.
 - Compact visual controls must retain accessible touch targets of at least 44 CSS pixels through their visible or invisible hit area.
@@ -151,3 +151,13 @@ The locked portrait-geometry rules are:
 - Browser and service-worker cache `v53` identifies this portrait-native release.
 
 Automated geometry and browser audits are required, but the owner must still approve the recognizable face and portrait use on a real phone.
+
+## D-019 — V54 Toby correction candidate and evidence limits
+
+The owner's 2026-10-10 fix request authorizes a correction of the unresolved Toby shape, preserving the D-018 portrait grids and `1.42–1.65` authored aspect gate. Ears use equal cell-coordinate radii and overlap the head; cheeks are fuller, muzzle/nose stronger, and chin shorter. Landmark trails retain their authored feature styles. Five mouth shapes preserve the expression order.
+
+The candidate compiler is `toxic-toby-teddy-v3`, level version `3`, content `tt01-teddy-2026.10.10.1`, presentation cache `v54`. These supersede D-018's version identifiers only. Incompatible unfinished sessions restart; completed expressions, feed unlocks and viewed posts remain intact. A duplicate delayed startup load is removed to protect exact restoration.
+
+Rollback: revert this draft's source and generated geometry/content changes together, then run the normal build preparation. Existing finished progress remains preserved; unfinished candidate sessions reset on content-version mismatch.
+
+This is geometry and runtime work, not approval of final artwork or release. DOM tests and code-derived SVG diagrams cannot approve actual mobile rendering. Owner phone approval, physical-device evidence, merge and deployment remain separate gates.

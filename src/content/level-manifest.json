@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "compiler_version": "toxic-toby-portrait-v2",
-  "content_version": "tt01-portrait-2026.08.03.1",
+  "compiler_version": "toxic-toby-teddy-v3",
+  "content_version": "tt01-teddy-2026.10.10.1",
   "geometry_mode": "portrait_native",
   "levels": [
     {
@@ -17,7 +17,7 @@
       "status": "playable",
       "qa_status": "solver_verified",
       "geometry_mode": "portrait_native",
-      "version": 2
+      "version": 3
     },
     {
       "id": "tt01_evil_grin",
@@ -32,7 +32,7 @@
       "status": "playable",
       "qa_status": "solver_verified",
       "geometry_mode": "portrait_native",
-      "version": 2
+      "version": 3
     },
     {
       "id": "tt01_gross",
@@ -47,7 +47,7 @@
       "status": "playable",
       "qa_status": "solver_verified",
       "geometry_mode": "portrait_native",
-      "version": 2
+      "version": 3
     },
     {
       "id": "tt01_angry",
@@ -62,7 +62,7 @@
       "status": "playable",
       "qa_status": "solver_verified",
       "geometry_mode": "portrait_native",
-      "version": 2
+      "version": 3
     },
     {
       "id": "tt01_maniacal_laugh",
@@ -77,7 +77,7 @@
       "status": "playable",
       "qa_status": "solver_verified",
       "geometry_mode": "portrait_native",
-      "version": 2
+      "version": 3
     }
   ]
 }

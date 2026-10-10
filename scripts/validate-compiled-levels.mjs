@@ -94,8 +94,8 @@ for (let level = 1; level <= 5; level += 1) {
   assert(data.teddy === 'tt01', `Level ${level}: incorrect Teddy ID`);
   assert(data.level === level, `Level ${level}: incorrect level number`);
   assert(data.movementRule === 'arrowhead_ray_clear_to_edge', `Level ${level}: incorrect movement rule`);
-  assert(data.compilerVersion === 'toxic-toby-portrait-v2', `Level ${level}: old compiler ${data.compilerVersion}`);
-  assert(data.levelVersion === 2, `Level ${level}: old level version ${data.levelVersion}`);
+  assert(data.compilerVersion === 'toxic-toby-teddy-v3', `Level ${level}: old compiler ${data.compilerVersion}`);
+  assert(data.levelVersion === 3, `Level ${level}: old level version ${data.levelVersion}`);
   assert(data.quality?.geometryMode === 'portrait_native', `Level ${level}: portrait geometry not declared`);
   assert(rows > cols, `Level ${level}: board is not portrait-native`);
   assert(Array.isArray(data.pieces) && data.pieces.length > 0, `Level ${level}: no pieces`);

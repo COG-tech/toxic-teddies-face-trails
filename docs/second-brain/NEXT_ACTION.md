@@ -1,63 +1,39 @@
 # Single Canonical Next Action
 
-Updated: 2026-08-03
-Status: **ACTIVE — VERIFY THE PUBLISHED V53 PORTRAIT-NATIVE TEDDY GEOMETRY**
+Updated: 2026-10-10
+Status: **ACTIVE — REVIEW AND VERIFY THE V54 TOBY FIX CANDIDATE**
 
 ## Action
 
-Publish and test v53 on a real phone and desktop browser. The adaptive full-viewport canvas and generated laboratory frame remain in place, but the old square Toxic Toby geometry has now been replaced by newly authored portrait-native levels. The new face uses a taller rectangular cell grid and preserves square cells, orthogonal paths, solver rules, and uniform SVG scaling.
+Finish independent review and browser/phone verification of the v54 draft Toby correction before requesting merge or deployment approval. The owner's 2026-10-10 instruction to fix the unfinished Toby slice reprioritizes the unresolved v53 shape gate. It does not approve final artwork, other Teddies, merge, deployment, paid Actions or workflows.
 
-Playable owner-review route after merge:
+Baseline: `b03905019be3062042c61bef8beaf8f41d2dcd5f`. Candidate compiler: `toxic-toby-teddy-v3`; level version `3`; content `tt01-teddy-2026.10.10.1`.
 
-```text
-https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=53
-```
+## Candidate verification gate
 
-## V53 owner verification gate
+1. Review code-derived before/after geometry previews for attached round ears, fuller cheeks, stronger muzzle/nose and short rounded chin. These diagrams are not browser screenshots.
+2. Run `npm ci`, `npm run prepare:build`, `npm run check`, and `npm run build` on the exact candidate.
+3. Independently review all five expressions and the duplicate-startup-load fix.
+4. In an authorized browser environment, serve the production bundle and inspect actual phone/desktop screenshots. At 430×764 require ≥86% gameplay width and ≥72% height; at 1365×768 require ≥28% width and ≥82% height. No clipping or non-uniform scaling is allowed.
+5. Remove ten valid arrows, resize and rotate; scale, center, aspect ratio and full-level viewBox must remain fixed within each expression.
+6. Play `1 → 2 → 3 → 4 → 5 → feed`, repeat Next taps, interrupt/reload, test a failed-load retry, and confirm completion/feed-view persistence.
+7. Obtain the owner's real-phone confirmation that Toby is immediately recognizable and all five expressions remain distinct.
 
-1. Close every old Toxic Teddies browser tab.
-2. Open the cache-busted v53 route in a new private/incognito tab.
-3. Confirm Toxic Toby is immediately recognizable as a Teddy face.
-4. Confirm the face is visibly taller than v52 and uses substantially more of the phone's safe portrait height.
-5. Confirm the ears remain round, the eyes remain balanced, the muzzle remains horizontal, and the chin extends lower without appearing stretched.
-6. Confirm there is materially less empty space above and below the face.
-7. Confirm the puzzle remains uniformly scaled with no vertical or horizontal distortion.
-8. Confirm no fixed raster gameplay background appears; the generated laboratory frame must adapt independently.
-9. Confirm the visible controls remain tiny while each control keeps a 44 CSS-pixel touch target.
-10. Remove at least ten valid arrows and confirm the Teddy never shrinks, zooms, jumps, or recenters.
-11. Resize or rotate and confirm the locked full-level fit is reapplied without distortion.
-12. Confirm no ear, chin path, arrowhead, face-critical feature, or exit lane is clipped.
-13. Confirm selection, blockers, head-first removal, save migration, progression, and reveal logic still work.
+## Current limitations
 
-## Locked v53 implementation
-
-- All five Toxic Toby expressions are generated from portrait-native rectangular grids.
-- Level 1 uses an 87×57 grid; Levels 2–5 increase to 89×59, 91×61, 93×63, and 95×65.
-- Cells remain square. The face is taller because its coordinates are newly authored, not because the SVG is stretched.
-- Ears, inner ears, eyes, patch, muzzle, nose, mouth, cheeks, and chin are proportioned independently for the taller grid.
-- The authored rendered-path aspect ratio must remain between approximately 1.42 and 1.65.
-- Compiler version is `toxic-toby-portrait-v2` and level version is `2`.
-- Old unfinished sessions are invalidated safely through the level-version change.
-- The deterministic reverse-construction head-ray solver remains mandatory.
-- The full-level viewBox remains locked during arrow removal.
-- The SVG continues to use `preserveAspectRatio="xMidYMid meet"`.
-- The generated CSS laboratory frame remains active; raster gameplay backdrops remain retired.
-- Browser and service-worker presentation cache advances to v53.
+DOM regression tests simulate SVG bounds and animation. They establish runtime state behavior, not rendered fit, physical touch targets, accessibility or native lifecycle. Local Chromium startup is blocked by Unix-socket restrictions. The supported cloud browser also returned `ERR_CONNECTION_REFUSED` for the temporary local candidate server; no accessible candidate preview route was established. Physical iPhone/Android and owner visual evidence remain pending. No merge or deployment has occurred.
 
 ## Do not start yet
 
-- Do not begin Moldy Molly.
-- Do not insert final reveal artwork.
-- Do not restore the fixed portrait background image.
-- Do not use `preserveAspectRatio="none"`.
-- Do not stretch the Teddy to consume portrait height.
-- Do not recalculate the puzzle from the reduced set of remaining arrows.
-- Do not approve the geometry from automated measurements alone; the owner must confirm the face visually on a real phone.
+- Do not begin Moldy Molly or the other eleven Teddies.
+- Do not insert or generate final reveal artwork.
+- Do not restore raster gameplay backgrounds, stretch the SVG, or remeasure fit from only remaining arrows.
+- Do not waive browser, owner or device gates based on the solver or simulated DOM alone.
 
 ## Completion rule
 
-The v53 gate is complete only after the owner confirms that the newly authored geometry is clearly a Teddy face, uses substantially more portrait height than v52, remains undistorted, and stays exactly the same size throughout normal arrow removal.
+The candidate gate closes only after independent checks, authorized browser evidence and owner real-phone visual approval. Merge and deployment need separate approval; the existing public v53 route does not show this draft.
 
 ## Replacement rule
 
-This file contains exactly one active next action. It may be replaced only when the action is completed, blocked with documented evidence, or explicitly reprioritized by the owner.
+This file contains exactly one active next action. It may be replaced only when completed, blocked with documented evidence, or explicitly reprioritized by the owner.

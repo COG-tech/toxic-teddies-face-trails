@@ -27,22 +27,20 @@ This reference defines **composition and readability**, not a style to copy. Tox
 - The actual arrow puzzle is the first allocation of screen space, not the background or menu cards.
 - Keep the playable Teddy face centered in the primary interaction zone.
 - Target approximately **88–94% of usable gameplay width** for the actual rendered outer path bounds when the silhouette permits it.
-- Target at least **52% of usable portrait gameplay height** for the actual rendered path bounds when the silhouette permits it.
+- Target at least **72% of gameplay height at the 430×764 audit viewport**, with minimum width **86%**. Desktop 1365×768 requires ≥28% width and ≥82% height. These current gates supersede the historic 52% target.
 - Keep ears, chin, hanging props, arrowheads, and exit lanes inside safe margins.
 - The combined persistent top header, status/feedback area, and bottom controls should normally remain at or below approximately **24% of gameplay height**.
 - Compress title, progress, feedback, expression navigation, and accessibility triggers before reducing the puzzle.
 - A compact menu may overlay decorative perimeter artwork, but it must not cover paths or exits.
 - Never place a persistent control over an eye, mouth, arrowhead, face-critical feature, or likely exit lane.
 
-### Background crop policy
+### Adaptive generated-frame policy
 
-- Full visibility of the 9:16 environment is not more important than puzzle size.
-- The environment may be center-cropped or trimmed at the top, bottom, or sides to maximize the playable arrow area.
-- Never stretch or distort the background image.
-- Preserve the calm central panel behind the puzzle.
-- Preserve enough peripheral pipes, vats, machinery, slime, warning details, or framing to retain the environment identity.
-- Decorative top and bottom frame detail is the first material that may be cropped when vertical space is needed.
-- A layout that displays more illustration but makes the arrow puzzle materially smaller fails this reference.
+- Gameplay uses responsive CSS laboratory surfaces and narrow rails; raster gameplay backgrounds are retired.
+- Give the complete safe viewport to the puzzle, preserving uniform SVG scaling.
+- Empty space from aspect mismatch is preferable to stretching the Teddy.
+- Keep the complete-level fit locked during removals; resize and rotation reapply that same fit.
+- Inspect actual browser screenshots and measured path bounds; geometry previews and simulated bounds cannot satisfy this gate.
 
 ### Puzzle silhouette
 

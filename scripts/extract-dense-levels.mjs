@@ -56,7 +56,12 @@ function makeMask(rows, cols, expression) {
   const halfCol = (cols - 1) / 2;
   const mask = new Set();
   const regions = new Map();
-  const mouthY = {neutral: .40, evil_grin: .39, gross: .41, angry: .40, maniacal_laugh: .39}[expression];
+  // Ear radii are equal in cell coordinates, not normalized grid coordinates.
+  // This keeps them circular on every portrait grid without stretching the SVG.
+  const earRadiusX = .205;
+  const earRadiusY = earRadiusX * halfCol / halfRow;
+  const innerRadiusX = .095;
+  const innerRadiusY = innerRadiusX * halfCol / halfRow;
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
@@ -65,50 +70,65 @@ function makeMask(rows, cols, expression) {
 
       // Portrait-native authoring. Cells stay square; the silhouette itself is
       // rebuilt on a taller grid instead of being stretched by the SVG.
-      const head = (x / .60) ** 2 + ((y - .055) / .66) ** 2 <= 1;
-      const leftEar = ((x + .50) / .205) ** 2 + ((y + .525) / .165) ** 2 <= 1;
-      const rightEar = ((x - .50) / .205) ** 2 + ((y + .525) / .165) ** 2 <= 1;
-      if (!(head || leftEar || rightEar)) continue;
-      if (y > .70 && Math.abs(x) > .22) continue;
+      const head = (x / .655) ** 2 + ((y - .075) / .585) ** 2 <= 1;
+      const leftEar = ((x + .46) / earRadiusX) ** 2 + ((y + .52) / earRadiusY) ** 2 <= 1;
+      const rightEar = ((x - .46) / earRadiusX) ** 2 + ((y + .52) / earRadiusY) ** 2 <= 1;
+      // Full lower cheeks and a short, round chin replace the long taper.
+      const cheeks = ((Math.abs(x) - .43) / .20) ** 2 + ((y - .22) / .25) ** 2 <= 1;
+      if (!(head || leftEar || rightEar || cheeks)) continue;
 
       let region = 'fur';
-      if (leftEar && x < -.36 && y < -.34) region = 'left_ear';
-      else if (rightEar && x > .36 && y < -.34) region = 'right_ear';
+      if (leftEar && y < -.35) region = 'left_ear';
+      else if (rightEar && y < -.35) region = 'right_ear';
 
-      const leftInner = ((x + .50) / .102) ** 2 + ((y + .525) / .078) ** 2;
-      const rightInner = ((x - .50) / .102) ** 2 + ((y + .525) / .078) ** 2;
+      const leftInner = ((x + .46) / innerRadiusX) ** 2 + ((y + .52) / innerRadiusY) ** 2;
+      const rightInner = ((x - .46) / innerRadiusX) ** 2 + ((y + .52) / innerRadiusY) ** 2;
       if (leftInner < 1 || rightInner < 1) continue;
-      if (leftInner >= 1 && leftInner < 2) region = 'left_inner_ear';
-      if (rightInner >= 1 && rightInner < 2) region = 'right_inner_ear';
+      if (leftInner < 2.4) region = 'left_inner_ear';
+      if (rightInner < 2.4) region = 'right_inner_ear';
 
-      const leftEye = ((x + .245) / .142) ** 2 + ((y + .12) / .105) ** 2;
-      const rightEye = ((x - .245) / .152) ** 2 + ((y + .12) / .11) ** 2;
-      if (leftEye >= .14 && leftEye <= 1.35) region = 'button_eye';
-      else if (leftEye < .14) region = 'button_core';
-      if (rightEye >= .12 && rightEye <= 1.35) region = 'infected_eye';
-      else if (rightEye < .12) region = 'infected_core';
-      if (leftEye < .045 || rightEye < .04) continue;
+      const leftEye = ((x + .265) / .145) ** 2 + ((y + .015) / .095) ** 2;
+      const rightEye = ((x - .265) / .155) ** 2 + ((y + .015) / .10) ** 2;
+      if (leftEye <= 1.35) region = 'button_eye';
+      if (rightEye <= 1.35) region = 'infected_eye';
+      if (leftEye < .18 || rightEye < .16) continue;
 
-      if (Math.abs(x) < .032 && y > -.63 && y < -.02) region = 'stitch';
-      const patch = ((x + .40) / .14) ** 2 + ((y - .10) / .11) ** 2;
-      if (patch <= 1 && (row + col) % 7 !== 0) region = 'patch';
-      const muzzle = (x / .31) ** 2 + ((y - .16) / .18) ** 2;
-      if (muzzle >= .23 && muzzle <= 1.28 && y > -.015) region = 'muzzle';
-      const nose = (x / .125) ** 2 + ((y - .035) / .055) ** 2;
-      if (nose <= 1.15) region = 'nose';
-      if (nose < .14) continue;
-      const mouth = (x / .34) ** 2 + ((y - mouthY) / .10) ** 2;
-      if (mouth >= .18 && mouth <= 1.35 && y > .26) region = 'mouth';
-      if ((expression === 'evil_grin' || expression === 'maniacal_laugh') && mouth < .62 && Math.abs(x) < .30 && y > .30) region = 'teeth';
-      if (expression === 'gross' && x > -.01 && x < .20 && y > .24 && y < .68) region = 'slime';
-      if (expression === 'angry' && y < -.20) {
-        if (x > -.42 && x < -.08 && Math.abs(y - (-.25 - .35 * (x + .25))) < .022) region = 'stitch';
-        if (x > .08 && x < .42 && Math.abs(y - (-.25 + .35 * (x - .25))) < .022) region = 'stitch';
+      if (Math.abs(x) < .028 && y > -.47 && y < .035) region = 'stitch';
+      const patch = ((x + .46) / .115) ** 2 + ((y - .27) / .10) ** 2;
+      if (patch <= 1) region = 'patch';
+      // A broad horizontal muzzle and a solid, legible nose are Teddy landmarks.
+      const muzzle = (x / .37) ** 2 + ((y - .31) / .17) ** 2;
+      if (muzzle >= .42 && muzzle <= 1.25 && y > .135) region = 'muzzle';
+      const nose = (x / .16) ** 2 + ((y - .21) / .065) ** 2;
+      if (nose <= 1) region = 'nose';
+      if (Math.abs(x) < .025 && y > .25 && y < .39) region = 'nose';
+
+      // Distinct mouth geometry, rather than a shared ellipse with recoloring.
+      let mouth = false;
+      if (expression === 'neutral') {
+        const smileY = .435 - .30 * Math.abs(x);
+        mouth = Math.abs(x) < .23 && Math.abs(y - smileY) < .025;
+      } else if (expression === 'evil_grin') {
+        const smileY = .54 - .75 * x * x;
+        mouth = Math.abs(x) < .37 && y > .435 && y < smileY + .025;
+        if (mouth && y < smileY - .035) region = 'teeth';
+      } else if (expression === 'gross') {
+        mouth = ((x + .035) / .25) ** 2 + ((y - .46) / .065) ** 2 <= 1;
+      } else if (expression === 'angry') {
+        mouth = Math.abs(x) < .26 && Math.abs(y - (.45 + .6 * x * x)) < .025;
+      } else {
+        const openMouth = (x / .28) ** 2 + ((y - .47) / .12) ** 2;
+        mouth = openMouth <= 1.18;
+        if (openMouth < .48 && y > .42) continue;
+        if (openMouth < .72 && y <= .42) region = 'teeth';
       }
-      if (((leftEar && x < -.54) || (rightEar && x > .54)) && (row * 3 + col) % 11 < 2) region = 'slime';
-      if (expression !== 'neutral' && Math.abs(x) > .46 && y > 0 && y < .46 && (row + col) % 13 === 0) region = 'slime';
-      if (Math.abs(x) < .095 && mouth < .10 && y > .32) continue;
-
+      if (mouth && region !== 'teeth') region = 'mouth';
+      if (expression === 'gross' && x > .035 && x < .18 && y > .43 && y < .63) region = 'slime';
+      if (expression === 'angry' && y < -.09) {
+        if (x > -.44 && x < -.10 && Math.abs(y - (-.14 + .28 * (x + .265))) < .024) region = 'stitch';
+        if (x > .10 && x < .44 && Math.abs(y - (-.14 - .28 * (x - .265))) < .024) region = 'stitch';
+      }
+      if (((leftEar && x < -.52) || (rightEar && x > .52)) && (row * 3 + col) % 11 < 2) region = 'slime';
       const cellKey = key(row, col);
       mask.add(cellKey);
       regions.set(cellKey, region);
@@ -147,6 +167,10 @@ function growPath(seedKey, available, regions, target, random) {
       }
       if (touches) continue;
       const nextRegion = regions.get(nextKey);
+      // Keep landmark trails inside their authored feature. Otherwise a nose or
+      // eye-colored path can spill into the forehead and erase the expression.
+      const featureStyle = value => STYLE[value] || 'fur';
+      if (featureStyle(nextRegion) !== featureStyle(desired)) continue;
       const same = nextRegion === desired ? 0 : (STYLE[nextRegion] === STYLE[desired] ? 1 : 5);
       const turn = previous === null ? 0 : (name === previous ? (straight >= 3 ? 2 : 0) : (straight >= 2 ? 0 : 1));
       choices.push([same, turn, -freeDegree(nextKey, available), random(), name, nextKey]);
@@ -267,8 +291,8 @@ function generate(level) {
 
   return {
     schemaVersion: 12,
-    levelVersion: 2,
-    compilerVersion: 'toxic-toby-portrait-v2',
+    levelVersion: 3,
+    compilerVersion: 'toxic-toby-teddy-v3',
     teddy: 'tt01',
     characterName: 'Toxic Toby',
     alternateName: 'Radioactive Ricky',
@@ -285,13 +309,13 @@ function generate(level) {
     strictSequence: false,
     movementRule: 'arrowhead_ray_clear_to_edge',
     decorations: [],
-    visualAnchors: ['portrait-native circular ears', 'button eye', 'infected eye', 'forehead seam', 'muzzle and black nose', 'cheek patch', 'expression mouth', 'radioactive slime', 'extended cheeks and chin'],
+    visualAnchors: ['portrait-native circular ears', 'button eye', 'infected eye', 'forehead seam', 'muzzle and black nose', 'cheek patch', 'expression mouth', 'radioactive slime', 'full cheeks and short rounded chin'],
     quality: {
       coverage: Number(coverage.toFixed(3)),
       verifiedSolvable: true,
       startingOpenPieces,
       startingBlockedPieces: added.length - startingOpenPieces,
-      solver: 'reverse_construction_head_ray_portrait_v2',
+      solver: 'reverse_construction_head_ray_teddy_v3',
       geometryMode: 'portrait_native',
       aspectRatio: Number((config.rows / config.cols).toFixed(4)),
     },

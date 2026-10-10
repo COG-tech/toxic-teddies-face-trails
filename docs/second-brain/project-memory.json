@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03",
+  "updatedAt": "2026-10-10",
   "repository": "COG-tech/toxic-teddies-face-trails",
-  "baselineCommit": "pending-v53-merge",
+  "baselineCommit": "b03905019be3062042c61bef8beaf8f41d2dcd5f",
   "product": {
     "name": "Toxic Teddies: Arrow Escape",
     "nativeName": "Toxic Teddies",
@@ -12,10 +12,11 @@
     "browserDemo": "https://cog-tech.github.io/toxic-teddies-face-trails/play/"
   },
   "release": {
-    "presentationCacheVersion": 53,
-    "pullRequest": "pending",
-    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=53",
-    "ownerPhoneVerificationPending": true
+    "presentationCacheVersion": 54,
+    "pullRequest": "draft-pending",
+    "playUrl": null,
+    "ownerPhoneVerificationPending": true,
+    "status": "draft_not_merged_or_deployed"
   },
   "designSystem": {
     "version": "1.0.0",
@@ -50,16 +51,33 @@
       "grime900": "#0F0C08"
     },
     "gradients": {
-      "toxicGlow": ["#B7E24B", "#7AA10F"],
-      "rustFade": ["#A84F18", "#6E341D"],
-      "sewerFade": ["#3E7C7B", "#1F4F4F"]
+      "toxicGlow": [
+        "#B7E24B",
+        "#7AA10F"
+      ],
+      "rustFade": [
+        "#A84F18",
+        "#6E341D"
+      ],
+      "sewerFade": [
+        "#3E7C7B",
+        "#1F4F4F"
+      ]
     },
     "typography": {
       "display": "Toxic Head custom",
       "body": "Inter system",
       "runtimeDisplayPolicy": "Use approved illustrated Toxic Teddies branding where exact lettering is required."
     },
-    "spacingScale": [4, 8, 12, 16, 24, 32, 64],
+    "spacingScale": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32,
+      64
+    ],
     "gridColumns": 12,
     "breakpoints": {
       "mobile": "0-479px",
@@ -80,7 +98,9 @@
     ]
   },
   "playable": {
-    "teddyIds": ["tt01"],
+    "teddyIds": [
+      "tt01"
+    ],
     "expressionsPerTeddy": 5,
     "expressionOrder": [
       "neutral",
@@ -114,30 +134,53 @@
     "scaleLockedDuringRemoval": true
   },
   "portraitGeometry": {
-    "decision": "D-018",
-    "status": "implemented_pending_owner_phone_verification",
-    "compilerVersion": "toxic-toby-portrait-v2",
-    "contentVersion": "tt01-portrait-2026.08.03.1",
-    "levelVersion": 2,
+    "decision": "D-019",
+    "status": "draft_pending_browser_and_owner_phone_verification",
+    "compilerVersion": "toxic-toby-teddy-v3",
+    "contentVersion": "tt01-teddy-2026.10.10.1",
+    "levelVersion": 3,
     "geometryMode": "portrait_native",
     "grids": [
-      {"level": 1, "rows": 87, "cols": 57},
-      {"level": 2, "rows": 89, "cols": 59},
-      {"level": 3, "rows": 91, "cols": 61},
-      {"level": 4, "rows": 93, "cols": 63},
-      {"level": 5, "rows": 95, "cols": 65}
+      {
+        "level": 1,
+        "rows": 87,
+        "cols": 57
+      },
+      {
+        "level": 2,
+        "rows": 89,
+        "cols": 59
+      },
+      {
+        "level": 3,
+        "rows": 91,
+        "cols": 61
+      },
+      {
+        "level": 4,
+        "rows": 93,
+        "cols": 63
+      },
+      {
+        "level": 5,
+        "rows": 95,
+        "cols": 65
+      }
     ],
-    "renderedPathAspectRatioRange": [1.42, 1.65],
+    "renderedPathAspectRatioRange": [
+      1.42,
+      1.65
+    ],
     "squareCells": true,
     "orthogonalPaths": true,
-    "solver": "reverse_construction_head_ray_portrait_v2",
+    "solver": "reverse_construction_head_ray_teddy_v3",
     "oldSessionPolicy": "clear incompatible unfinished session while preserving completion and feed state"
   },
   "activeNextAction": {
-    "id": "verify-v53-portrait-native-teddy-geometry",
-    "status": "owner_phone_verification_required",
-    "summary": "Verify that the newly authored portrait-native Toxic Toby face is recognizable, uses substantially more phone height, remains undistorted, and never changes size while arrows are removed.",
-    "playUrl": "https://cog-tech.github.io/toxic-teddies-face-trails/play/?teddy=tt01&level=1&v=53",
+    "id": "review-verify-v54-toby-correction",
+    "status": "independent_browser_and_owner_phone_verification_required",
+    "summary": "Review the draft Toby shape correction and restored-save regression, then collect actual browser and owner phone evidence before separately authorized merge or deployment.",
+    "playUrl": null,
     "blockNewTeddyProduction": true
   },
   "artwork": {
@@ -171,8 +214,8 @@
     "content integrity verification"
   ],
   "humanGatesPending": [
-    "owner verifies the published v53 face is recognizably Teddy-shaped",
-    "owner verifies v53 uses materially more portrait height than v52",
+    "owner verifies the v54 candidate face is recognizably Teddy-shaped",
+    "owner verifies v54 round ears fuller cheeks stronger muzzle and short chin read clearly",
     "owner verifies ears eyes muzzle and chin retain natural proportions",
     "owner removes at least ten arrows and confirms scale remains fixed",
     "owner confirms no path arrowhead ear chin or exit lane is clipped",

@@ -2,14 +2,18 @@
   "teddyId": "tt01",
   "level": 2,
   "expressionId": "evil_grin",
-  "gridSize": 59,
-  "pathCount": 124,
-  "initialOpenCount": 45,
+  "gridSize": 89,
+  "gridRows": 89,
+  "gridCols": 59,
+  "authoredAspectRatio": 1.4872,
+  "geometryMode": "portrait_native",
+  "pathCount": 167,
+  "initialOpenCount": 51,
   "verifiedNoOverlap": true,
   "verifiedOrthogonal": true,
   "verifiedEndpointTangents": true,
   "verifiedSolvable": true,
   "movementRule": "arrowhead_ray_clear_to_edge",
-  "compilerVersion": "toxic-toby-deterministic-v1",
-  "levelVersion": 1
+  "compilerVersion": "toxic-toby-teddy-v3",
+  "levelVersion": 3
 }

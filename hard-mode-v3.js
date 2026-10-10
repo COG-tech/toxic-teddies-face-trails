@@ -343,10 +343,6 @@
     baseSetStatus(`BRUTAL · ${DISPLAY_EXPRESSIONS[state.level]} · FIND AN UNLOCKED ARROW`);
   };
 
-  setTimeout(() => {
-    renderHome();
-    if (!els.gameView.classList.contains('hidden')) {
-      openGame(0, Math.max(1, Math.min(5, Number(state.level) || 1)));
-    }
-  }, 0);
+  // dense-loader installs every wrapper before its single boot() call. A second
+  // delayed openGame races the first load and can overwrite restored path IDs.
 })();

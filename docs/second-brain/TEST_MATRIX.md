@@ -1,63 +1,43 @@
 # Test Matrix
 
-Updated: 2026-07-30
+Updated: 2026-10-10
 
-## Automated repository gates — current alignment branch
+## V54 candidate evidence
 
-| Area | Evidence type | Status |
+Baseline: `b03905019be3062042c61bef8beaf8f41d2dcd5f`. These results concern the local draft candidate; no public deployment or physical-device result is implied.
+
+| Area | Evidence | Status |
 |---|---|---|
-| JavaScript syntax | Node checks | PASS when branch checks pass |
-| Deterministic five-level compiler | Compiler + reports | PASS when branch checks pass |
-| Geometry and solver validation | Automated tests | PASS when branch checks pass |
-| Pointer geometry and touch selection | Unit tests | PASS when branch checks pass |
-| Save migration and exact path restoration | Unit tests | PASS when branch checks pass |
-| Expression progression 1→2 | Manifest-backed unit test | PASS when branch checks pass |
-| Expression progression 2→3 | Manifest-backed unit test | PASS when branch checks pass |
-| Expression progression 3→4 | Manifest-backed unit test | PASS when branch checks pass |
-| Expression progression 4→5 | Manifest-backed unit test | PASS when branch checks pass |
-| Final expression 5→feed | Manifest-backed unit test | PASS when branch checks pass |
-| Missing playable next expression rejected | Unit test | PASS when branch checks pass |
-| Missing final feed rejected | Unit test | PASS when branch checks pass |
-| Restart cannot unlock content | Unit test | PASS when branch checks pass |
-| Direct locked feed route rejected | Unit test | PASS when branch checks pass |
-| Feed viewed/unread persistence | Unit test | PASS when branch checks pass |
-| Approved loading artwork decodes as WebP | Unit test | PASS when branch checks pass |
-| Loading screen markup and lifecycle hooks | Unit test | PASS when branch checks pass |
-| Five Toxic Toby gameplay backgrounds decode as WebP | Unit test | PASS when branch checks pass |
-| Gameplay backdrop expression order and manifest paths | Unit test | PASS when branch checks pass |
-| Full-screen backdrop synchronizer loaded after HTML exists | Markup/runtime unit test | PASS when branch checks pass |
-| Canonical runtime color hex values | Runtime CSS unit test | PASS when branch checks pass |
-| Retired cream page gradient rejected | Runtime CSS unit test | PASS when branch checks pass |
-| Dark home/card styling present | Runtime CSS unit test | PASS when branch checks pass |
-| Final dark-theme stylesheet order | Runtime CSS unit test | PASS when branch checks pass |
-| Gameplay-first mobile chrome budget | Production-browser measurement | REQUIRED for next layout branch |
-| Actual rendered path width/height target | `getBBox()` + `getScreenCTM()` | REQUIRED for next layout branch |
-| Background crop without distortion | Computed-style and screenshot audit | REQUIRED for next layout branch |
-| All rendered paths remain inside gameplay bounds | Production-browser assertion | REQUIRED for next layout branch |
-| Compact controls retain accessible touch targets | DOM geometry assertion | REQUIRED for next layout branch |
-| Analytics allow-list and privacy | Unit tests | PASS when branch checks pass |
-| Second-brain canonical records | Automated validator | PASS when branch checks pass |
-| Design-system documentation and runtime tokens | Automated second-brain validator | PASS when branch checks pass |
-| Vite production build | GitHub Actions | PASS when branch checks pass |
-| Offline bundle integrity | SHA-256 verification | PASS when branch checks pass |
-| Browser `/play/` bundle generation | GitHub Actions | PASS when branch checks pass |
-| Android debug compilation | GitHub Actions | PASS when branch checks pass |
-| iOS simulator compilation | GitHub Actions | PASS when branch checks pass |
-| Android release AAB packaging | GitHub Actions | PASS when branch checks pass |
-| iOS Release archive packaging | GitHub Actions | PASS when branch checks pass |
+| Canonical records, versions and syntax | `npm run check` after build preparation | PASS |
+| Geometry, style-region landmarks and complete solver orders | Five levels, 791 paths | PASS |
+| Full `1→2→3→4→5→feed` through production Next handlers | DOM integration with simulated animation | PASS |
+| Duplicate Next, blocked moves and 2→3 failed-load retry | Production runtime DOM integration | PASS |
+| Ten removals, resize/rotation/pageshow fit reapplication | DOM integration with simulated SVG bounds | PASS — state behavior only |
+| Exact ten-path reload, v53 migration, completion and feed/view persistence | Production runtime and save store | PASS |
+| Locked routes and eleven disabled Coming Soon cards | Production runtime DOM integration | PASS |
+| Unit tests for input geometry, saves, analytics and design tokens | `npm test` | PASS |
+| Generated CSS frame and uniform locked viewBox wiring | Repository regression tests | PASS — not a rendered-browser claim |
+| Vite build and offline integrity | `npm run build` | PASS |
+| Native/store configuration | 30 repository checks | PASS — signing/device warnings remain |
+| Actual 430×764 and 1365×768 browser geometry and screenshots | Production Chromium audit | BLOCKED — local Chromium Unix-socket restriction; cloud browser candidate URL refused connection |
+| Real touch input, visual recognition, all five expressions on phone | Owner/device playthrough | NOT RUN |
+| Native iOS/Android compilation, lifecycle and accessibility | Native and physical-device evidence | NOT RUN |
+| GitHub Actions / publication | No workflows dispatched or enabled | NOT RUN |
+
+The code-derived geometry previews are review aids, not browser screenshots. DOM bounds and animation are simulated. Re-run all applicable checks after any later edit; actual-browser and owner gates cannot be closed by these tests.
 
 ## Human/device gates — still pending
 
 | Gate | Required evidence | Status |
 |---|---|---|
 | Gameplay-first mobile hierarchy | Owner confirms arrows dominate the screen and menus are compact | PENDING — CURRENT PRIORITY |
-| Background crop acceptance | Owner confirms crop preserves laboratory identity without shrinking the puzzle | PENDING — CURRENT PRIORITY |
+| Generated CSS frame | Owner confirms the adaptive laboratory frame stays secondary to the puzzle | PENDING |
 | Top/bottom menu compression | Owner confirms persistent chrome no longer consumes excessive gameplay height | PENDING — CURRENT PRIORITY |
 | Dark home collection | Owner confirms Grime 900 background, dark cards and toxic accents on phone | PENDING |
 | Coming-soon distinction | Owner confirms disabled cards remain visibly distinct and readable | PENDING |
 | Dark game chrome | Owner confirms top bar, progress, level chips and controls match the system | PENDING |
-| Toxic Toby gameplay backdrop mapping | Owner confirms Neutral, Evil Grin, Gross, Angry and Maniacal Laugh each show the correct environment | PENDING |
-| Gameplay backdrop board alignment | Owner confirms the quiet central panel sits behind the arrow face without visible misalignment | PENDING |
+| Five-expression recognition | Owner confirms each expression is readable and distinctly Toby | PENDING — CURRENT PRIORITY |
+| Uniform locked puzzle fit | Actual-browser resize/rotation and ten-removal measurements | PENDING |
 | Arrow readability over gameplay backdrops | Owner confirms dark, cream and accent trails remain readable on phone | PENDING |
 | High-contrast fallback | Owner confirms decorative backdrop fades and the board becomes a solid readable surface | PENDING |
 | Dark Toxic Feed | Owner confirms profile, posts, unread state and replies remain readable | PENDING |
@@ -89,14 +69,16 @@ Updated: 2026-07-30
 
 The next mobile gameplay layout must satisfy all of the following before merge:
 
-- Actual rendered arrow-path width is approximately 90–94% of gameplay width.
-- Actual rendered arrow-path height is at least 52% of gameplay height when the silhouette permits it.
+- At 430×764, actual rendered arrow-path width is at least 86% of gameplay width (88–94% design target).
+- At 430×764, actual rendered arrow-path height is at least 72% of gameplay height.
+- At 1365×768, width is at least 28% and height at least 82%.
+- These current portrait-native gates supersede the old 52% and square-board targets.
 - Every path, arrowhead, ear, chin line, and exit lane stays inside the gameplay canvas.
 - Combined persistent top header, status/feedback, and bottom controls consume no more than approximately 24% of gameplay height.
 - Top and bottom controls are compact rather than large card stacks.
 - Compact visual controls retain at least 44 CSS-pixel touch targets.
 - The accessibility move list remains opt-in and does not occupy a large persistent gameplay region.
-- The environment may crop at the top, bottom, or sides but is never stretched.
+- The responsive CSS laboratory frame adapts independently; the Teddy is never stretched.
 - The quiet central panel remains aligned behind the Teddy face.
 - Enough pipes, machinery, slime, warning details, or frame structure remain to preserve the Toxic Toby laboratory identity.
 - The arrow puzzle is the first visual focus.
@@ -128,16 +110,16 @@ The next mobile gameplay layout must satisfy all of the following before merge:
 - Startup errors remove the splash and show the actionable failure screen.
 - The loading artwork remains fully offline in browser and native bundles.
 
-## Gameplay-backdrop acceptance gates
+## Generated-frame acceptance gates
 
-- The five WebP files remain local and available offline.
-- Each expression maps to its matching background in the locked expression order.
-- The environment fills or intentionally crops to the complete portrait gameplay view instead of being trapped in the old square board layer.
-- The central quiet panel remains behind the Teddy face puzzle.
-- Strong pipes, slime, sparks, barrels and lighting remain peripheral.
-- The arrow puzzle remains the first visual focus.
-- No gameplay background introduces a teddy, character, text, logo, UI, arrows or puzzle pieces.
-- The background presentation does not modify pointer selection, blocker detection, trail removal, saves or progression.
+- No raster gameplay backdrop is active in any expression.
+- The generated CSS frame fills the available viewport independently of the puzzle.
+- Startup does not wait for a retired gameplay raster image.
+- Narrow rails, grime and laboratory lighting remain secondary to the arrow face.
+- The SVG uses `xMidYMid meet`; `preserveAspectRatio="none"` is forbidden.
+- Removing paths never changes the complete-level viewBox, scale, center or aspect.
+- Resize and rotation reapply the complete-level fit rather than measuring only remaining paths.
+- Actual browser bounds, no-clipping checks and phone screenshots remain mandatory.
 
 ## Visual-level acceptance gates
 
