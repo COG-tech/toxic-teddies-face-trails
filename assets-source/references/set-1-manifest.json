@@ -3,8 +3,8 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 7,
-  "total_expressions": 35,
+  "completed_sheets": 16,
+  "total_expressions": 80,
   "expected_expressions": 205,
   "status": "in_progress",
   "expression_order": [
@@ -24,6 +24,17 @@
     "included_in_completed_count": false
   },
   "sheets": [
+    {
+      "artwork_id": "TT_S1_001",
+      "teddy_id": "tt01",
+      "a_name": "Toxic Toby",
+      "b_name": "Radioactive Ricky",
+      "file": "tt01/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3222240,
+      "sha256": "80628ccb9dc51345982a71449a7fdf8b429795fbb5ae0b4150fcc12cf04b7a93"
+    },
     {
       "artwork_id": "TT_S1_002",
       "teddy_id": "tt02",
@@ -45,6 +56,28 @@
       "height": 1024,
       "bytes": 3098369,
       "sha256": "da4ca7c5e1cf0b4a15961acc2ae5ba776442900993b7e21b682bfbe549e3d0ef"
+    },
+    {
+      "artwork_id": "TT_S1_005",
+      "teddy_id": "tt05",
+      "a_name": "Battery Barry",
+      "b_name": "Leaking Leon",
+      "file": "tt05/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3122854,
+      "sha256": "490a2297e64bc5b7b1ccd87cea69fc96bc45e6aadc4da169c87e7b954910abcb"
+    },
+    {
+      "artwork_id": "TT_S1_006",
+      "teddy_id": "tt06",
+      "a_name": "Maggot Mitch",
+      "b_name": "Wormy Walt",
+      "file": "tt06/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3293978,
+      "sha256": "b0a8e2964c3962901c1fadd28609dbfe03faa74f1b668b0f053d540320a43af2"
     },
     {
       "artwork_id": "TT_S1_007",
@@ -69,6 +102,39 @@
       "sha256": "f8e97e5c3bd1f6221c665798e721c22bf47964f6d684812ab0987a78d291a449"
     },
     {
+      "artwork_id": "TT_S1_009",
+      "teddy_id": "tt09",
+      "a_name": "Acid Andy",
+      "b_name": "Meltdown Mel",
+      "file": "tt09/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3187299,
+      "sha256": "d68f79e0317c88cd9751f8b01dd12981248d13bc20c631fd01d0e61b091cda55"
+    },
+    {
+      "artwork_id": "TT_S1_010",
+      "teddy_id": "tt10",
+      "a_name": "Gas Mask Max",
+      "b_name": "Fumey Frank",
+      "file": "tt10/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3253407,
+      "sha256": "647d5a2bf3dbed6cc8f4bcfd39a834c02296adeb2ba73e855b218c5dcfdd8c14"
+    },
+    {
+      "artwork_id": "TT_S1_011",
+      "teddy_id": "tt11",
+      "a_name": "Patchwork Pat",
+      "b_name": "Quilted Quinn",
+      "file": "tt11/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3094535,
+      "sha256": "b00332a6a8b4eef6921a7584e34cb85d851d89f61f4f144a2191c6ae3fb38e28"
+    },
+    {
       "artwork_id": "TT_S1_013",
       "teddy_id": "tt13",
       "a_name": "Cracked Connie",
@@ -78,6 +144,17 @@
       "height": 1024,
       "bytes": 3827912,
       "sha256": "0c65cf56089a345d57795446e4c3351f54f70ffc74109121f7c6c2ece2f1a173"
+    },
+    {
+      "artwork_id": "TT_S1_015",
+      "teddy_id": "tt15",
+      "a_name": "Ripped Rita",
+      "b_name": "Torn Tammy",
+      "file": "tt15/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3785379,
+      "sha256": "ee66d82d1e4b89eb52e4aff892959086a1fcf61189857352b21517397b66a79b"
     },
     {
       "artwork_id": "TT_S1_016",
@@ -100,6 +177,28 @@
       "height": 1024,
       "bytes": 3740782,
       "sha256": "a85569f3a9e444c261f49d56ce07c388c44624f2d57a057658ec9257ae7e494c"
+    },
+    {
+      "artwork_id": "TT_S1_018",
+      "teddy_id": "tt18",
+      "a_name": "Stinky Stu",
+      "b_name": "Reeking Ron",
+      "file": "tt18/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3670728,
+      "sha256": "38001610c4afa6af0e5ed49c1a55a780b22ece29c088675448a7c30d680d4a26"
+    },
+    {
+      "artwork_id": "TT_S1_019",
+      "teddy_id": "tt19",
+      "a_name": "Greaseball Gabe",
+      "b_name": "Oily Ollie",
+      "file": "tt19/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3647167,
+      "sha256": "332e40bd8e7bbf82622f80374088d819b324d8592f9677719104364c69e28667"
     }
   ]
 }
