@@ -2,7 +2,7 @@
 
 Reviewed five-expression reference sheets for the 41 distinct Set 1 character designs. A/B names are aliases for the same design.
 
-Progress: **37 of 41 sheets**, containing **185 of 205 expressions**.
+Progress: **41 of 41 sheets**, containing **205 of 205 expressions**.
 
 Expression order: Neutral, Evil Grin, Gross, Angry, Maniacal Laugh. Each source PNG is preserved at its original dimensions and bytes.
 
@@ -42,6 +42,7 @@ These are character-production reference sheets. They are not integrated into th
 | TT_S1_026 | Tin-Lid Tina | Can-Opener Kate | [PNG](tt26/expression-sheet.png) |
 | TT_S1_027 | Ashcan Abby | Bin-Top Liz | [PNG](tt27/expression-sheet.png) |
 | TT_S1_028 | Scrapheap Sean | Junkyard Joel | [PNG](tt28/expression-sheet.png) |
+| TT_S1_029 | Sooty Sarah | Smoke Stack Sue | [PNG](tt29/expression-sheet.png) |
 | TT_S1_030 | Nailgun Neil | Hardware Hank | [PNG](tt30/expression-sheet.png) |
 | TT_S1_031 | Tirefire Ty | Rubber Rob | [PNG](tt31/expression-sheet.png) |
 | TT_S1_032 | Droopy Drew | Saggy Silas | [PNG](tt32/expression-sheet.png) |
@@ -51,3 +52,6 @@ These are character-production reference sheets. They are not integrated into th
 | TT_S1_036 | Vial Kyle | Test-Tube Troy | [PNG](tt36/expression-sheet.png) |
 | TT_S1_037 | Poison Polly | Venom Vera | [PNG](tt37/expression-sheet.png) |
 | TT_S1_038 | Oozy Oscar | Slime-Time Sullivan | [PNG](tt38/expression-sheet.png) |
+| TT_S1_039 | Needle Nelly | Pin-Cushion Paige | [PNG](tt39/expression-sheet.png) |
+| TT_S1_040 | Eyeball Eddie | Peeker Paul | [PNG](tt40/expression-sheet.png) |
+| TT_S1_041 | Cursed Curtis | Hexed Hector | [PNG](tt41/expression-sheet.png) |

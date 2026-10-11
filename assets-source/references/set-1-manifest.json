@@ -3,10 +3,10 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 37,
-  "total_expressions": 185,
+  "completed_sheets": 41,
+  "total_expressions": 205,
   "expected_expressions": 205,
-  "status": "in_progress",
+  "status": "complete",
   "expression_order": [
     "neutral",
     "evil_grin",
@@ -333,6 +333,17 @@
       "sha256": "9efe4cbeae5b3481fb8c03fbfcc827feba38d524a3a7f14305734c8ba0502a1c"
     },
     {
+      "artwork_id": "TT_S1_029",
+      "teddy_id": "tt29",
+      "a_name": "Sooty Sarah",
+      "b_name": "Smoke Stack Sue",
+      "file": "tt29/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2909830,
+      "sha256": "a37e767fc64e910b52e1919ff961dd5465864c26db79c0338cadc2d0138b2d36"
+    },
+    {
       "artwork_id": "TT_S1_030",
       "teddy_id": "tt30",
       "a_name": "Nailgun Neil",
@@ -430,6 +441,39 @@
       "height": 1024,
       "bytes": 3199316,
       "sha256": "f69e6a61c5a2cda9fd8e004b09183e8b8a05f68fb4c093bed3f7841e77517d5e"
+    },
+    {
+      "artwork_id": "TT_S1_039",
+      "teddy_id": "tt39",
+      "a_name": "Needle Nelly",
+      "b_name": "Pin-Cushion Paige",
+      "file": "tt39/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3125788,
+      "sha256": "89090c41084fe7723e2977abd0de1e8d9c8362a280dd860a75b7308ee29fed6b"
+    },
+    {
+      "artwork_id": "TT_S1_040",
+      "teddy_id": "tt40",
+      "a_name": "Eyeball Eddie",
+      "b_name": "Peeker Paul",
+      "file": "tt40/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2908856,
+      "sha256": "43580a61e650adc644da8a4faff02d23050426645d00531186018da275428fed"
+    },
+    {
+      "artwork_id": "TT_S1_041",
+      "teddy_id": "tt41",
+      "a_name": "Cursed Curtis",
+      "b_name": "Hexed Hector",
+      "file": "tt41/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3089497,
+      "sha256": "690d451e81443cdea1c4b255686601e9c88387a6439edd05716328fd42c2d58c"
     }
   ]
 }
