@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "collection": "Toxic Teddies",
+  "set": 1,
+  "total_designs": 41,
+  "completed_sheets": 4,
+  "total_expressions": 20,
+  "expected_expressions": 205,
+  "status": "in_progress",
+  "expression_order": [
+    "neutral",
+    "evil_grin",
+    "gross",
+    "angry",
+    "maniacal_laugh"
+  ],
+  "alias_note": "A and B names are aliases for the same design, not separate characters.",
+  "style_reference": {
+    "file": "style-reference/toxic-toby-original.png",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 3854719,
+    "sha256": "ed700d35e974cfd16af17cc9f9db648855838f0ed03ef0a34e1e3c53195cfa29",
+    "included_in_completed_count": false
+  },
+  "sheets": [
+    {
+      "artwork_id": "TT_S1_002",
+      "teddy_id": "tt02",
+      "a_name": "Moldy Molly",
+      "b_name": "Fungus Faye",
+      "file": "tt02/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3169747,
+      "sha256": "f8c8155419797431e827119a42d42371b2dacc87a478cc5e427d82924f85b63b"
+    },
+    {
+      "artwork_id": "TT_S1_007",
+      "teddy_id": "tt07",
+      "a_name": "Burger Bruno",
+      "b_name": "Greasy Gina",
+      "file": "tt07/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3097518,
+      "sha256": "e9ed402df4035607e098b7ba85cb47abb810cc65a21e2203053386fb20dd5767"
+    },
+    {
+      "artwork_id": "TT_S1_008",
+      "teddy_id": "tt08",
+      "a_name": "Rusty Randy",
+      "b_name": "Corroded Cory",
+      "file": "tt08/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3549129,
+      "sha256": "f8e97e5c3bd1f6221c665798e721c22bf47964f6d684812ab0987a78d291a449"
+    },
+    {
+      "artwork_id": "TT_S1_013",
+      "teddy_id": "tt13",
+      "a_name": "Cracked Connie",
+      "b_name": "Broken Bella",
+      "file": "tt13/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3827912,
+      "sha256": "0c65cf56089a345d57795446e4c3351f54f70ffc74109121f7c6c2ece2f1a173"
+    }
+  ]
+}
