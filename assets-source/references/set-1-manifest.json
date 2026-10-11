@@ -3,8 +3,8 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 28,
-  "total_expressions": 140,
+  "completed_sheets": 34,
+  "total_expressions": 170,
   "expected_expressions": 205,
   "status": "in_progress",
   "expression_order": [
@@ -289,6 +289,50 @@
       "sha256": "36415946f9fbe448525b8b5a342347b7d4d28ab9cdfc6f5c060f6a8e0eafc62e"
     },
     {
+      "artwork_id": "TT_S1_025",
+      "teddy_id": "tt25",
+      "a_name": "Freezer-Burn Fran",
+      "b_name": "Cold-Cut Kim",
+      "file": "tt25/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3555514,
+      "sha256": "88aec74891cd670b6477fe2db567a3c2004361825df83afbc8f8870ceea70bee"
+    },
+    {
+      "artwork_id": "TT_S1_028",
+      "teddy_id": "tt28",
+      "a_name": "Scrapheap Sean",
+      "b_name": "Junkyard Joel",
+      "file": "tt28/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3670224,
+      "sha256": "9efe4cbeae5b3481fb8c03fbfcc827feba38d524a3a7f14305734c8ba0502a1c"
+    },
+    {
+      "artwork_id": "TT_S1_030",
+      "teddy_id": "tt30",
+      "a_name": "Nailgun Neil",
+      "b_name": "Hardware Hank",
+      "file": "tt30/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3175780,
+      "sha256": "c7d3ce8f97134052667fa669c7bbac018a4a72830dfc3aa1a828499885cc7986"
+    },
+    {
+      "artwork_id": "TT_S1_031",
+      "teddy_id": "tt31",
+      "a_name": "Tirefire Ty",
+      "b_name": "Rubber Rob",
+      "file": "tt31/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3614854,
+      "sha256": "5e699e75d23d35460ef1b9de385f579eccdabf10c711c8b94337cb91503a7bdc"
+    },
+    {
       "artwork_id": "TT_S1_033",
       "teddy_id": "tt33",
       "a_name": "Mutant Marvin",
@@ -311,6 +355,17 @@
       "sha256": "856bdc847e3b5aec834c7c79955aa8c81354994aac4c6ad5e7308460852525b0"
     },
     {
+      "artwork_id": "TT_S1_035",
+      "teddy_id": "tt35",
+      "a_name": "Nuclear Nick",
+      "b_name": "Half-Life Hal",
+      "file": "tt35/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2974950,
+      "sha256": "d540fe0dda5a3ab77f0d27c5762e879eab94184cd711f794d1b72e356d3dd015"
+    },
+    {
       "artwork_id": "TT_S1_036",
       "teddy_id": "tt36",
       "a_name": "Vial Kyle",
@@ -331,6 +386,17 @@
       "height": 1024,
       "bytes": 3654765,
       "sha256": "7a4e1dedbacbab00e8c9a8d17fec9953e56a1cf2bd213c3dfa3fefd26fe68df4"
+    },
+    {
+      "artwork_id": "TT_S1_038",
+      "teddy_id": "tt38",
+      "a_name": "Oozy Oscar",
+      "b_name": "Slime-Time Sullivan",
+      "file": "tt38/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3199316,
+      "sha256": "f69e6a61c5a2cda9fd8e004b09183e8b8a05f68fb4c093bed3f7841e77517d5e"
     }
   ]
 }
