@@ -3,8 +3,8 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 34,
-  "total_expressions": 170,
+  "completed_sheets": 37,
+  "total_expressions": 185,
   "expected_expressions": 205,
   "status": "in_progress",
   "expression_order": [
@@ -300,6 +300,28 @@
       "sha256": "88aec74891cd670b6477fe2db567a3c2004361825df83afbc8f8870ceea70bee"
     },
     {
+      "artwork_id": "TT_S1_026",
+      "teddy_id": "tt26",
+      "a_name": "Tin-Lid Tina",
+      "b_name": "Can-Opener Kate",
+      "file": "tt26/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3138581,
+      "sha256": "f80a570c93bd238efa48788a2c4b3bd7331157a1d090cdb152ca735c892aa63e"
+    },
+    {
+      "artwork_id": "TT_S1_027",
+      "teddy_id": "tt27",
+      "a_name": "Ashcan Abby",
+      "b_name": "Bin-Top Liz",
+      "file": "tt27/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2845495,
+      "sha256": "e8eb0a30e99d1d1fec3863d63a29d489b164a269438aea5370d812a646ccc730"
+    },
+    {
       "artwork_id": "TT_S1_028",
       "teddy_id": "tt28",
       "a_name": "Scrapheap Sean",
@@ -331,6 +353,17 @@
       "height": 1024,
       "bytes": 3614854,
       "sha256": "5e699e75d23d35460ef1b9de385f579eccdabf10c711c8b94337cb91503a7bdc"
+    },
+    {
+      "artwork_id": "TT_S1_032",
+      "teddy_id": "tt32",
+      "a_name": "Droopy Drew",
+      "b_name": "Saggy Silas",
+      "file": "tt32/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3171621,
+      "sha256": "6ea29b92cb60df8da37ee08c27dc930494ee2b313bdb5ba30c014fa7ef9d05be"
     },
     {
       "artwork_id": "TT_S1_033",
