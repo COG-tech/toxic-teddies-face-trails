@@ -3,8 +3,8 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 4,
-  "total_expressions": 20,
+  "completed_sheets": 7,
+  "total_expressions": 35,
   "expected_expressions": 205,
   "status": "in_progress",
   "expression_order": [
@@ -34,6 +34,17 @@
       "height": 1024,
       "bytes": 3169747,
       "sha256": "f8c8155419797431e827119a42d42371b2dacc87a478cc5e427d82924f85b63b"
+    },
+    {
+      "artwork_id": "TT_S1_004",
+      "teddy_id": "tt04",
+      "a_name": "Sludge Sam",
+      "b_name": "Gooey Grant",
+      "file": "tt04/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3098369,
+      "sha256": "da4ca7c5e1cf0b4a15961acc2ae5ba776442900993b7e21b682bfbe549e3d0ef"
     },
     {
       "artwork_id": "TT_S1_007",
@@ -67,6 +78,28 @@
       "height": 1024,
       "bytes": 3827912,
       "sha256": "0c65cf56089a345d57795446e4c3351f54f70ffc74109121f7c6c2ece2f1a173"
+    },
+    {
+      "artwork_id": "TT_S1_016",
+      "teddy_id": "tt16",
+      "a_name": "Button-Eye Bryce",
+      "b_name": "Loose-Stitch Lou",
+      "file": "tt16/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3759970,
+      "sha256": "7136e4c91380c3298c65a66f9d462b9fec7ca4b93fb3733c28c0da39ec0621ab"
+    },
+    {
+      "artwork_id": "TT_S1_017",
+      "teddy_id": "tt17",
+      "a_name": "Stuffing Stan",
+      "b_name": "Cotton Calvin",
+      "file": "tt17/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3740782,
+      "sha256": "a85569f3a9e444c261f49d56ce07c388c44624f2d57a057658ec9257ae7e494c"
     }
   ]
 }
