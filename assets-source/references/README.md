@@ -2,7 +2,7 @@
 
 Reviewed five-expression reference sheets for the 41 distinct Set 1 character designs. A/B names are aliases for the same design.
 
-Progress: **20 of 41 sheets**, containing **100 of 205 expressions**.
+Progress: **25 of 41 sheets**, containing **125 of 205 expressions**.
 
 Expression order: Neutral, Evil Grin, Gross, Angry, Maniacal Laugh. Each source PNG is preserved at its original dimensions and bytes.
 
@@ -33,4 +33,9 @@ These are character-production reference sheets. They are not integrated into th
 | TT_S1_017 | Stuffing Stan | Cotton Calvin | [PNG](tt17/expression-sheet.png) |
 | TT_S1_018 | Stinky Stu | Reeking Ron | [PNG](tt18/expression-sheet.png) |
 | TT_S1_019 | Greaseball Gabe | Oily Ollie | [PNG](tt19/expression-sheet.png) |
+| TT_S1_020 | Sour Seth | Pickled Pete | [PNG](tt20/expression-sheet.png) |
+| TT_S1_021 | Candy Rot Carl | Sugary Shane | [PNG](tt21/expression-sheet.png) |
 | TT_S1_023 | Syrup Sid | Sticky Stevie | [PNG](tt23/expression-sheet.png) |
+| TT_S1_024 | Nacho Ned | Cheesy Chase | [PNG](tt24/expression-sheet.png) |
+| TT_S1_033 | Mutant Marvin | Twisted Trevor | [PNG](tt33/expression-sheet.png) |
+| TT_S1_034 | Biohazard Ben | Hazmat Harry | [PNG](tt34/expression-sheet.png) |
