@@ -3,8 +3,8 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 16,
-  "total_expressions": 80,
+  "completed_sheets": 20,
+  "total_expressions": 100,
   "expected_expressions": 205,
   "status": "in_progress",
   "expression_order": [
@@ -45,6 +45,17 @@
       "height": 1024,
       "bytes": 3169747,
       "sha256": "f8c8155419797431e827119a42d42371b2dacc87a478cc5e427d82924f85b63b"
+    },
+    {
+      "artwork_id": "TT_S1_003",
+      "teddy_id": "tt03",
+      "a_name": "Dumpster Danny",
+      "b_name": "Trashcan Travis",
+      "file": "tt03/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2946926,
+      "sha256": "8424148506dc83069bb243b2267cf8373ec7dac0a00f0a02737acb7784643b27"
     },
     {
       "artwork_id": "TT_S1_004",
@@ -135,6 +146,17 @@
       "sha256": "b00332a6a8b4eef6921a7584e34cb85d851d89f61f4f144a2191c6ae3fb38e28"
     },
     {
+      "artwork_id": "TT_S1_012",
+      "teddy_id": "tt12",
+      "a_name": "Plague Bear",
+      "b_name": "Sickly Sonny",
+      "file": "tt12/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3589862,
+      "sha256": "45cd493ea1dbbf17b9ce3a7b64aa29cfb08aef7ecf5d7dbd0c9bb3836b408fcd"
+    },
+    {
       "artwork_id": "TT_S1_013",
       "teddy_id": "tt13",
       "a_name": "Cracked Connie",
@@ -144,6 +166,17 @@
       "height": 1024,
       "bytes": 3827912,
       "sha256": "0c65cf56089a345d57795446e4c3351f54f70ffc74109121f7c6c2ece2f1a173"
+    },
+    {
+      "artwork_id": "TT_S1_014",
+      "teddy_id": "tt14",
+      "a_name": "Burnt Burt",
+      "b_name": "Scorched Scott",
+      "file": "tt14/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3741380,
+      "sha256": "d04b8de0383a63cff3559fed5673a71cb9f07b1b0f5939b69ee65b946e936c4c"
     },
     {
       "artwork_id": "TT_S1_015",
@@ -199,6 +232,17 @@
       "height": 1024,
       "bytes": 3647167,
       "sha256": "332e40bd8e7bbf82622f80374088d819b324d8592f9677719104364c69e28667"
+    },
+    {
+      "artwork_id": "TT_S1_023",
+      "teddy_id": "tt23",
+      "a_name": "Syrup Sid",
+      "b_name": "Sticky Stevie",
+      "file": "tt23/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3573459,
+      "sha256": "7445f9445a76e3f4c94d333daeb50bcf823a56f43175f99d53c2ad2bd459b8fa"
     }
   ]
 }
