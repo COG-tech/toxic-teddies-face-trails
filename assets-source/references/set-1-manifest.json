@@ -3,8 +3,8 @@
   "collection": "Toxic Teddies",
   "set": 1,
   "total_designs": 41,
-  "completed_sheets": 25,
-  "total_expressions": 125,
+  "completed_sheets": 28,
+  "total_expressions": 140,
   "expected_expressions": 205,
   "status": "in_progress",
   "expression_order": [
@@ -256,6 +256,17 @@
       "sha256": "a32e06c32beff15a38448354e3f838a8fb1636fe941cc913f2444c28aee64380"
     },
     {
+      "artwork_id": "TT_S1_022",
+      "teddy_id": "tt22",
+      "a_name": "Spoiled Spencer",
+      "b_name": "Rotten Russell",
+      "file": "tt22/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3859536,
+      "sha256": "e90fa02264c7595b89b3c8aac95eb37837d1e587f1e7a7607e2883cdf4982d21"
+    },
+    {
       "artwork_id": "TT_S1_023",
       "teddy_id": "tt23",
       "a_name": "Syrup Sid",
@@ -298,6 +309,28 @@
       "height": 1024,
       "bytes": 3669573,
       "sha256": "856bdc847e3b5aec834c7c79955aa8c81354994aac4c6ad5e7308460852525b0"
+    },
+    {
+      "artwork_id": "TT_S1_036",
+      "teddy_id": "tt36",
+      "a_name": "Vial Kyle",
+      "b_name": "Test-Tube Troy",
+      "file": "tt36/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3669700,
+      "sha256": "d027ed96a5172ce9bf70b3df85e164ec59a9389b77f00bc9e868a4c52fd542e9"
+    },
+    {
+      "artwork_id": "TT_S1_037",
+      "teddy_id": "tt37",
+      "a_name": "Poison Polly",
+      "b_name": "Venom Vera",
+      "file": "tt37/expression-sheet.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3654765,
+      "sha256": "7a4e1dedbacbab00e8c9a8d17fec9953e56a1cf2bd213c3dfa3fefd26fe68df4"
     }
   ]
 }
